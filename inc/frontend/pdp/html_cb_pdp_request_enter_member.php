@@ -539,18 +539,18 @@ do {
                                                       <td height="1" align="right" valign="middle" nowrap bgcolor="#6666FF" class="style25"><div align="left" class="style31">REQUESTED CFIG 1: </div></td>
                                                       <td height="1" valign="middle" bgcolor="#6666FF"><div align="left">
                                                                   <select name="request_cfig" id="request_cfig">
-                                                                        <?php
-do {  
-?>
-                                                                        <option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
-                                                                        <?php
-} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
-  $rows = mysqli_num_rows($Instructors);
-  if($rows > 0) {
-      mysqli_data_seek($Instructors, 0);
-	  $row_Instructors =mysqli_fetch_assoc($Instructors);
-  }
-?>
+				                                                 <?php
+																		do {  
+																		?>
+																		<option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
+																		 <?php
+																		} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
+																		  $rows = mysqli_num_rows($Instructors);
+																		  if($rows > 0) {
+																		      mysqli_data_seek($Instructors, 0);
+																			  $row_Instructors =mysqli_fetch_assoc($Instructors);
+																		  }
+																		?>
                                                                   </select>
                                                             </div></td>
                                                 </tr>
@@ -559,17 +559,17 @@ do {
                                                       <td height="1" valign="middle" bgcolor="#6666FF"><div align="left">
                                                                   <select name="request_cfig2" id="request_cfig2">
                                                                         <?php
-do {  
-?>
+																do {  
+																?>
                                                                         <option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
-                                                                        <?php
-} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
-  $rows = mysqli_num_rows($Instructors);
-  if($rows > 0) {
-      mysqli_data_seek($Instructors, 0);
-	  $row_Instructors =mysqli_fetch_assoc($Instructors);
-  }
-?>
+																<?php
+																} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
+																  $rows = mysqli_num_rows($Instructors);
+																  if($rows > 0) {
+																      mysqli_data_seek($Instructors, 0);
+																	  $row_Instructors =mysqli_fetch_assoc($Instructors);
+																  }
+																?>
                                                                   </select>
                                                             </div></td>
                                                 </tr>

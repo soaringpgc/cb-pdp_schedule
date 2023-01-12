@@ -99,8 +99,13 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/workingjs.js'));
+	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/zxml.js'));
+	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/CalendarPopup.js'));
+	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/javascripts.js'));
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_template-frontend.js', array( 'jquery' ), $this->version, false );		
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_template-frontend.js', array( 'jquery',
+		'javascripts', 'CalendarPopup', 'zxml', 'workingjs' ), $this->version, false );		
     	wp_localize_script( $this->plugin_name, 'PDP_FLIGHT_SUBMITTER', array(
     		'ajax_url' =>  admin_url('admin-ajax.php'),
     		'root' => esc_url_raw( rest_url() ),

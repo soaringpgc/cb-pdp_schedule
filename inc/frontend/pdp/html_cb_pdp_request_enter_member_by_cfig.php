@@ -376,7 +376,13 @@ a:visited {
                                                 </div></td>
                                 </tr>
                                 <tr>
-                                        <td height="277" align="center" valign="top" bgcolor="#424A66"><form action="<?php echo $editFormAction; ?>" method="post" name="new_flight" id="new_flight">
+                                        <td height="277" align="center" valign="top" bgcolor="#424A66">
+                               			<form action="<?php echo admin_url('admin-post.php'); ?>" method="post">
+                               			<input type="hidden" name="action" value="cb_pdp_training_request">
+                               			<input type="hidden" name="page" value="enter_request_cfig">
+                                                                                
+                                        <form action="<?php echo $editFormAction; ?>" method="post" name="new_flight" id="new_flight">
+
                                                         <p><span class="style25 style34 style37"><?php echo "Requests only accepted for scheduled ops days - one week into the future."; ?>&nbsp;</span></p>
                                                         <table width="500" align="center" cellpadding="5" cellspacing="2" bgcolor="#666666">
                                                                 <tr valign="baseline">
@@ -508,7 +514,17 @@ do {
                                                 <p></p></td>
                                 </tr>
                                 <tr>
-                                        <td height="30" bgcolor="#4F5359" class="style16"><div align="center"><a href="pgc_request_list_cfig.php" class="style17">BACK TO CFIG  LIST </a></div></td>
+                                        <td height="30" bgcolor="#4F5359" class="style16"><div align="center">
+                                        	<form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
+                         	    				<input type="hidden" name="action" value="cb_pdp_training_request">
+                         	    				<input type="hidden" name="page" value="list_cfig">
+                         	    				<input type="submit" value="BACK TO CFIG  LIST">	 
+                      		    			</form>    
+<!-- 
+                                			        <a href="pgc_request_list_cfig.php" class="style17">BACK TO CFIG  LIST </a>
+ -->
+                                        
+                                        </div></td>
                                 </tr>
               </table></td>
         </tr>

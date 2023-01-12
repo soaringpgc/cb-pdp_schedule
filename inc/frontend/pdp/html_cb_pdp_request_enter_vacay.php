@@ -129,10 +129,12 @@ $totalRows_Instructors = mysqli_num_rows($Instructors);
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<!-- 
 <script src="../java/javascripts.js" type="text/javascript"></script>
 <script src="../java/CalendarPopup.js" type="text/javascript"></script>
 <script src="../java/zxml.js" type="text/javascript"></script>
 <script src="../java/workingjs.js" type="text/javascript"></script>
+ -->
 <SCRIPT LANGUAGE="JavaScript" ID="js1">
 		var cal = new CalendarPopup();
 	 </SCRIPT>

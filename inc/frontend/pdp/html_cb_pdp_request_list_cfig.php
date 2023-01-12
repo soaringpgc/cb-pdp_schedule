@@ -139,7 +139,7 @@ $startRow_Requests = $pageNum_Requests * $maxRows_Requests;
 $query_Requests = "SELECT request_key, entry_date, member_id, member_name,member_weight, Date_format(request_date,'%W, %M %e') as mydate,  request_time, request_type, request_cfig,  request_cfig2, cfig_vacation, cfig_vacation2, cfig_weight, request_notes, accept_cfig, cfig2_vacation, accept_date, accept_notes, record_deleted, Date_format(request_date,'%W') as mdayofweek, sched_assist FROM pgc_request WHERE request_date >= curdate() AND record_deleted <> 'Y' ORDER BY request_date ASC, request_key ASC  ";
 $query_limit_Requests = sprintf("%s LIMIT %d, %d", $query_Requests, $startRow_Requests, $maxRows_Requests);
 $Requests = mysqli_query($PGCi, $query_limit_Requests )  or die(mysqli_error($PGCi));
-$row_Requests =mysqli_fetch_assoc($Requests);
+//$row_Requests =mysqli_fetch_assoc($Requests);
 
 if (isset($_GET['totalRows_Requests'])) {
   $totalRows_Requests = $_GET['totalRows_Requests'];
@@ -285,7 +285,7 @@ a:visited {
               <td bgcolor="#35415B" class="style25"><div align="center">CFIG ASSIGNED</div></td>
               <td bgcolor="#35415B" class="style25"><div align="center">CFIG COMMENTS </div></td>
             </tr>
-            <?php do { ?>
+            <?php  while ($row_Requests =mysqli_fetch_assoc($Requests)) { ?>
             <tr>
               <?php
 							  
@@ -399,7 +399,7 @@ a:visited {
               <td bgcolor="<?php echo $color; ?>"><div align="left"><?php echo $row_Requests['accept_cfig']; ?></div></td>
               <td bgcolor="<?php echo $color1; ?>"><?php echo $row_Requests['accept_notes']; ?></td>
             </tr>
-            <?php } while ($row_Requests =mysqli_fetch_assoc($Requests)); ?>
+            <?php }; ?>
           </table>
             <table width="50%" border="0" align="center" bgcolor="#CCCCCC">
               <tr>
