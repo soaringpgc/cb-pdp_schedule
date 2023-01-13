@@ -631,10 +631,9 @@ do {
           <td height="30" bgcolor="#4F5359" class="style16"><div align="center">
                       <form action="<?php echo admin_url('admin-post.php'); ?>" method="get">
        	    	     <input type="hidden" name="action" value="cb_pdp_training_request">
-       	    	     <input type="hidden" name="page" value="list_cfig">       	    	   
+       	    	     <input type="hidden" name="page" value="vacation_view_cfig_by_cfig">       	    	   
        	    	     <input type="submit" value="Instructors Portal">	 
-    		         </form>               
-          
+    		         </form>                         
  <!-- 
          <a href=<?PHP echo $_SESSION['PDP_HOME']; ?>>BACK TO MEMBERS PAGE </a>
  -->

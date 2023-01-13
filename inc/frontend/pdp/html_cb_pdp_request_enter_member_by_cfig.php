@@ -73,9 +73,9 @@ if (isset($_SERVER['QUERY_STRING'])) {
 $date_limit = date('Y-m-d', strtotime("+7 days"));
 $todays_date = date('Y-m-d', strtotime("0 days"));
 
-if (1==1) { 
+//if (1==1) { 
 	
-	if ( (isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1") && ($_POST["member_name"] != "")) {
+if ( (isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form1") && ($_POST["member_name"] != "")) {
 	
 	$insertSQL = sprintf("INSERT INTO pgc_request (member_name, member_id, request_date, request_time, request_type, member_weight, request_cfig, request_cfig2, request_notes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
 						   GetSQLValueString($_POST['member_name'], "text"),
@@ -87,10 +87,9 @@ if (1==1) {
 						   GetSQLValueString($_POST['request_cfig'], "text"),
 						   GetSQLValueString($_POST['request_cfig2'], "text"),
 						   GetSQLValueString($_POST['request_notes'], "text"));
-//var_dump($insertSQL);	
 	  //mysql_select_db($database_PGC, $PGC);
 	  $Result1 = mysqli_query($PGCi, $insertSQL )  or die(mysqli_error($PGCi));
-	  
+ 
 	   	  /*   Update E-Mail IDs                 */
 	  $id = mysqli_insert_id($PGCi); 
 	  $updateSQL = sprintf( "UPDATE pgc_request A, pgc_members B SET A.cfig1_email = B.USER_ID
@@ -130,28 +129,19 @@ if (1==1) {
       WHERE A.member_name = B.NAME AND A.request_key=%s",        
                        GetSQLValueString($id, "int"));
       //mysql_select_db($database_PGC, $PGC);
-      $Result1 = mysqli_query($PGCi, $updateSQL )  or die(mysqli_error($PGCi));
-	   
-	   
-	     
+      $Result1 = mysqli_query($PGCi, $updateSQL )  or die(mysqli_error($PGCi));	   
+		     
      /*  Send Email */
-	 $colname_Requests = "-1";
-if (isset($_GET['request_id'])) {
-  $colname_Requests = $_GET['request_id'];
-}
-	 
- //mysql_select_db($database_PGC, $PGC);
-$query_Requests9 = sprintf("SELECT * FROM pgc_request WHERE request_key = %s", $id);
-$Requests9= mysqli_query($PGCi, $query_Requests9 )  or die(mysqli_error($PGCi));
-$row_Requests9 =mysqli_fetch_assoc($Requests9);
-$totalRows_Requests9 = mysqli_num_rows($Requests9);
+			 
+		 //mysql_select_db($database_PGC, $PGC);
+		$query_Requests9 = sprintf("SELECT * FROM pgc_request WHERE request_key = %s", $id);
+		$Requests9= mysqli_query($PGCi, $query_Requests9 )  or die(mysqli_error($PGCi));
+		$row_Requests9 =mysqli_fetch_assoc($Requests9);
+		$totalRows_Requests9 = mysqli_num_rows($Requests9);
   
-          $message = " " . $row_Requests9['member_name'] . "\n\n" . " The CFIG Team entered your instruction request as indicated below." . "\n\n";
-		  
-		  
-		    
-        $made_change = 'yes';   
-		   
+        $message = " " . $row_Requests9['member_name'] . "\n\n" . " The CFIG Team entered your instruction request as indicated below." . "\n\n";
+		  	    
+        $made_change = 'yes';   		   
    
 		$message = $message . "New Instruction Request" . "\n";
 		$message = $message . "==================" . "\n";
@@ -169,7 +159,7 @@ $totalRows_Requests9 = mysqli_num_rows($Requests9);
 		
 
 		$message = $message . "This record was entered by ... " . $session_pilotname . "\n\n\n";
-		
+ 		
 			$entry_ip = '';
     if (!empty($_SERVER['HTTP_CLIENT_IP']))   //check ip from share internet
     {
@@ -187,13 +177,13 @@ $totalRows_Requests9 = mysqli_num_rows($Requests9);
 
 		
 	    /* Create Email List */
-	    $ToList = $row_Requests9[member_id] ;
+	    $ToList = $row_Requests9['member_id'] ;
 		
-		if (trim($row_Requests9[cfig1_email]) != '') {
-		$ToList = $ToList . "," . $row_Requests9[cfig1_email];
+		if (trim($row_Requests9['cfig1_email']) != '') {
+		$ToList = $ToList . "," . $row_Requests9['cfig1_email'];
 				}
-		if (trim($row_Requests9[cfig2_email]) != '') {
-		$ToList = $ToList . "," . $row_Requests9[cfig2_email];
+		if (trim($row_Requests9['cfig2_email']) != '') {
+		$ToList = $ToList . "," . $row_Requests9['cfig2_email'];
 				}
 				
 		$ToList = $ToList . "," . $webmaster;
@@ -202,13 +192,13 @@ $totalRows_Requests9 = mysqli_num_rows($Requests9);
 		/* End - Create Email List */
 			
 		$to = $ToList;
-		if ($row_System[sys_status] == 'test') {
-				$to = "ventusdriver@gmail.com, support@pgcsoaring.org";
-		}
+// 		if ($row_System['sys_status'] == 'test') {
+// 				$to = " support@pgcsoaring.org";
+// 		}
 		    
 		$subject = "PGC Instruction Request - New - Entered by CFIG Team";
 				
-	    $email = $_REQUEST['email'];
+//	    $email = $_REQUEST['email'];
 				
 		$headers = "From: PGC Pilot Data Portal";
 		$headers = "From: ventusdriver@gmail.com";
@@ -216,34 +206,34 @@ $totalRows_Requests9 = mysqli_num_rows($Requests9);
 		$headers = "From: PGC-Instruction@noreply.com";
 		
 	   If ($made_change == 'yes') {
-		  $sent = mail($to, $subject, $message, $headers) ; }
+	//	  $sent = mail($to, $subject, $message, $headers) ; }
 
 		  /*  END EMAIL */
 	   
 	  $_SESSION['MM_S_Message'] = "Record Saved - Enter Additional Or Exit";
+	 
 	  
-	  
-	  $updateGoTo = $_SESSION[last_cfig_r_query];
+	  $updateGoTo = $_SESSION['last_cfig_r_query'];
   
-	  if (isset($_SERVER['QUERY_STRING'])) {
-		$updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
-		$updateGoTo .= $_SERVER['QUERY_STRING'];
-	  }
-	  header(sprintf("Location: %s", $updateGoTo));
+// 	  if (isset($_SERVER['QUERY_STRING'])) {
+// 		$updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
+// 		$updateGoTo .= $_SERVER['QUERY_STRING'];
+// 	  }
+//	  header(sprintf("Location: %s", $updateGoTo));
 	  $_SESSION['MM_S_Message'] =  "Modify record or save with no changes";
 	  $_SESSION['MM_S_Message'] = "Record Saved - Enter Additional Or Exit";
-  
-	}
-	
-} else {
-	if (isset($_POST['date1'])) {
-	$_SESSION['MM_S_Message'] = "Enter Training Request";
-	} else {
-	$_SESSION['MM_S_Message'] = "Enter Training Request";
-	}
-} 
 
-$maxRows_Requests = 10;
+	}
+}	
+// } else {
+// 	if (isset($_POST['date1'])) {
+// 	$_SESSION['MM_S_Message'] = "Enter Training Request";
+// 	} else {
+// 	$_SESSION['MM_S_Message'] = "Enter Training Request";
+// 	}
+// } 
+
+$maxRows_Requests = 20;
 $pageNum_Requests = 0;
 if (isset($_GET['pageNum_Requests'])) {
   $pageNum_Requests = $_GET['pageNum_Requests'];
@@ -381,7 +371,9 @@ a:visited {
                                			<input type="hidden" name="action" value="cb_pdp_training_request">
                                			<input type="hidden" name="page" value="enter_request_cfig">
                                                                                 
+<!-- 
                                         <form action="<?php echo $editFormAction; ?>" method="post" name="new_flight" id="new_flight">
+ -->
 
                                                         <p><span class="style25 style34 style37"><?php echo "Requests only accepted for scheduled ops days - one week into the future."; ?>&nbsp;</span></p>
                                                         <table width="500" align="center" cellpadding="5" cellspacing="2" bgcolor="#666666">
@@ -396,20 +388,20 @@ a:visited {
                                                                 <tr valign="baseline">
                                                                         <td height="1" align="right" valign="middle" nowrap bgcolor="#6666FF" class="style25"><div align="left"><span class="style31">MEMBER NAME: </span></div></td>
                                                                         <td height="1" valign="middle" bgcolor="#6666FF"><div align="left">
-                                                                                        <select name="member_name" id="member_name">
-                                                                                                <?php
-do {  
-?>
-                                                                                                <option value="<?php echo $row_Members['NAME']?>"><?php echo $row_Members['NAME']?></option>
-                                                                                                <?php
-} while ($row_Members =mysqli_fetch_assoc($Members));
-  $rows = mysqli_num_rows($Members);
-  if($rows > 0) {
-      mysqli_data_seek($Members, 0);
-	  $row_Members =mysqli_fetch_assoc($Members);
-  }
-?>
-                                                                                        </select>
+                                                                       <select name="member_name" id="member_name">
+                                                                        <?php
+																			do {  
+																			?>
+																			 <option value="<?php echo $row_Members['NAME']?>"><?php echo $row_Members['NAME']?></option>
+																			 <?php
+																			} while ($row_Members =mysqli_fetch_assoc($Members));
+																			  $rows = mysqli_num_rows($Members);
+																			  if($rows > 0) {
+																			      mysqli_data_seek($Members, 0);
+																				  $row_Members =mysqli_fetch_assoc($Members);
+																			  }
+																			?>
+								                                     </select>
                                                                                 </div></td>
                                                                 </tr>
                                                                 <tr valign="baseline">
@@ -417,17 +409,17 @@ do {
                                                                         <td width="215" height="1" valign="middle" bgcolor="#6666FF"><div align="left">
                                                                                         <select name="date1" id="date1">
                                                                                                 <?php
-do {  
-?>
+																								do {  
+																								?>
                                                                                                 <option value="<?php echo $row_DutyDates['date']?>"><?php echo $row_DutyDates['mydate']?></option>
                                                                                                 <?php
-} while ($row_DutyDates =mysqli_fetch_assoc($DutyDates));
-  $rows = mysqli_num_rows($DutyDates);
-  if($rows > 0) {
-      mysqli_data_seek($DutyDates, 0);
-	  $row_DutyDates =mysqli_fetch_assoc($DutyDates);
-  }
-?>
+																							} while ($row_DutyDates =mysqli_fetch_assoc($DutyDates));
+																							  $rows = mysqli_num_rows($DutyDates);
+																							  if($rows > 0) {
+																							      mysqli_data_seek($DutyDates, 0);
+																								  $row_DutyDates =mysqli_fetch_assoc($DutyDates);
+																							  }
+																							?>
                                                                                         </select>
                                                                                 </div></td>
                                                                 </tr>
@@ -436,17 +428,17 @@ do {
                                                                         <td height="1"><div align="left">
                                                                                         <select name="request_type" id="request_type">
                                                                                           <?php
-do {  
-?>
-                                                                                          <option value="<?php echo $row_InstructionTypes['Instruction_type']?>"><?php echo $row_InstructionTypes['Instruction_type']?></option>
+																							do {  
+																							?>
+	                                                                                        <option value="<?php echo $row_InstructionTypes['Instruction_type']?>"><?php echo $row_InstructionTypes['Instruction_type']?></option>
                                                                                           <?php
-} while ($row_InstructionTypes =mysqli_fetch_assoc($InstructionTypes));
-  $rows = mysqli_num_rows($InstructionTypes);
-  if($rows > 0) {
-      mysqli_data_seek($InstructionTypes, 0);
-	  $row_InstructionTypes =mysqli_fetch_assoc($InstructionTypes);
-  }
-?>
+																							} while ($row_InstructionTypes =mysqli_fetch_assoc($InstructionTypes));
+																							  $rows = mysqli_num_rows($InstructionTypes);
+																							  if($rows > 0) {
+																							      mysqli_data_seek($InstructionTypes, 0);
+																								  $row_InstructionTypes =mysqli_fetch_assoc($InstructionTypes);
+																							  }
+																							?>
                                                                           </select>
                                                                                 </div></td>
                                                                 </tr>
@@ -467,17 +459,17 @@ do {
                                                                         <td height="1" valign="middle" bgcolor="#6666FF"><div align="left">
                                                                                         <select name="request_cfig" id="request_cfig">
                                                                                                 <?php
-do {  
-?>
-                                                                                                <option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
-                                                                                                <?php
-} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
-  $rows = mysqli_num_rows($Instructors);
-  if($rows > 0) {
-      mysqli_data_seek($Instructors, 0);
-	  $row_Instructors =mysqli_fetch_assoc($Instructors);
-  }
-?>
+																							do {  
+																							?>
+																							<option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
+																							<?php
+																							} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
+																							  $rows = mysqli_num_rows($Instructors);
+																							  if($rows > 0) {
+																							      mysqli_data_seek($Instructors, 0);
+																								  $row_Instructors =mysqli_fetch_assoc($Instructors);
+																							  }
+																							?>
                                                                                         </select>
                                                                                 </div></td>
                                                                 </tr>
@@ -486,17 +478,17 @@ do {
                                                                         <td height="1" valign="middle" bgcolor="#6666FF"><div align="left">
                                                                                         <select name="request_cfig2" id="request_cfig2">
                                                                                                 <?php
-do {  
-?>
-                                                                                                <option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
-                                                                                                <?php
-} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
-  $rows = mysqli_num_rows($Instructors);
-  if($rows > 0) {
-      mysqli_data_seek($Instructors, 0);
-	  $row_Instructors =mysqli_fetch_assoc($Instructors);
-  }
-?>
+																							do {  
+																							?>
+																							<option value="<?php echo $row_Instructors['Name']?>"><?php echo $row_Instructors['Name']?></option>
+																							<?php
+																							} while ($row_Instructors =mysqli_fetch_assoc($Instructors));
+																							  $rows = mysqli_num_rows($Instructors);
+																							  if($rows > 0) {
+																							      mysqli_data_seek($Instructors, 0);
+																								  $row_Instructors =mysqli_fetch_assoc($Instructors);
+																							  }
+																							?>
                                                                                         </select>
                                                                                 </div></td>
                                                                 </tr>

@@ -128,7 +128,7 @@ $Result1 = mysqli_query($PGCi, $runSQL )  or die(mysqli_error($PGCi));
 ?>
 
 <?php
-$maxRows_Requests = 15;
+$maxRows_Requests = 20;
 $pageNum_Requests = 0;
 if (isset($_GET['pageNum_Requests'])) {
   $pageNum_Requests = $_GET['pageNum_Requests'];
