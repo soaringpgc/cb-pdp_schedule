@@ -102,5 +102,11 @@ class Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_template-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+	public function add_admin_tab_calendar(  $page_tabs_enhanced){
+           $page_tabs_enhanced[] = array( "tab"=>"pgc_fd_menu" , "title"=> "Field Duty Setup", "page"=>"cloud_base",
+           "plug_path"=>plugin_dir_path(__FILE__).'views/' );
+    
+           return  $page_tabs_enhanced;
+    }
 
 }
