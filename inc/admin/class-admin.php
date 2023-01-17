@@ -1,6 +1,6 @@
 <?php
 
-namespace CB_PDP_template\Inc\Admin;
+namespace CB_PDP_schedule\Inc\Admin;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -77,7 +77,7 @@ class Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_template-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_pdp_schedule-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -99,7 +99,7 @@ class Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_template-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 	public function add_admin_tab_calendar(  $page_tabs_enhanced){

@@ -22,7 +22,7 @@
  * @link       http://pgcsoaring.com
  * @since      1.0.0
  *
- * @package    CB_PDP_template
+ * @package    CB_PDP_schedule
  */
 
 // If uninstall not called from WordPress, then exit.

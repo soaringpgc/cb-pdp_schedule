@@ -9,7 +9,7 @@
  *
  * @link              http://pgcsoaring.com
  * @since             1.0.0
- * @package           CB_PDP_template
+ * @package           CB_PDP_schedule
  *
  * @wordpress-plugin
  * Plugin Name:       Cloud Base -PGC PDP Instruction Scheduling. 
@@ -20,11 +20,11 @@
  * Author URI:        http://pgcsoaring.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       cb-pdp_template
+ * Text Domain:       cb-pdp_schedule
  * Domain Path:       /languages
  */
 
-namespace CB_PDP_template;
+namespace CB_PDP_schedule;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
-define( NS . 'PLUGIN_NAME', 'cb-pdp_template' );
+define( NS . 'PLUGIN_NAME', 'cb-pdp_schedule' );
 
 define( NS . 'PLUGIN_VERSION', '1.0.0' );
 
@@ -47,7 +47,7 @@ define( NS . 'PLUGIN_NAME_URL', plugin_dir_url( __FILE__ ) );
 
 define( NS . 'PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-define( NS . 'PLUGIN_TEXT_DOMAIN', 'cb-pdp_template' );
+define( NS . 'PLUGIN_TEXT_DOMAIN', 'cb-pdp_schedule' );
 
 
 /**
@@ -86,7 +86,7 @@ register_deactivation_hook( __FILE__, array( NS . 'Inc\Core\Deactivator', 'deact
  *
  * @since    1.0.0
  */
-class CB_PDP_template {
+class CB_PDP_schedule {
 
 	/**
 	 * The instance of the plugin.
@@ -123,13 +123,16 @@ class CB_PDP_template {
  * can interact with the plugin's hooks contained within.
  **/
 function wp_plugin_name_init() {
-		return CB_PDP_template::init();
+
+		return CB_PDP_schedule::init();
+		
 }
 
 $min_php = '5.6.0';
 
 // Check the minimum required PHP version and run the plugin.
 if ( version_compare( PHP_VERSION, $min_php, '>=' ) ) {
-	add_action( 'plugins_loaded', 'CB_PDP_template\wp_plugin_name_init' );
+
+	add_action( 'plugins_loaded', 'CB_PDP_schedule\wp_plugin_name_init' );
 //		wp_plugin_name_init();
 }

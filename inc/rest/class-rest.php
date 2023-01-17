@@ -1,5 +1,5 @@
 <?php
-namespace CB_PDP_template\Inc\Rest;
+namespace CB_PDP_schedule\Inc\Rest;
 /**
  * The rest functionality of the plugin.
  *

@@ -1,6 +1,6 @@
 <?php
 
-namespace CB_PDP_template\Inc\Core;
+namespace CB_PDP_schedule\Inc\Core;
 
 /**
  * Register all actions and filters for the plugin

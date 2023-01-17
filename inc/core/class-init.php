@@ -1,10 +1,10 @@
 <?php
 
-namespace CB_PDP_template\Inc\Core;
-use CB_PDP_template as NS;
-use CB_PDP_template\Inc\Admin as Admin;
-use CB_PDP_template\Inc\Frontend as Frontend;
-use CB_PDP_template\Inc\Rest as Rest;
+namespace CB_PDP_schedule\Inc\Core;
+use CB_PDP_schedule as NS;
+use CB_PDP_schedule\Inc\Admin as Admin;
+use CB_PDP_schedule\Inc\Frontend as Frontend;
+use CB_PDP_schedule\Inc\Rest as Rest;
 
 /**
  * The core plugin class.
@@ -61,12 +61,14 @@ class Init {
 		$this->version = NS\PLUGIN_VERSION;
 		$this->plugin_basename = NS\PLUGIN_BASENAME;
 		$this->plugin_text_domain = NS\PLUGIN_TEXT_DOMAIN;
-
 		$this->load_dependencies();
+
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		
 		$this->define_rest_hooks();
+
 	}
 
 	/**
@@ -102,7 +104,6 @@ class Init {
 	public function define_rest_hooks() {
 
 		$plugin_rest = new Rest\Rest( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
-		
 		$this->loader->add_action( 'rest_api_init', $plugin_rest, 'register_routes');
 
 	}
@@ -143,31 +144,18 @@ class Init {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Frontend\Frontend( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
-
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+ 		$plugin_public = new Frontend\Frontend( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
+ 		
+ 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+ 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );		
-// flight logging actions 
+// scheduling actions
 		$this->loader->add_action( 'admin_post_cb_pdp_training_request', $plugin_public, 'cb_pdp_training_request' );
 		$this->loader->add_action( 'admin_post_nopriv_cb_pdp_training_request', $plugin_public, 'cb_pdp_no_login' );
 
 		$this->loader->add_action( 'admin_post_pdp_cfig_schedule', $plugin_public, 'pdp_cfig_schedule' );
 		$this->loader->add_action( 'admin_post_nopriv_pdp_cfig_schedule', $plugin_public, 'pdp_no_login' );
-
-//		$this->loader->add_action( 'admin_post_pdp-flight-log-details', $plugin_public, 'pdp_flight_log_details' );
-//		$this->loader->add_action( 'admin_post_nopriv_pdp-flight-details', $plugin_public, 'pdp_no_login' );
-
-		$this->loader->add_action( 'wp_ajax_pdp_update_time', $plugin_public, 'pdp_update_time' );
-		$this->loader->add_action( 'wp_ajax_nopriv_pdp_update_time', $plugin_public, 'pdp_no_login' );
-// flight metrics actions 
-
-		$this->loader->add_action( 'admin_post_pdp-flight-metrics', $plugin_public, 'pdp_flight_metrics' );
-		$this->loader->add_action( 'admin_post_nopriv_pdp-flight-metrics', $plugin_public, 'pdp_no_login' );
-
-		$this->loader->add_action( 'admin_post_pdp-metrics-details', $plugin_public, 'pdp_metrics_details' );
-		$this->loader->add_action( 'admin_post_nopriv_pdp-metrics-details', $plugin_public, 'pdp_no_login' );
 
 	}
 
@@ -211,10 +199,6 @@ class Init {
 	 * @since     1.0.0
 	 * @return    string    The text domain of the plugin.
 	 */
-     
-     public function include_flightlog_list_edit(){
-     	include_once( 'partials/html_CB_PDP_template_list_edit.php');
-     }
      
       public function get_plugin_text_domain() {
      		return $this->plugin_text_domain;

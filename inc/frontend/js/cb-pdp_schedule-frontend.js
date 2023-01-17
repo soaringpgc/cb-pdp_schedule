@@ -69,7 +69,7 @@
 		 $(".pdp_popup_detail").on('click', function(e){
 		 	e.preventDefault();
 		 	alert ("popup" +  $(this).val());
-//		 	window.location.replace('./html_CB_PDP_template_update.php');		 
+//		 	window.location.replace('./html_CB_PDP_schedule_update.php');		 
 		 });
 	});
 	
