@@ -134,10 +134,10 @@ $totalRows_Instructors = mysqli_num_rows($Instructors);
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 
-<script src="<?php echo plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/javascripts.js') ?>";></script>
-<script src="<?php echo plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/CalendarPopup.js') ?>";></script>
-<script src="<?php echo plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/zxml.js') ?>";></script>
-<script src="<?php echo plugins_url('/cb-pdp_instruction_schedule/inc/frontend/js/workingjs.js') ?>";></script>
+<script src="<?php echo plugins_url('/cb-pdp_schedule/inc/frontend/js/javascripts.js') ?>";></script>
+<script src="<?php echo plugins_url('/cb-pdp_schedule/inc/frontend/js/CalendarPopup.js') ?>";></script>
+<script src="<?php echo plugins_url('/cb-pdp_schedule/inc/frontend/js/zxml.js') ?>";></script>
+<script src="<?php echo plugins_url('/cb-pdp_schedule/inc/frontend/js/workingjs.js') ?>";></script>
 
 <!-- 
 <script src="../js/javascripts.js" type="text/javascript"></script>

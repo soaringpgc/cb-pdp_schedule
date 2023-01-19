@@ -69,79 +69,125 @@ class Rest extends \Cloud_Base_Rest {
     $namespace = 'cloud_base/v' . $version;
     $base = 'route';
 	 // the extra (?:/ ...  ) makes the parmater optional 
- 		register_rest_route( $namespace, '/pdp_flights(?:/(?P<id>[\d]+))?', array (
+ 		register_rest_route( $namespace, '/calendar(?:/(?P<id>[\d]+))?', array (
  			array(
        		'methods'  => \WP_REST_Server::READABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        	'callback' => array( $this, 'pdp_get_flights' ),
+        	'callback' => array( $this, 'pdp_get_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
        		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),        	
    		 	), array(
        		'methods'  => \WP_REST_Server::CREATABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        	'callback' => array( $this, 'pdp_post_flight' ),
+        	'callback' => array( $this, 'pdp_post_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
        		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::EDITABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        	'callback' => array( $this, 'pdp_update_flight' ),
+        	'callback' => array( $this, 'pdp_update_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
        		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
-        	'callback' => array( $this, 'glider_club_delete_signoff' ),
+        	'callback' => array( $this, 'pdp_delete_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
        		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	)) 
    		 );	
     }
       
-	public function pdp_get_flights( \WP_REST_Request $request) {
-		global $PGCwp; 
-		$table_name =  'pgc_flightsheet';
-		
-		$maxRows = isset($request['maxrows']) ? $request['maxrows'] : 10;
-		$pageNum = isset($request['pageNum']) ? $request['pageNum'] : 0 ;
-		$startRow = $pageNum * $maxRows; 
-		$fields_valid = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_type', 'Pilot1'=>'pilot1', 
-			'Pilot2'=>'pilot2', 'Takeoff'=>'takeoff', 'Landing'=>'landing', 'Time'=>'time', '`Tow Altitude`'=>'tow_altitude', 
-			'`Tow Plane`'=>'tow_plane', '`Tow Pilot`'=>'tow_pilot', '`Tow Charge`'=>'tow_charge', 'Notes'=>'notes', 
-			'Ip'=>'ip', 'email'=>'email', 'mail_count'=>'mail_count', 'cfig_train'=>'cfig_train');	
-		// NTFS I copied the array but I need it in reverse key value order, so I'm lazy, sue me. 	
-		//  --dsj 
-		$valid_fields= array_flip($fields_valid);			
-		$select_string = $this->select_fields($request, $valid_fields);	
-
-// process filters.  	  
- 	    $filters_valid = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_type', 'Pilot1'=>'pilot1', 
-			'Pilot2'=>'pilot2', 'Tow Altitude'=>'tow_altitude', 'Tow Plane'=>'tow_plane', 'Tow Pilot'=>'tow_pilot' );
-		$valid_filters = array_flip($filters_valid);
-	    $filter_string = $this->pdp_select_filters($request, $valid_filters);
-		
- 		if(isset($request['id'])){
- 			$sql = $PGCwp->prepare("SELECT {$select_string} FROM {$table_name} s WHERE {$filter_string} AND `key` = %d" ,  $request['id'] );		
-
- 	//		$sql = $PGCwp->prepare("SELECT * FROM  $table_name WHERE `Key` = '%d'", $request['id']);
- 		}else {
- 		  	$sql = "SELECT {$select_string} FROM {$table_name} s WHERE {$filter_string} ORDER BY key DESC ";	
- 		
-//			$sql = $PGCwp->prepare("SELECT * FROM $table_name WHERE `Date` = '%s' ORDER BY `Key` DESC LIMIT %d, %d", date("Y-m-d"), $maxRows,  $startRow);
-		}
-		$items = $PGCwp->get_results($sql);
-	  	return new \WP_REST_Response ($items);
+	public function pdp_get_dates( \WP_REST_Request $request) {
+		global $wpdb;
+		$table_name =  'wp_cloud_base_calendar';
+		 	
+		if(isset($request['id'])){
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `id` = %d" ,  $request['id'] );	
+		} else {
+ 			if(isset($request['session'])){
+ 			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d" ,  $request['session'] );			
+ 			} elseif (isset($request['start'])){
+ 				if (isset($request['stop'])){
+ 					$stop = $request['stop'] ;
+ 				} else {
+ 					$end = new \DateTime($request['start']);
+ 					$stop = $end->modify('+14 day')->format("Y-m-d");							
+ 				}
+ 				$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `calendar_date` >= %s AND  `calendar_date` <=  = %s" ,  
+ 						$request['start'], $stop );	
+ 			} else {
+  				$start = new \DateTime('now');
+				$stop = clone $start;
+  				$stop = $stop->modify('+14 day')->format("Y-m-d");	
+  				$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `calendar_date` >= %s AND  `calendar_date` <=  %s" ,  
+  						$start->format("Y-m-d"), $stop );	
+ 			}
+ 		}	
+ 		$items = $wpdb->get_results($sql);
+ 	  	return new \WP_REST_Response ($items);
 	}
-//  create new flight
-	public function pdp_post_flight( \WP_REST_Request $request) {
-		global $PGCwp; 
-		$table_name =  'pgc_flightsheet';
-		$today = date("Y-m-d");
-		$flight_data = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_Type', 'Pilot1'=>'pilot1', 
-			'Pilot2'=>'pilot2', 'Takeoff'=>'takeoff', 'Landing'=>'landing', 'Time'=>'time', 'Tow Altitude'=>'tow_altitude', 
-			'Tow Plane'=>'tow_plane', 'Tow Pilot'=>'tow_pilot', 'Tow Charge'=>'tow_charge', 'Notes'=>'notes', 
-			'Ip'=>'ip', 'email'=>'email', 'mail_count'=>'mail_count', 'cfig_train'=>'cfig_train');	
+//  create new date
+	public function pdp_post_dates( \WP_REST_Request $request) {
+		global $wpdb; 
+		$table_name =  'wp_cloud_base_calendar';
 		
+	// need start of each session and days of week to schedule. 	
+		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) &&
+			isset($request['su']) && isset($request['m']) && isset($request['t']) && isset($request['w']) &&
+			  isset($request['th']) && isset($request['f']) && isset($request['sa'])){	  
+			  
+				$s1 =  new \DateTime($request['s1']) ;
+				$s2 =  new \DateTime($request['s2']) ;
+				$s3 =  new \DateTime($request['s3']) ;
+				$e3 =  new \DateTime($request['e3']) ;
+				$date1 =  strtotime('first day of january');
+                $date2 =  strtotime('last day of december');     
+
+                $s_date1 = date('Y-m-d', $date1 );
+                $s_date2 = date('Y-m-d', $date2 );     
+    
+ 
+/*
+	This will generate enteries for every day from Jan 1 of this year to Jan 31st of next
+	year. 
+*/
+                $jan_this_year =  new \DateTime( $s_date1 );
+                $jan_next_year =  new \DateTime( $s_date2 );     
+ 				$jan_next_year->modify('+31 day');
+		
+ 				$s_days = array (					
+					($request['su'] == "1") ? 0 : -1, 
+					($request['m']  == "1") ? 1 : -1, 
+					($request['t']  == "1") ? 2 : -1, 
+					($request['w']  == "1") ? 3 : -1, 
+			  		($request['th'] == "1") ? 4 : -1, 
+			  		($request['f']  == "1") ? 5 : -1, 
+ 			  		($request['sa'] == "1") ? 6 : -1 ) ; 
+ 			  
+	  		
+  			 for($i = $jan_this_year; $i <= $s2 ; $i-modify('+1 day') ) {
+ 				 
+ 			 	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> '0', 'scheduling'=>  in_array( $i->format('w'), $s_days ) );	
+	
+  			  	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
+				$id = $wpdb->get_var($sql); 
+  			  	if ($id != null ) {
+  			  		$result = $wpdb->update($table_name, $record, array('id' => $id ));	
+  			  	} else {
+  			  		$result = $wpdb->insert($table_name, $record);	
+  			  	}		
+				$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
+
+  				return new \WP_REST_Response ($wpdb->get_results($sql));				 			  			 
+  			 }		
+ 			  	
+ 			  		
+return new \WP_REST_Response ($s_days);		
+		} else {
+			return new \WP_Error( 'Insert Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
+		}
+return new \WP_REST_Response ('huh?');		
 		$insert_array = array();
 		foreach ($flight_data as $key =>$value){
 			if(isset($request[$value])){
@@ -153,7 +199,7 @@ class Rest extends \Cloud_Base_Rest {
 			if (!isset($insert_array['Date'])){
 				$insert_array += ['Date'=>date("Y-m-d")];
 			}
-			$result = $PGCwp->insert($table_name, $insert_array );		
+			$result = $wpdb->insert($table_name, $insert_array );		
 		}
 		if ($result ){
 			return new \WP_REST_Response ($items);
@@ -161,10 +207,10 @@ class Rest extends \Cloud_Base_Rest {
 			return new \WP_Error( 'Insert Failed', esc_html__( 'Unable to add Flight', 'my-text-domain' ), array( 'status' => 204 ) );
 		}
 	}	
-//  update flight. 	
-	public function pdp_update_flight( \WP_REST_Request $request) {
-		global $PGCwp; 
-		$table_name =  'pgc_flightsheet';
+//  update dates. 	
+	public function pdp_update_dates( \WP_REST_Request $request) {
+		global $wpdb; 
+		$table_name =  'wp_cloud_base_calendar';
 		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
@@ -182,7 +228,7 @@ class Rest extends \Cloud_Base_Rest {
 		}
 		
 		if (!empty($update_array)){
-			$result = $PGCwp->update($table_name, $update_array, array('Key'=>$request['id'] ));		
+			$result = $wpdb->update($table_name, $update_array, array('Key'=>$request['id'] ));		
 		}		
 		if ($result ){
 			return new \WP_REST_Response ($result);
@@ -190,13 +236,12 @@ class Rest extends \Cloud_Base_Rest {
 			return new \WP_Error( 'Update Failed', esc_html__( 'Unable to update Flight', 'my-text-domain' ), array( 'status' => 204 ) );
 		}
 	}			
-//  delete flight. 	
-	public function glider_club_delete_signoff( \WP_REST_Request $request) {
+//  delete daate. 	
+	public function pdp_delete_dates( \WP_REST_Request $request) {
 	// NOt implemented. 
 	
-		global $PGCwp; 
-		$table_name =  'pgc_flightsheet';
-		
+		global $wpdb; 
+		$table_name =  'wp_cloud_base_calendar';		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 		}		

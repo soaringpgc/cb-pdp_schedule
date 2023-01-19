@@ -99,11 +99,17 @@ class Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', array( 'jquery' ), $this->version, false );
+	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
+	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
+	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
+	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
+		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'workingjs'  ), $this->version, false );
 
 	}
 	public function add_admin_tab_calendar(  $page_tabs_enhanced){
-           $page_tabs_enhanced[] = array( "tab"=>"pgc_fd_menu" , "title"=> "Field Duty Setup", "page"=>"cloud_base",
+           $page_tabs_enhanced[] = array( "tab"=>"html_seasion_setup" , "title"=> "Field Duty Setup", "page"=>"cloud_base",
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );
     
            return  $page_tabs_enhanced;
