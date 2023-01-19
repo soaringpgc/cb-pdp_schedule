@@ -101,12 +101,22 @@ class Rest extends \Cloud_Base_Rest {
 	public function pdp_get_dates( \WP_REST_Request $request) {
 		global $wpdb;
 		$table_name =  'wp_cloud_base_calendar';
+		$date1 =  strtotime('first day of january');
+        $date2 =  strtotime('last day of december');     
+        $s_date1 = date('Y-m-d', $date1 );
+        $s_date2 = date('Y-m-d', $date2 );  
+        $fist_day_year =  new \DateTime( $s_date1 );
+        $last_day_year =  new \DateTime( $s_date2 );   
 		 	
-		if(isset($request['id'])){
-			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `id` = %d" ,  $request['id'] );	
+		if(isset($request['date'])){
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `calendar_date` = %s" ,  $request['date'] );										
+		} elseif(isset($request['id'])){
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `id` = %d" ,  $request['id'] );				
+						
 		} else {
  			if(isset($request['session'])){
- 			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d" ,  $request['session'] );			
+ 			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d  AND `calendar_date` BETWEEN %s AND %s", 
+ 	 			 	 $request['session'], $fist_day_year->format("Y-m-d") , $last_day_year->format("Y-m-d")  );	 			 		
  			} elseif (isset($request['start'])){
  				if (isset($request['stop'])){
  					$stop = $request['stop'] ;
@@ -136,105 +146,78 @@ class Rest extends \Cloud_Base_Rest {
 		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) &&
 			isset($request['su']) && isset($request['m']) && isset($request['t']) && isset($request['w']) &&
 			  isset($request['th']) && isset($request['f']) && isset($request['sa'])){	  
-			  
-				$s1 =  new \DateTime($request['s1']) ;
-				$s2 =  new \DateTime($request['s2']) ;
-				$s3 =  new \DateTime($request['s3']) ;
-				$e3 =  new \DateTime($request['e3']) ;
-				$date1 =  strtotime('first day of january');
-                $date2 =  strtotime('last day of december');     
+			
+		    $s1 =  new \DateTime($request['s1']) ;
+		    $s2 =  new \DateTime($request['s2']) ;
+		    $s3 =  new \DateTime($request['s3']) ;
+		    $e3 =  new \DateTime($request['e3']) ;
+		    $date1 =  strtotime('first day of january');
+            $date2 =  strtotime('last day of december');     
 
-                $s_date1 = date('Y-m-d', $date1 );
-                $s_date2 = date('Y-m-d', $date2 );     
-    
- 
+            $s_date1 = date('Y-m-d', $date1 );
+            $s_date2 = date('Y-m-d', $date2 );     
 /*
-	This will generate enteries for every day from Jan 1 of this year to Jan 31st of next
+	This will generate or update enteries for every day from Jan 1 of this year to Jan 31st of next
 	year. 
 */
-                $jan_this_year =  new \DateTime( $s_date1 );
-                $jan_next_year =  new \DateTime( $s_date2 );     
- 				$jan_next_year->modify('+31 day');
+            $jan_this_year =  new \DateTime( $s_date1 );
+            $jan_next_year =  new \DateTime( $s_date2 );     
+ 			$jan_next_year->modify('+31 day');
 		
- 				$s_days = array (					
-					($request['su'] == "1") ? 0 : -1, 
-					($request['m']  == "1") ? 1 : -1, 
-					($request['t']  == "1") ? 2 : -1, 
-					($request['w']  == "1") ? 3 : -1, 
-			  		($request['th'] == "1") ? 4 : -1, 
-			  		($request['f']  == "1") ? 5 : -1, 
- 			  		($request['sa'] == "1") ? 6 : -1 ) ; 
- 			  
-	  		
-  			 for($i = $jan_this_year; $i <= $s2 ; $i-modify('+1 day') ) {
- 				 
- 			 	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> '0', 'scheduling'=>  in_array( $i->format('w'), $s_days ) );	
-	
-  			  	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
-				$id = $wpdb->get_var($sql); 
-  			  	if ($id != null ) {
-  			  		$result = $wpdb->update($table_name, $record, array('id' => $id ));	
-  			  	} else {
-  			  		$result = $wpdb->insert($table_name, $record);	
-  			  	}		
-				$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
-
-  				return new \WP_REST_Response ($wpdb->get_results($sql));				 			  			 
-  			 }		
- 			  	
- 			  		
-return new \WP_REST_Response ($s_days);		
+ 			$s_days = array (					
+				($request['su'] == "1") ? 0 : -1, 
+				($request['m']  == "1") ? 1 : -1, 
+				($request['t']  == "1") ? 2 : -1, 
+				($request['w']  == "1") ? 3 : -1, 
+				($request['th'] == "1") ? 4 : -1, 
+				($request['f']  == "1") ? 5 : -1, 
+ 				($request['sa'] == "1") ? 6 : -1 ) ; 
+ 			$c = 0; 
+	  		$u = 0;
+	  		$s_count=-1;
+	  		$session_dates = array(  $jan_this_year, $s1, $s2, $s3, $e3, $jan_next_year);
+	  		$sessions = array('0', '1', '2', '3', '0');
+  
+	  	    for ( $j = 0; $j < 5; $j++) {	
+ 	  	    	 $s_count++;	
+	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {							 
+  			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j], 'scheduling'=>  in_array( $i->format('w'), $s_days ) );	 			  	 
+  			 	   	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
+			 	 	$id = $wpdb->get_var($sql); 
+  			 	   	if ($id != null ) {
+  			 	   		$result = $wpdb->update($table_name, $record, array('id' => $id ));	
+  			 	   		$u++;
+  			 	   	} else {
+  			 	   		$result = $wpdb->insert($table_name, $record);	
+  			 	   		$c++;
+  			 	   	}		
+			 	 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));				   
+   			 	 }	
+ 		    } 
+ 		    $count = array( 'updated' => $u, 'created'=>$c);
+ 		    return new \WP_REST_Response ( $count); 		
 		} else {
-			return new \WP_Error( 'Insert Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
-		}
-return new \WP_REST_Response ('huh?');		
-		$insert_array = array();
-		foreach ($flight_data as $key =>$value){
-			if(isset($request[$value])){
-				$insert_array += [$key=>$request[$value]];
-			}
-		}
-		if (!empty($insert_array)){
-			// if no date was supplied but other data is set, use today's date. 
-			if (!isset($insert_array['Date'])){
-				$insert_array += ['Date'=>date("Y-m-d")];
-			}
-			$result = $wpdb->insert($table_name, $insert_array );		
-		}
-		if ($result ){
-			return new \WP_REST_Response ($items);
-		} else {
-			return new \WP_Error( 'Insert Failed', esc_html__( 'Unable to add Flight', 'my-text-domain' ), array( 'status' => 204 ) );
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
 		}
 	}	
 //  update dates. 	
 	public function pdp_update_dates( \WP_REST_Request $request) {
-		global $wpdb; 
-		$table_name =  'wp_cloud_base_calendar';
-		
-		if (!isset($request['id'])){
-			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
-		}		
-		$flight_data = array( 'Date'=>'date', 'Glider'=>'glider', 'Flight_Type'=>'flight_type', 'Pilot1'=>'pilot1', 
-			'Pilot2'=>'pilot2', 'Takeoff'=>'takeoff', 'Landing'=>'landing', 'Time'=>'time', 'Tow Altitude'=>'tow_altitude', 
-			'Tow Plane'=>'tow_plane', 'Tow Pilot'=>'tow_pilot', 'Tow Charge'=>'tow_charge', 'Notes'=>'notes', 
-			'Ip'=>'ip', 'email'=>'email', 'mail_count'=>'mail_count', 'cfig_train'=>'cfig_train');	
-		
-		$update_array = array();
-		foreach ($flight_data as $key =>$value){
-			if(isset($request[$value])){
-				$update_array += [$key=>$request[$value]];
-			}
-		}
-		
-		if (!empty($update_array)){
-			$result = $wpdb->update($table_name, $update_array, array('Key'=>$request['id'] ));		
-		}		
-		if ($result ){
-			return new \WP_REST_Response ($result);
-		} else {
-			return new \WP_Error( 'Update Failed', esc_html__( 'Unable to update Flight', 'my-text-domain' ), array( 'status' => 204 ) );
-		}
+ 		global $wpdb; 
+ 		$table_name =  'wp_cloud_base_calendar';
+ 		
+ 		if (isset($request['scheduling']) && (isset($request['id']) || isset($request['date'] )) ){
+ 			$record = array('scheduling'=> $request['scheduling'] );
+		    if (isset($request['id'])  ){		    
+		    	$result = $wpdb->update($table_name, $record, array('id' => $request['id'] ));
+		    }		
+		    if(isset($request['date']) ){	 	
+		    	$result = $wpdb->update($table_name, $record, array('calendar_date' => $request['date'] ));		
+		    
+		    }
+		   	return new \WP_REST_Response ( $result); 	 	
+	     } else {	     
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
+ 	     }
 	}			
 //  delete daate. 	
 	public function pdp_delete_dates( \WP_REST_Request $request) {
@@ -246,15 +229,5 @@ return new \WP_REST_Response ('huh?');
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 		}		
 		return new \WP_Error( 'rest_api_sad', esc_html__( 'Something went horribly wrong.', 'my-text-domain' ), array( 'status' => 500 ) );
-	}	
-	public function pdp_select_filters($request, $valid_filters){
-	  $filter_string = "1";
-	  $valid_keys = array_keys($valid_filters );		  
-	  foreach($valid_keys as $key ){
-	  	if(!empty($request[$key]) ){
-	  		$filter_string = $filter_string . ' AND '. $valid_filters[$key] .'='.  $wpdb->prepare('%s' , $request[$key]);
-	  	}
-	  }
-	return($filter_string);
 	}	
 }
