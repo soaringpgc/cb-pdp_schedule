@@ -1,16 +1,27 @@
-   		<?php  
-                $date1 =  strtotime('first saturday of april ');
-                $date2=   strtotime('last sunday of november ');     
-                $session1Start =  date('Y-m-d', $date1 );
-                $session3End =  date('Y-m-d', $date2 );     
-    
-                $sessionduration = ($date2 - $date1)/60/60/24/3 ;
+<?php  
+/**
+ * Provide a admin area view for the plugin
+ *
+ * This file is used to markup the admin-facing aspects of the plugin.
+ *
+ * @link       http://example.com
+ * @since      1.0.0
+ *
+ * @package    cb-pdp-schedule
+ * @subpackage cb-pdp-schedule/admin/partials
+ */
 
-                $session2Start =  date('Y-m-d', strtotime( $session1Start. '+' .  (int)$sessionduration . 'days'));  
-                $session3Start =  date('Y-m-d', strtotime( $session1Start. '+' .   (int)$sessionduration*2 . 'days'));  
-//		var_dump ($session1Start);
-//		die();
-   		?>
+    $date1 =  strtotime('first saturday of april ');
+    $date2=   strtotime('last sunday of november ');     
+    $session1Start =  date('Y-m-d', $date1 );
+    $session3End =  date('Y-m-d', $date2 );     
+
+    $sessionduration = ($date2 - $date1)/60/60/24/3 ;
+
+    $session2Start =  date('Y-m-d', strtotime( $session1Start. '+' .  (int)$sessionduration . 'days'));  
+    $session3Start =  date('Y-m-d', strtotime( $session1Start. '+' .   (int)$sessionduration*2 . 'days'));  
+
+?>
 
 <SCRIPT LANGUAGE="JavaScript" ID="js1">
 		var cal = new CalendarPopup();

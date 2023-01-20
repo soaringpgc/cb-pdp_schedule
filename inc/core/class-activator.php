@@ -40,7 +40,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.2;
+   	$db_version = 0.3;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -91,6 +91,26 @@ function create_cb_scheduling_database(){
       	PRIMARY KEY  (id)
       );" . $charset_collate  . ";";
       dbDelta($sql);	            
+
+      $table_name = $wpdb->prefix . "cloud_base_field_duty";
+      // create basic calendar
+      $sql = "CREATE TABLE ". $table_name . " (
+      	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      	calendar_id int(10) UNSIGNED NOT NULL,
+      	trade int(5),
+      	member_id int,
+      	PRIMARY KEY  (id)
+      );" . $charset_collate  . ";";
+      dbDelta($sql);	            
+      
+      $table_name = $wpdb->prefix . "cloud_base_trades";
+      // create basic calendar
+      $sql = "CREATE TABLE ". $table_name . " (
+      	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      	trade tinytext,
+      	PRIMARY KEY  (id)
+      );" . $charset_collate  . ";";
+      dbDelta($sql);	      
       
 	//  Set the version of the Database
 	update_option("cloud_base_schedule_db_version", $db_version);
