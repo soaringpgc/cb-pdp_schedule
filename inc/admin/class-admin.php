@@ -77,7 +77,7 @@ class Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_pdp_schedule-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -98,13 +98,15 @@ class Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
 	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
+        wp_register_script( 'cb_pdp_schedule_admin_templates',  plugins_url('/cb-pdp_schedule/inc/admin/js/templates.js'));
+	    
+	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
-		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'workingjs'  ), $this->version, false );
+		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
 
 	}
 	public function add_admin_tab_calendar(  $page_tabs_enhanced){

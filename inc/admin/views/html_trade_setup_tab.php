@@ -2,23 +2,66 @@
 <script language="JavaScript">
 	var cb_admin_tab = "trade_types";
 </script>
+
+
 <div style="display:inline-block"  align:left id="trade_types"  class="trade_type editform" >
 <?php 			
 if( current_user_can( 'manage_options' ) ) {	
-  echo ('   
-   <h3>Trade Types</h3><DIV>   
-   <form id="addtrade_type" action="#" >
-    	<div>
+  echo ('   <h3>Trade Types</h3>
+  <DIV id="addtradetypes">   
+   <form id="addtradetypes" action="#" >
+<div>
+    
     	<input type = "hidden"
             id = "id"
             size = "2"
             value = ""
             name = "id"/>
+    
+        <div class="hform">           		   
         <input type = "text"
-            id = "title"
-            size = "8"
+            id = "trade"
+            size = "20"
             title = "trade ." 
-            name = "title"/> 
+            name = "trade"/> 
+           </div> 
+        <div class="hform">           		
+		<select name ="authority" id="authority" name="authority" >
+			<option value="0"> Select Authority </option>
+			');
+			// authority array is stored in WP options, It is created/updated on activation 
+			$value_label_authority = get_option('cloud_base_authoritys');
+
+			foreach ($value_label_authority  as $key => $authority ){
+				echo ('<option value="' . $key . '">' . $authority . '</option>');
+			}	
+		echo ('</select>         </div>
+        <div class="hform">    
+		<select name ="overrideauthority" id="overrideauthority"  >
+			<option value="0"> Select Over Ride Authority </option>
+			');
+			// authority array is stored in WP options, It is created/updated on activation 
+			$value_label_authority = get_option('cloud_base_authoritys');
+
+			foreach ($value_label_authority  as $key => $authority ){
+				echo ('<option value="' . $key . '">' . $authority . '</option>');
+			}	
+		echo ('</select>        </div>
+        <div class="hform">    
+		 <input type = "number"
+            id = "sessionmax"
+            title = "sessionmax ." 
+            name = "sessionmax"
+            min = "0" max = "15" /> 
+               </div>
+        <div class="hform">        
+		 <input type = "number"
+            id = "yearmin"
+            title = "yearmin ." 
+            name = "yearmin"
+            min = "0" max = "25"/> 	
+        </div>
+        <div class="hform">         	
         <input type = "hidden"
             id = "active"
             size = "2"
@@ -26,36 +69,43 @@ if( current_user_can( 'manage_options' ) ) {
             name = "active"/> 
         <button id="add" class="view">Add</button>
         <button id="update" class="cb_edit">Update</button>
-       </div>
+        </div>
+       
     </form></DIV>');
 }    
 ?>    
-
+</div>
 <div  class="Table">
     <div class="Title">
         <p>Trade Types</p>
     </div>
     <div class="Heading">
-        <div class="Cell"  >
+        <div class="Cell0"  >
             <p>ID</p>
         </div>
-        <div class="Cell"  style="width: 6.1em">
+        <div class="Cell2" >
             <p>Trade</p>
         </div>
-
+        <div class="Cell" >
+            <p>Authority</p>
+        </div>
+        <div class="Cell" >
+            <p>Over Ride Authority</p>
+        </div> 
+        <div class="Cell"  >
+            <p>Max per Session</p>
+        </div>  
+        <div class="Cell"  >
+            <p>Min per Year</p>
+        </div>                       
     </div>
 </div>
-
 </div>
-
     
-    <h4>Instructions</h4>
-<p>      
-    Here is where you add trades such as; Tow Pilot, Instructor, Field Manager for 
-    Field Duty.
-</p><p>      
-    You can not delete a trade type if it is in use. 
-</p><p>  
+    <h3>Instructions</h3>
+    <p>Here is where you add trades such as; Tow Pilot, Instructor, Field Manager for 
+    Field Duty.     
+    You can not delete a trade type if it is in use.  
     To edit an existing item double click anywhere in that line. The data will be copied 
     to the form at the top of the page and the button will change to "Update" click on
     Update to save the new values.  All previous assignment to that id will reflect the 

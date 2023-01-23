@@ -60,29 +60,44 @@ class Trades extends \Cloud_Base_Rest {
 	public function pdp_get_trade ( \WP_REST_Request $request) {
 		global $wpdb;
  		$table_name =  'wp_cloud_base_trades';
-  		 	
+ 		$cloud_base_authoritys = get_option('cloud_base_authoritys');
+ // authority array is stored in WP options, It is created/updated on activation of Cloudbase plugin. 
+ 		 	
 		if(isset($request['id'])){			
-			$sql = $wpdb->prepare("SELECT trade FROM {$table_name}  WHERE id = %d" , $request['id']);
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE id = %d" , $request['id']);
  			$items = $wpdb->get_results($sql);
- 		    return new \WP_REST_Response ($items); 	
+// 		    return new \WP_REST_Response ($items); 	
 		} else {
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name} ");
 			$items = $wpdb->get_results($sql);
-		    return new \WP_REST_Response ($items); 
+//		    return new \WP_REST_Response ($items); 
 		}	
+		if( $wpdb->num_rows > 0 ) {
+			foreach($items as $k=> $v){	
+//	NTFS: The CAPABILITY is stored in the database, however it does not look pretty
+// use the above array to reverse lookup the primary AUTHORITY that can signoff an item. 			
+			$items[$k]->authority_label =  $cloud_base_authoritys[$v->authority];
+			$items[$k]->override_authority_label =  $cloud_base_authoritys[$v->overrideauthority];
+			}			
+ 		 }				
+		return new \WP_REST_Response ($items); 	
 	}
 //  create new trade entry
 	public function pdp_post_trade ( \WP_REST_Request $request) {
 		global $wpdb; 
 		$table_name =  'wp_cloud_base_trades';
+		$sessionMax = isset($request['sessionmax']) ? $request['sessionmax'] : 0;
+		$yearMin = isset($request['yearmin']) ? $request['yearmin'] : 0;
+		$authority = isset($request['authority']) ? $request['authority'] : "";
+		$over_ride_authority = isset($request['over_ride_authority']) ? $request['over_ride_authority'] : "";
 		
 	// need start of each session and days of week to schedule. 	
 		if(isset($request['trade']) ){	  
  		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `trade` = %s " ,   $request['trade']);	
 			$result = $wpdb->get_results($sql); ; 
 		    if( $result == null) {
-		    	$record = array('trade'=>$request['trade'] );
-//		    	$wpdb->insert($table_name, $record );
+		    	$record = array('trade'=>$request['trade'], 'authority'=>$request['authority'], 'overrideauthority'=>$request['over_ride_authority'], 'sessionmax'=>$request['sessionMax'], 'yearmin'=>$request['yearMin'] );
+		    	$wpdb->insert($table_name, $record );
 		    	return new \WP_REST_Response ( $wpdb->insert($table_name, $record )); 
 		    } else {
 		    	return new \WP_Error( 'duplicate', esc_html__( 'trade exists', 'my-text-domain' ), array( 'status' => 409) );
@@ -96,9 +111,23 @@ class Trades extends \Cloud_Base_Rest {
 	public function pdp_update_trade( \WP_REST_Request $request) {
  		global $wpdb; 
  		$table_name =  'wp_cloud_base_trades';
- 		
+ 		if(isset($request['trade'])){
+ 			$record['trade'] =  $request['trade'] ;
+ 		}
+ 		if(isset($request['authority'])){
+ 			$record['authority'] =  $request['authority'] ;
+ 		}
+ 		if(isset($request['overrideauthority'])){
+ 			$record['overrideauthority'] =  $request['overrideauthority'] ;
+ 		}
+ 		if(isset($request['sessionmax'])){
+ 			$record['sessionmax'] =  $request['sessionmax'] ;
+ 		} 		
+ 		 if(isset($request['yearmin'])){
+ 			$record['yearmin'] =  $request['yearmin'] ;
+ 		} 		
  		if (isset($request['id']) && (isset($request['trade'])) ){
- 			$record = array('trade'=> $request['trade'] );
+// 			$record = array('trade'=> $request['trade'] );
 		    if (isset($request['id'])  ){		    
 		    	$result = $wpdb->update($table_name, $record, array('id' => $request['id'] ));
 		    }		

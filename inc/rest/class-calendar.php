@@ -60,6 +60,18 @@ class Calendar extends \Cloud_Base_Rest {
 	public function pdp_get_dates( \WP_REST_Request $request) {
 		global $wpdb;
 		$table_name =  'wp_cloud_base_calendar';
+		
+		if(isset($request['limit'])){
+			$limit = $request['limit'];
+		} else {
+			$limit = 25; 
+		}
+		if(isset($request['offset'])){
+			$offset = $request['offset'];
+		} else {
+			$offset = 0; 
+		}		
+		
 		$date1 =  strtotime('first day of january');
         $date2 =  strtotime('last day of december');     
         $s_date1 = date('Y-m-d', $date1 );
@@ -67,15 +79,19 @@ class Calendar extends \Cloud_Base_Rest {
         $fist_day_year =  new \DateTime( $s_date1 );
         $last_day_year =  new \DateTime( $s_date2 );   
 		 	
-		if(isset($request['date'])){
+		if(isset($request['session_start'])){
+			
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `session` = %s LIMIT 1",  $request['session_start'] );			
+		} elseif(isset($request['date'])){
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `calendar_date` = %s" ,  $request['date'] );										
 		} elseif(isset($request['id'])){
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `id` = %d" ,  $request['id'] );				
 						
 		} else {
  			if(isset($request['session'])){
- 			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d  AND `calendar_date` BETWEEN %s AND %s", 
- 	 			 	 $request['session'], $fist_day_year->format("Y-m-d") , $last_day_year->format("Y-m-d")  );	 			 		
+ 			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d  AND `calendar_date` BETWEEN %s AND %s LIMIT %d OFFSET %d", 
+ 	 			 	 $request['session'], $fist_day_year->format("Y-m-d") , $last_day_year->format("Y-m-d"),  $limit, $offset );	
+	 			 	  			 		
  			} elseif (isset($request['start'])){
  				if (isset($request['stop'])){
  					$stop = $request['stop'] ;
@@ -83,8 +99,8 @@ class Calendar extends \Cloud_Base_Rest {
  					$end = new \DateTime($request['start']);
  					$stop = $end->modify('+14 day')->format("Y-m-d");							
  				}
- 				$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `calendar_date` >= %s AND  `calendar_date` <=  = %s" ,  
- 						$request['start'], $stop );	
+ 				$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `calendar_date` >= %s AND  `calendar_date` <= %s  LIMIT %d OFFSET %d ",  
+ 						$request['start'], $stop,  $limit, $offset);						
  			} else {
   				$start = new \DateTime('now');
 				$stop = clone $start;
