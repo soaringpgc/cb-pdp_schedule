@@ -3,3 +3,11 @@
  *
  * The file is enqueued from inc/admin/class-admin.php.
  */
+dd label input {
+   margin-right:100px;
+}
+.hform2 {
+	float:left;
+	margin-right:2px;
+	width: 15px;
+}

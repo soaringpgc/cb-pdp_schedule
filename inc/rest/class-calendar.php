@@ -79,29 +79,37 @@ class Calendar extends \Cloud_Base_Rest {
         $fist_day_year =  new \DateTime( $s_date1 );
         $last_day_year =  new \DateTime( $s_date2 );   
 		 	
-		if(isset($request['session_start'])){
-			
-			$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `session` = %s LIMIT 1",  $request['session_start'] );			
+		if(isset($request['session_end'])){	
+ 	// last day of a session this year. 		
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `session` = %s AND  `calendar_date` >= %s ORDER BY calendar_date DESC LIMIT 1", $request['session_end'], $fist_day_year->format("Y-m-d") );			
+		} elseif(isset($request['session_start'])){	
+		// first day of a session this year. 		
+			$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `session` = %s AND `calendar_date` >= %s  LIMIT 1",  $request['session_start'], $fist_day_year->format("Y-m-d") );			
 		} elseif(isset($request['date'])){
+		// specified date
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `calendar_date` = %s" ,  $request['date'] );										
 		} elseif(isset($request['id'])){
+		// specified id 
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `id` = %d" ,  $request['id'] );				
 						
 		} else {
+		// get all of the days in the specified session of this year. 
  			if(isset($request['session'])){
  			 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} s WHERE `session` = %d  AND `calendar_date` BETWEEN %s AND %s LIMIT %d OFFSET %d", 
- 	 			 	 $request['session'], $fist_day_year->format("Y-m-d") , $last_day_year->format("Y-m-d"),  $limit, $offset );	
-	 			 	  			 		
+ 	 			 	 $request['session'], $fist_day_year->format("Y-m-d") , $last_day_year->format("Y-m-d"),  $limit, $offset );		 			 	  			 		
  			} elseif (isset($request['start'])){
+ 			// range of dates
  				if (isset($request['stop'])){
  					$stop = $request['stop'] ;
  				} else {
+ 					// if stop is not specified, return two weeks. 
  					$end = new \DateTime($request['start']);
  					$stop = $end->modify('+14 day')->format("Y-m-d");							
  				}
  				$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE `calendar_date` >= %s AND  `calendar_date` <= %s  LIMIT %d OFFSET %d ",  
  						$request['start'], $stop,  $limit, $offset);						
  			} else {
+ 			// if nothing specified return the next two weeks. 
   				$start = new \DateTime('now');
 				$stop = clone $start;
   				$stop = $stop->modify('+14 day')->format("Y-m-d");	
@@ -116,11 +124,12 @@ class Calendar extends \Cloud_Base_Rest {
 	public function pdp_post_dates( \WP_REST_Request $request) {
 		global $wpdb; 
 		$table_name =  'wp_cloud_base_calendar';
-		
+// get options instead! 		
 	// need start of each session and days of week to schedule. 	
-		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) &&
-			isset($request['su']) && isset($request['m']) && isset($request['t']) && isset($request['w']) &&
-			  isset($request['th']) && isset($request['f']) && isset($request['sa'])){	  
+// 		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) &&
+// 			isset($request['su']) && isset($request['m']) && isset($request['t']) && isset($request['w']) &&
+// 			  isset($request['th']) && isset($request['f']) && isset($request['sa'])){	  
+		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) ){	  
 			
 		    $s1 =  new \DateTime($request['s1']) ;
 		    $s2 =  new \DateTime($request['s2']) ;
@@ -133,20 +142,14 @@ class Calendar extends \Cloud_Base_Rest {
             $s_date2 = date('Y-m-d', $date2 );     
 /*
 	This will generate or update enteries for every day from Jan 1 of this year to Jan 31st of next
-	year. 
+	year. Overlap next year so we have all of Juanuary to set up.
 */
             $jan_this_year =  new \DateTime( $s_date1 );
             $jan_next_year =  new \DateTime( $s_date2 );     
  			$jan_next_year->modify('+31 day');
+
+			$schedule_days = get_option('cloudbase_tp_weekly', $_POST['weekschedule'], false );	
 		
- 			$s_days = array (					
-				($request['su'] == "1") ? 0 : -1, 
-				($request['m']  == "1") ? 1 : -1, 
-				($request['t']  == "1") ? 2 : -1, 
-				($request['w']  == "1") ? 3 : -1, 
-				($request['th'] == "1") ? 4 : -1, 
-				($request['f']  == "1") ? 5 : -1, 
- 				($request['sa'] == "1") ? 6 : -1 ) ; 
  			$c = 0; 
 	  		$u = 0;
 	  		$s_count=-1;
@@ -156,7 +159,8 @@ class Calendar extends \Cloud_Base_Rest {
 	  	    for ( $j = 0; $j < 5; $j++) {	
  	  	    	 $s_count++;	
 	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {							 
-  			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j], 'scheduling'=>  in_array( $i->format('w'), $s_days ) );	 			  	 
+  			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j], 'tow_scheduling'=> $schedule_days[0][$i->format('w')],
+  			 	   'instructor_scheduling'=>$schedule_days[1][$i->format('w')] , 'manager_scheduling'=>$schedule_days[2][$i->format('w')] );	 			  	 
   			 	   	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
 			 	 	$id = $wpdb->get_var($sql); 
   			 	   	if ($id != null ) {
@@ -179,16 +183,14 @@ class Calendar extends \Cloud_Base_Rest {
 	public function pdp_update_dates( \WP_REST_Request $request) {
  		global $wpdb; 
  		$table_name =  'wp_cloud_base_calendar';
- 		
- 		if (isset($request['scheduling']) && (isset($request['id']) || isset($request['date'] )) ){
- 			$record = array('scheduling'=> $request['scheduling'] );
-		    if (isset($request['id'])  ){		    
-		    	$result = $wpdb->update($table_name, $record, array('id' => $request['id'] ));
-		    }		
-		    if(isset($request['date']) ){	 	
+ 		$scheduling = $request['scheduling'];
+//	return new \WP_REST_Response ( $request['scheduling'][2]); 	  		
+ 		if (isset($request['scheduling']) && (isset($request['session']) && isset($request['date'] )) ){ 
+ 			  	$record = array( 'session'=> $request['session'], 'tow_scheduling'=> $scheduling[0],
+  			   'instructor_scheduling'=>$scheduling[1], 'manager_scheduling'=>$scheduling[2]);			 	 	
 		    	$result = $wpdb->update($table_name, $record, array('calendar_date' => $request['date'] ));				    
-		    }
-		   	return new \WP_REST_Response ( $result); 	 	
+
+		   	return new \WP_REST_Response ($result); 	 	
 	     } else {	     
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
  	     }

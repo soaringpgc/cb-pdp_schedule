@@ -34,13 +34,14 @@ class Activator {
         	wp_die( __( 'Please install and Activate Cloud Base.', 'cb-pdp_schedule' ), 'Plugin dependency check', array( 'back_link' => true ) );
     	}
     	create_cb_scheduling_database();
+    	set_default_cb_schedule_configuration();
 	}
 }
  
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.31;
+   	$db_version = 0.33;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -51,6 +52,9 @@ function create_cb_scheduling_database(){
       	calendar_date date DEFAULT NULL,
       	session smallint(6),
       	scheduling BOOLEAN,
+      	tow_scheduling BOOLEAN,
+      	instructor_scheduling BOOLEAN,
+      	manager_scheduling BOOLEAN,
       	PRIMARY KEY  (id)
       );" . $charset_collate  . ";";
       dbDelta($sql);	
@@ -118,5 +122,15 @@ function create_cb_scheduling_database(){
       
 	//  Set the version of the Database
 	update_option("cloud_base_schedule_db_version", $db_version);
+	}
+}
+function set_default_cb_schedule_configuration(){
+
+	if ( get_option('cloudbase_tp_weekly') == false ){	
+		$cb_tp_weekly = array( 1, 0, 0, 1, 0, 0, 1 );
+		$cb_ins_weekly = array( 1, 0, 0, 1, 0, 0, 1 );
+		$cb_fm_weekly = array( 1, 0, 0, 1, 0, 0, 1 );
+		$cb_weekly = array( $cb_tp_weekly, $cb_ins_weekly, $cb_fm_weekly );
+		update_option('cloudbase_tp_weekly', $cb_weekly, false );								    
 	}
 }

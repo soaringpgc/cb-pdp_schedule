@@ -117,5 +117,37 @@ class Admin {
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
            return  $page_tabs_enhanced;
     }
-
+    public function calendar_setup_page(){
+    
+    }
+	public function cb_schedule_setup_response(){
+		$match = $_POST['selection'];	
+     	check_admin_referer('schedule_page');
+	
+ 		if( strcmp($match,'Update Year') == 0 ){
+ 			// set up the Year
+ 			$s1 = $_POST['session1Start'];
+ 			$s2 = $_POST['session2Start'];
+ 			$s3 = $_POST['session3Start'];
+ 			$e3 = $_POST['session3end'];
+ 		
+ 			$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/calendar' ) ;  
+  			$rest_request->set_query_params(array('s1'=> $s1, 's2'=> $s2,'s3'=> $s3, 'e3'=> $e3));
+   			$rest_response = rest_do_request( $rest_request);      		
+		
+		} elseif( strcmp($match, 'Update Daily') == 0 ){
+			// configure the days of the week to schedule	
+			update_option('cloudbase_tp_weekly', $_POST['weekschedule'], false );		  				
+	 		
+		}elseif(strcmp($match,'Add Holiday') == 0 ){
+			$rest_request = new \WP_REST_REQUEST( 'PUT', '/cloud_base/v1/calendar' ) ;  
+  			$rest_request->set_query_params(array('date'=> $_POST['editdates'], 'scheduling'=> $_POST['holiday'], 'session'=> $_POST['holsession']));
+   			$rest_response = rest_do_request( $rest_request);    
+				
+		}elseif(strcmp($match,'Enable Sessions') == 0 ){
+			update_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		  						
+		}
+		wp_redirect('options-general.php?page=cloud_base&tab=html_seasion_setup');	
+    	exit();    		
+    }  
 }

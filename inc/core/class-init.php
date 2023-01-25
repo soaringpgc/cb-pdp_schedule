@@ -143,6 +143,8 @@ class Init {
 		 *
 		 */
 		 $this->loader->add_filter( 'cb_admin_add_config', $plugin_admin, 'add_admin_tab_calendar' );
+		 $this->loader->add_action( 'admin_post_schedule_setup', $plugin_admin, 'cb_schedule_setup_response');
+
 	}
 
 	/**
@@ -158,7 +160,8 @@ class Init {
  		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
  		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );		
+		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );	
+					
 // scheduling actions
 		$this->loader->add_action( 'admin_post_cb_pdp_training_request', $plugin_public, 'cb_pdp_training_request' );
 		$this->loader->add_action( 'admin_post_nopriv_cb_pdp_training_request', $plugin_public, 'cb_pdp_no_login' );
