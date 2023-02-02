@@ -103,8 +103,7 @@ class Admin {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
         wp_register_script( 'cb_pdp_schedule_admin_templates',  plugins_url('/cb-pdp_schedule/inc/admin/js/templates.js'));
-	    
-	    
+	    	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
 		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
 
@@ -140,12 +139,45 @@ class Admin {
 			update_option('cloudbase_tp_weekly', $_POST['weekschedule'], false );		  				
 	 		
 		}elseif(strcmp($match,'Add Holiday') == 0 ){
-			$rest_request = new \WP_REST_REQUEST( 'PUT', '/cloud_base/v1/calendar' ) ;  
-  			$rest_request->set_query_params(array('date'=> $_POST['editdates'], 'scheduling'=> $_POST['holiday'], 'session'=> $_POST['holsession']));
-   			$rest_response = rest_do_request( $rest_request);    
-				
-		}elseif(strcmp($match,'Enable Sessions') == 0 ){
-			update_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		  						
+ 	 		global $wpdb; 
+  			$table_name =  'wp_cloud_base_calendar';
+ 			$field_name =  'wp_cloud_base_field_duty';
+		
+ 			if(isset($_POST['holiday'])){
+ 				$trade = $_POST['holiday'];
+ 			} else {
+  				$trade = array(0, 0, 0);
+ 			};		
+   			if (isset($_POST['editdates'] )){ // get id of the date
+ 		
+ 
+ 
+  	 	  		$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $_POST['editdates']);	
+  	 			$id = $wpdb->get_var($sql); 
+  				for ($t = 1 ; $t <= 3; $t++ )	{	// for each trade. 	
+  					if($trade[$t-1] == "1"){
+   						$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );		// new record 		 	 	
+   	 		 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %s AND `trade`=%d",  $id, $t);	// does date and trade exist?
+   						$tid = $wpdb->get_var($sql); 
+    						
+   						if ($tid === null) {
+  							$result = $wpdb->insert($field_name, $record);	 // add new 
+  							
+  						} else {
+  							$result = $wpdb->update($field_name, $record, array('id' => $tid ));	// update existing. 
+  						}		
+  					}
+  				}		    	
+ 	 	    } 		
+		
+		
+		
+// 			$rest_request = new \WP_REST_REQUEST( 'PUT', '/cloud_base/v1/calendar', array ('status'=>$response_code, 'response'=> $response_message, 'body_response'=> $response_body) ) ;  
+//   			$rest_request->set_query_params(array('date'=> $_POST['editdates'], 'scheduling'=> $_POST['holiday']));
+//    			$rest_response = rest_do_request( $rest_request);    
+// 				
+// 		}elseif(strcmp($match,'Enable Sessions') == 0 ){
+// 			update_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		  						
 		}
 		wp_redirect('options-general.php?page=cloud_base&tab=html_seasion_setup');	
     	exit();    		

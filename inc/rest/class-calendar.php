@@ -64,7 +64,7 @@ class Calendar extends \Cloud_Base_Rest {
 		if(isset($request['limit'])){
 			$limit = $request['limit'];
 		} else {
-			$limit = 25; 
+			$limit = 31; 
 		}
 		if(isset($request['offset'])){
 			$offset = $request['offset'];
@@ -124,11 +124,9 @@ class Calendar extends \Cloud_Base_Rest {
 	public function pdp_post_dates( \WP_REST_Request $request) {
 		global $wpdb; 
 		$table_name =  'wp_cloud_base_calendar';
-// get options instead! 		
-	// need start of each session and days of week to schedule. 	
-// 		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) &&
-// 			isset($request['su']) && isset($request['m']) && isset($request['t']) && isset($request['w']) &&
-// 			  isset($request['th']) && isset($request['f']) && isset($request['sa'])){	  
+		$field_name =  'wp_cloud_base_field_duty';
+		$trade_name =  'wp_cloud_base_trades';
+		
 		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) ){	  
 			
 		    $s1 =  new \DateTime($request['s1']) ;
@@ -147,8 +145,8 @@ class Calendar extends \Cloud_Base_Rest {
             $jan_this_year =  new \DateTime( $s_date1 );
             $jan_next_year =  new \DateTime( $s_date2 );     
  			$jan_next_year->modify('+31 day');
-
-			$schedule_days = get_option('cloudbase_tp_weekly', $_POST['weekschedule'], false );	
+// session start days are stored in the options table
+			$schedule_days = get_option('cloudbase_tp_weekly', false );	
 		
  			$c = 0; 
 	  		$u = 0;
@@ -158,19 +156,39 @@ class Calendar extends \Cloud_Base_Rest {
   
 	  	    for ( $j = 0; $j < 5; $j++) {	
  	  	    	 $s_count++;	
-	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {							 
-  			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j], 'tow_scheduling'=> $schedule_days[0][$i->format('w')],
-  			 	   'instructor_scheduling'=>$schedule_days[1][$i->format('w')] , 'manager_scheduling'=>$schedule_days[2][$i->format('w')] );	 			  	 
+	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {	
+	  	    	 	  	    	 						 
+  			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j]);	 			  	  
+  			 	   	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));		  	    	 
+	  	    	 						  			  	 
+ 					// See if the calendar data already exists. 
   			 	   	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));	
-			 	 	$id = $wpdb->get_var($sql); 
-  			 	   	if ($id != null ) {
+			 	 	$id = $wpdb->get_var($sql); 			 	 				 	 	
+  			 	   	if ($id != null ) {  // it exists update it. 
   			 	   		$result = $wpdb->update($table_name, $record, array('id' => $id ));	
   			 	   		$u++;
-  			 	   	} else {
+  			 	   	} else { // Does not exist create a new one. 
   			 	   		$result = $wpdb->insert($table_name, $record);	
+  			 	   		$id = $wpdb->insert_id;  // get the id of the record just inserted. 
   			 	   		$c++;
-  			 	   	}		
-			 	 	$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));				   
+  			 	   	};	
+//    			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
+//    			 		$max_t = $wpdb->get_var($sql); 
+			 	 	$max_t = 3; // fixed at three for now until I fix the schedule_days options in settings. 
+							// may return up to $max_t recrords
+					if( $sessions[$j] === '0'){
+						$max_t = 1;						
+					}	
+			 	 	for ($t = 1 ; $t <= $max_t; $t++ )	{	
+			 	 		if($schedule_days[$t-1][$i->format('w')] == 1 ){ // if the weekday has a schedule flag for this trade create an entry in the field duty table. 
+			 	 			$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );				 	 	
+		 	 				$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %d  AND `trade` = %d ",  $id, $t);	
+			 	 			$tid = $wpdb->get_var($sql); 			 	 			 	 	
+  			 	   			if ($tid == null ) { // no record in field duty add it for date and trade with no member assigned.   			 	   			
+								$result = $wpdb->insert($field_name, $record);	
+  			 	   			}				 	   	
+  			 	   		}  			 	   		
+  			 	   	}	
    			 	 }	
  		    } 
  		    $count = array( 'updated' => $u, 'created'=>$c);
@@ -179,23 +197,40 @@ class Calendar extends \Cloud_Base_Rest {
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
 		}
 	}	
-//  update dates. 	
+//  update dates.  Only used for holidays and special dates. 	
 	public function pdp_update_dates( \WP_REST_Request $request) {
  		global $wpdb; 
  		$table_name =  'wp_cloud_base_calendar';
- 		$scheduling = $request['scheduling'];
-//	return new \WP_REST_Response ( $request['scheduling'][2]); 	  		
- 		if (isset($request['scheduling']) && (isset($request['session']) && isset($request['date'] )) ){ 
- 			  	$record = array( 'session'=> $request['session'], 'tow_scheduling'=> $scheduling[0],
-  			   'instructor_scheduling'=>$scheduling[1], 'manager_scheduling'=>$scheduling[2]);			 	 	
-		    	$result = $wpdb->update($table_name, $record, array('calendar_date' => $request['date'] ));				    
-
+		$field_name =  'wp_cloud_base_field_duty';
+		
+		if(isset($request['scheduling'])){
+			$trade = explode(",", $request['scheduling']);
+		} else {
+ 			$trade = array(0, 0, 0);
+		};
+ // return new \WP_REST_Response($trade); 			
+  		if (isset($request['date'] )){ // get id of the date
+ 	   		$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $request['date']);	
+ 	 		$id = $wpdb->get_var($sql); 
+			
+ 			for ($t = 1 ; $t <= 3; $t++ )	{	// for each trade. 	
+ 				if($trade[$t-1] == "1"){
+  					$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );		// new record 		 	 	
+  	 	 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %s AND `trade`=%d",  $id, $t);	// does date and trade exist?
+  					$tid = $wpdb->get_var($sql); 
+  					if ($tid === null) {
+ 						$result = $wpdb->insert($field_name, $record);	 // add new 
+ 					} else {
+ 						$result = $wpdb->update($field_name, $record, array('id' => $tid ));	// update existing. 
+ 					}		
+ 				}
+ 			}
 		   	return new \WP_REST_Response ($result); 	 	
 	     } else {	     
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
  	     }
 	}			
-//  delete daate. 	
+//  delete date. 	
 	public function pdp_delete_dates( \WP_REST_Request $request) {
 	// NOt implemented. 
 	

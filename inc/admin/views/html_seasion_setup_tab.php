@@ -143,13 +143,7 @@ enable sign up for duty for each session.
       						<input type="checkbox" value="1" id="holfm" name="holiday[2]">
      							Field Manager
   							 </label>
-					  </dd>'; 
-        		echo '<dd id="rr-element" class="hform">
-						<label for="holsession-">
-							<input type="number" id="holsession" name="holsession" min="0" max="3">
-  								Session
-							</label>
-				  	</dd>';  					      		          		
+					  </dd>';  					      		          		
 				submit_button('Add Holiday', 'primary', 'selection', true);		         		
 				$enabled = get_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		        		         		
            		echo '<hr><dd id="rr-element" class="hform">

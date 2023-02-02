@@ -267,8 +267,7 @@
       		this.$el.append( itemView.render().el);   
         }
 	 });
-
-
+  
  $(function(){
    if (typeof cb_admin_tab !== 'undefined' ){
    		switch(cb_admin_tab){
@@ -281,3 +280,5 @@
    	    
   }) // $(function) close
 })( jQuery );
+
+

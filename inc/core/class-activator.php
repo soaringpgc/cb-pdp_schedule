@@ -41,7 +41,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.33;
+   	$db_version = 0.35;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -119,6 +119,21 @@ function create_cb_scheduling_database(){
       	PRIMARY KEY  (id)
       );" . $charset_collate  . ";";
       dbDelta($sql);	      
+
+	 // prepopulate with default trade types 
+	$sql =  $wpdb->prepare("INSERT INTO {$table_name} (id, trade, authority, overrideauthority, sessionmax, yearmin ) 
+	VALUES (%d, %s, %s, %s, %d, %d ) ON DUPLICATE KEY UPDATE id=id", '1', 'Tow Pilot', 'edit_gc_tow', 'chief_tow','0', '0');	
+	$wpdb->query($sql);		
+	$sql =  $wpdb->prepare("INSERT INTO {$table_name} (id, trade, authority, overrideauthority, sessionmax, yearmin ) 
+	VALUES (%d, %s, %s, %s, %d, %d ) ON DUPLICATE KEY UPDATE id=id ", '2', 'Instructor', 'chief_flight', 'chief_flight','0', '0');	
+	$wpdb->query($sql);		
+	$sql =  $wpdb->prepare("INSERT INTO {$table_name} (id, trade, authority, overrideauthority, sessionmax, yearmin ) 
+	VALUES (%d, %s, %s, %s, %d, %d ) ON DUPLICATE KEY UPDATE id=id", '3', 'Field Manager', 'read', 'edit_gc_operations','1', '3');	
+	$wpdb->query($sql);		
+	$sql =  $wpdb->prepare("INSERT INTO {$table_name} (id, trade, authority, overrideauthority, sessionmax, yearmin ) 
+	VALUES (%d, %s, %s, %s, %d, %d ) ON DUPLICATE KEY UPDATE id=id", '4', 'Assistant Manager', 'read', 'edit_gc_operations','1', '3');	
+	$wpdb->query($sql);		
+
       
 	//  Set the version of the Database
 	update_option("cloud_base_schedule_db_version", $db_version);

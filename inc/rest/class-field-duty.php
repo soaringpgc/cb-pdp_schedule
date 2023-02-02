@@ -60,6 +60,59 @@ class Field_Duty extends \Cloud_Base_Rest {
 	global $wpdb;
 		$table_name =  'wp_cloud_base_field_duty';
  		$calendar_name =  'wp_cloud_base_calendar';
+ 		$trade_name =  'wp_cloud_base_trades';
+		$results_array = array();
+
+		if(isset($request['limit'])){
+			$limit = $request['limit'];
+		} else {
+			$limit = 40; 
+		}
+		if(isset($request['offset'])){
+			$offset = $request['offset'];
+		} else {
+			$offset = 0; 
+		}		
+
+ 		if(isset($request['ec'])){
+			
+ 			if (isset($request['start'])){
+ 				$start = new \DateTime($request['start']);
+ 				if (isset($request['stop'])){
+ 					$stop = new \DateTime($request['stop']);
+
+
+
+//  					$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
+  					$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id, t.trade FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id INNER JOIN {$trade_name} t ON f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
+					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 					
+// return new \WP_REST_Response($sql);					
+ 				} else {
+  				$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id WHERE c.calendar_date = %s LIMIT %d OFFSET %d", $start->format("Y-m-d"), $limit, $offset );	 
+
+ // 				$sql = $wpdb->prepare("SELECT * FROM {$calendar_name} c  WHERE c.calendar_date= %s " , $start->format("Y-m-d"));	 																		
+ 				}												
+ 			} else {
+				return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
+ 			} 	
+ 			$cdays = $wpdb->get_results($sql);
+
+//			return new \WP_REST_Response ($cdays);
+
+			foreach($cdays as $value){ 
+				if($value->member_id != null) {
+					$f = get_user_meta($value->member_id, 'first_name', true  );
+  					$l = get_user_meta($value->member_id, 'last_name', true  );  	
+					$r = array ( eventName=>  $value->trade.": " .$f .' ' .$l , calendar=>$value->trade, color=>'green', day=> substr($value->calendar_date, -2) );				
+				} else {
+				
+					$r = array ( eventName=>'No '.$value->trade. ' assigned', calendar=>$value->trade, color=>'red', day=> substr($value->calendar_date, -2) );				
+				}
+				array_push($results_array, $r );	
+			}	
+ 				
+			return new \WP_REST_Response ($results_array);
+		} 
  				
 		if(isset($request['limit'])){
 			$limit = $request['limit'];
@@ -76,20 +129,21 @@ class Field_Duty extends \Cloud_Base_Rest {
  			$start = new \DateTime($request['start']);
  			if (isset($request['stop'])){
  				$stop = new \DateTime($request['stop']);
- 				$sql = $wpdb->prepare("SELECT * FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id WHERE c.calendar_date BETWEEN %s AND %s LIMIT %d OFFSET %d" ,  
+ 				$sql = $wpdb->prepare("SELECT *, t.id as trade_id FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id INNER JOIN {$trade_name} t on f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s LIMIT %d OFFSET %d" ,  
   					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 
  			} else {
-  			$sql = $wpdb->prepare("SELECT * FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id WHERE c.calendar_date= %s " ,  
+  			$sql = $wpdb->prepare("SELECT *, t.id as trade_id FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id INNER JOIN {$trade_name} t on f.trade = t.id WHERE c.calendar_date= %s " ,  
   					$start->format("Y-m-d"));	 																		
  			}												
  		} else {
   			$start = new \DateTime('now');
 			$stop = clone $start;
   			$stop = $stop->modify('+14 day')->format("Y-m-d");	
-  			$sql = $wpdb->prepare("SELECT * FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id WHERE c.calendar_date BETWEEN %s AND %s LIMIT %d OFFSET %d" ,  
+  			$sql = $wpdb->prepare("SELECT *, t.id as trade_id  FROM {$table_name} f INNER JOIN {$calendar_name} c ON f.calendar_id = c.id INNER JOIN {$trade_name} t on f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s LIMIT %d OFFSET %d" ,  
   				$start->format("Y-m-d"), $stop, $limit, $offset );	
  		} 			
  		$items = $wpdb->get_results($sql);
+// 		 	  	return new \WP_REST_Response ($sql);
  	  	return new \WP_REST_Response ($items);
  
 	}

@@ -76,8 +76,12 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array(), $this->version, 'all' );
+// 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/calendar.css'));	    
+// 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/css/styles.css'));	    
+// 	    wp_register_style( 'calendar_src_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.css'));	    
+ 	    wp_register_style( 'event_calendar_css',  plugins_url('/cb-pdp_schedule/assets/css/event-calendar.css'));	    
+                                                                                                              
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( 'event_calendar_css'), $this->version, 'all' );
 
 	}
 
@@ -99,16 +103,25 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/inc/frontend/js/workingjs.js'));
-	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/inc/frontend/js/zxml.js'));
-	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/inc/frontend/js/CalendarPopup.js'));
-	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/inc/frontend/js/javascripts.js'));
+	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
+	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
+	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
+	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
+// 	    wp_register_script( 'calendar',  plugins_url('/cb-pdp_schedule/assets/js/calendar.js'));
+  	    wp_register_script( 'event_calendar',  plugins_url('/cb-pdp_schedule/assets/js/event-calendar.js'));	    
+    
+ //       wp_register_script( 'calendar',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.js'));	  
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-frontend.js', array( 'jquery',
-		'javascripts', 'CalendarPopup', 'zxml', 'workingjs' ), $this->version, false );		
-    	wp_localize_script( $this->plugin_name, 'PDP_FLIGHT_SUBMITTER', array(
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/test.js', array( 'jquery', 'jquery-ui-widget',
+// 		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment'), $this->version, false );		
+
+
+                     
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment',  'event_calendar'), $this->version, false );		
+    	wp_localize_script( $this->plugin_name, 'PDP_SCHEDULER', array(
     		'ajax_url' =>  admin_url('admin-ajax.php'),
-    		'root' => esc_url_raw( rest_url() ),
+    		'restURL' => esc_url_raw( rest_url() ),
      		'nonce' => wp_create_nonce( 'wp_rest' ),
      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
@@ -145,7 +158,19 @@ class Frontend {
 		return $output;
 
 	} // schedule_request()	
-	
+	public function cb_pdp_calendar( $atts = array() ) {
+
+		ob_start();
+	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+			include ('views/html_cb_pdp_calendar.php' );
+		$output = ob_get_contents();
+
+		ob_end_clean();
+
+		return $output;
+	} // cb_pdp_calendart()	
+		
 	/**
 	 * This function brings up the flight details page. This is where glider, pilot
 	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
@@ -303,6 +328,7 @@ class Frontend {
 
 		add_shortcode( 'cb_pgc_schedule_request', array( $this, 'schedule_request' ) );
 		add_shortcode( 'cb_pgc_instructor_portal', array( $this, 'instructor_portal' ) );
+		add_shortcode( 'cb_pdp_calendar', array( $this, 'cb_pdp_calendar' ) );
 
 	} // register_shortcodes()
 	/**
