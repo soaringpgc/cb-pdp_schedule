@@ -30,6 +30,14 @@ namespace CB_PDP_schedule;
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+// if dependent plugin is not active - stop here and return. 
+// odd way of checking however because this is loaded before cloudbase, we can not 
+// check for a cloudbase class as it is not loaded yet. However, it is in the active plugins 
+// list attempts to self disable falied. 
+// 
+if(!in_array('cloudbase/cloud-base.php', apply_filters('active_plugins', get_option('active_plugins')))){ 
+		return; 
+}
 
 /**
  * Define Constants
@@ -128,7 +136,7 @@ function wp_plugin_name_init() {
 		
 }
 
-$min_php = '5.6.0';
+$min_php = '7.4.0';
 
 // Check the minimum required PHP version and run the plugin.
 if ( version_compare( PHP_VERSION, $min_php, '>=' ) ) {

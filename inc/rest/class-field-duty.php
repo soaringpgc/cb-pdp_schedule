@@ -103,10 +103,9 @@ class Field_Duty extends \Cloud_Base_Rest {
 				if($value->member_id != null) {
 					$f = get_user_meta($value->member_id, 'first_name', true  );
   					$l = get_user_meta($value->member_id, 'last_name', true  );  	
-					$r = array ( eventName=>  $value->trade.": " .$f .' ' .$l , calendar=>$value->trade, color=>'green', day=> substr($value->calendar_date, -2) );				
-				} else {
-				
-					$r = array ( eventName=>'No '.$value->trade. ' assigned', calendar=>$value->trade, color=>'red', day=> substr($value->calendar_date, -2) );				
+					$r = array ( 'eventName'=>  $value->trade.": " .$f .' ' .$l , 'calendar'=>$value->trade, 'color'=>'green', 'day'=> substr($value->calendar_date, -2) );				
+				} else {				
+					$r = array ( 'eventName'=>'No '.$value->trade. ' assigned', 'calendar'=>$value->trade, 'color'=>'red', 'day'=> substr($value->calendar_date, -2) );				
 				}
 				array_push($results_array, $r );	
 			}	
