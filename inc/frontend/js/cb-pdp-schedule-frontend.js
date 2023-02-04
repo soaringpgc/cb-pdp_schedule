@@ -156,31 +156,34 @@ let endOfMonth   = moment().endOf('month');
 	var member_id = $("#"+trade).val();
 	var member_name = $("#"+trade).find('option:selected').text();
   	if(confirm("Are you sure you want to assign " + member_name + " as " + trade_name + " on " + dutyday + "? " )) {
-    //delete here
+
 //     let elements = document.querySelector('#calendar');
 //     elements.remove;
 
-    
-//     	$.ajax({
-// 		type: "PUT",
-// 		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
-// 		async: true,
-//         cache: false,
-//         timeout: 30000,
-// 		beforeSend: function (xhr){
-// 			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
-// 		},
-// 		data:{
-// 			date: dutyday,
-// 			member_id: member_id,
-// 			trade_id: trade_id
-// 		},
-// 		success : function (response){
-// 			if(response){
-// 				var calendar = new Calendar('#calendar', response); 
-// 			}
-// 		}	
-// 	});
+  
+     	$.ajax({
+ 		type: "PUT",
+ 		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
+ 		async: true,
+         cache: false,
+         timeout: 30000,
+ 		beforeSend: function (xhr){
+ 			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
+ 		},
+ 		data:{
+ 			date: dutyday,
+ 			member_id: member_id,
+ 			trade_id: trade_id
+ 		},
+ 		success : function (response){
+ 			if(response){
+ 			 this.el = document.querySelector('#calendar');
+ 			 this.el.removeChild(this.month);
+ 				//var calendar = new Calendar('#calendar', response); 
+   alert(response);
+ 			}
+ 		}	
+ 	});
 
     
     

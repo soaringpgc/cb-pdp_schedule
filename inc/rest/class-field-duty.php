@@ -81,30 +81,23 @@ class Field_Duty extends \Cloud_Base_Rest {
  				if (isset($request['stop'])){
  					$stop = new \DateTime($request['stop']);
 
-
-
-//  					$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
   					$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id, t.trade FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id INNER JOIN {$trade_name} t ON f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
-					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 					
-// return new \WP_REST_Response($sql);					
+					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 									
  				} else {
   				$sql = $wpdb->prepare("SELECT c.id as id, c.calendar_date, c.session, f.trade, f.member_id FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id WHERE c.calendar_date = %s LIMIT %d OFFSET %d", $start->format("Y-m-d"), $limit, $offset );	 
-
- // 				$sql = $wpdb->prepare("SELECT * FROM {$calendar_name} c  WHERE c.calendar_date= %s " , $start->format("Y-m-d"));	 																		
  				}												
  			} else {
 				return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
  			} 	
  			$cdays = $wpdb->get_results($sql);
 
-//			return new \WP_REST_Response ($cdays);
-
 			foreach($cdays as $value){ 
 				if($value->member_id != null) {
 					$f = get_user_meta($value->member_id, 'first_name', true  );
   					$l = get_user_meta($value->member_id, 'last_name', true  );  	
 					$r = array ( 'eventName'=>  $value->trade.": " .$f .' ' .$l , 'calendar'=>$value->trade, 'color'=>'green', 'day'=> substr($value->calendar_date, -2) );				
-				} else {				
+				} else {
+				
 					$r = array ( 'eventName'=>'No '.$value->trade. ' assigned', 'calendar'=>$value->trade, 'color'=>'red', 'day'=> substr($value->calendar_date, -2) );				
 				}
 				array_push($results_array, $r );	
@@ -171,21 +164,39 @@ class Field_Duty extends \Cloud_Base_Rest {
 //  update field_duty. 	
 	public function pdp_update_field_duty( \WP_REST_Request $request) {
 		global $wpdb; 
- 		$table_name =  'wp_cloud_base_field_duty';
- 		
- 		if (isset($request['scheduling']) && (isset($request['id']) || isset($request['date'] )) ){
- 			$record = array('scheduling'=> $request['scheduling'] );
-		    if (isset($request['id'])  ){		    
-		    	$result = $wpdb->update($table_name, $record, array('id' => $request['id'] ));
-		    }		
-		    if(isset($request['date']) ){	 	
-		    	$result = $wpdb->update($table_name, $record, array('calendar_date' => $request['date'] ));				    
-		    }
+ 		$calendar_name   =  'wp_cloud_base_calendar';
+		$field_name      =  'wp_cloud_base_field_duty';
+
+		$member = null;
+	  	if (isset($request['member_id'] )  ){ // get id of the member
+			$member = $request['member_id'] ;
+		}
+// 
+   		if (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date		
+ 	   		$sql = $wpdb->prepare("SELECT id FROM {$calendar_name} WHERE `calendar_date` = %s" ,  $request['date']);	
+ 	 		$id = $wpdb->get_var($sql); 
+ 			if( $id == null ){
+ 				return new \WP_Error( ' Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	     
+ 			} else{
+  			 	 $sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %d AND `trade` = %d " , $id, $request['trade_id'] );	 	
+ 				 $fid = $wpdb->get_var($sql); // get field duty record. 	
+				 if( $fid == null ){
+ 				 	if ( $request['trade_id'] != "1" ){
+ 						return new \WP_Error( ' Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	
+ 					}  else {
+ 					 	$record = array('calendar_id'=> $id ,'trade'=> $request['trade_id'], 'member_id'=>$member );// new record 			
+ 						$result = $wpdb->insert($field_name, $record);	 // add new 
+ //							return new \WP_REST_Response ( $wpdb->last_query); 	
+ 					} 					  
+  				 } else{
+ 				   	$record = array('trade'=> $request['trade_id'], 'member_id'=>$member );		// update record 		 	 						
+ 					$result = $wpdb->update($field_name, $record, array('id' => $fid ));	// update existing. 
+ 				}
+ 			}
 		   	return new \WP_REST_Response ( $result); 	 	
 	     } else {	     
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
- 	     }
- 
+  	   } 
 	}			
 //  delete field_duty. 	
 	public function pdp_delete_field_duty( \WP_REST_Request $request) {
