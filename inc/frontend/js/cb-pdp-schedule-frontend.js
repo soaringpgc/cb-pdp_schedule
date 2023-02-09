@@ -30,175 +30,119 @@
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
 	 $(function(){
- 
- // Over-ride openForm method to do our bidding. 
- 	Calendar.prototype.openForm = function(el) {
- 	    var dayNumber = +el.querySelectorAll('.day-number')[0].innerText || +el.querySelectorAll('.day-number')[0].textContent;
-		    var day = this.current.clone().date(dayNumber);
- 	  		$("#assignself").removeClass('popup-overlay'); 
- 	  		$("#dutyday").val(day);
-// 	  		alert(day);
- 	      return ;            
- 	      ;
- 	}
-let startOfMonth = moment().startOf('month');
-let endOfMonth   = moment().endOf('month');
- 	
-// process and get next month 
- 	Calendar.prototype.nextMonth = function() {
-    	this.current.add(1, 'months');
-    	this.next = true;
-    	
-    	var response=[];
-    	var self = this;
-// get the day we need to schedule trades		
-	$.ajax({
-		type: "GET",
-		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
-		async: false,
-        cache: false,
-        timeout: 30000,
-		beforeSend: function (xhr){
-			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
-		},
-		data:{
-			start: startOfMonth.add(1, "month").format('YYYY-MM-DD'),
-			stop: endOfMonth.add(1, "month").endOf('month').format('YYYY-MM-DD'),
-			ec: true
-		},
-		success : function (response){
-			if(response){
-			self.events = response;	
-    		self.draw();  
-			}
-		}			
-	});	
-  }
-// process and get previous month
- 	Calendar.prototype.prevMonth = function() {
-    	this.current.subtract(1, 'months');
-    	this.next = false;   	
-    	var response=[];
-    	var self = this;
-// get the day we need to schedule trades		
-	$.ajax({
-		type: "GET",
-		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
-		async: false,
-        cache: false,
-        timeout: 30000,
-		beforeSend: function (xhr){
-			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
-		},
-		data:{
-			start: startOfMonth.subtract(1, "month").format('YYYY-MM-DD'),
-			stop: endOfMonth.subtract(1, "month").endOf('month').format('YYYY-MM-DD'),
-			ec: true
-		},
-		success : function (response){
-			if(response){
-			self.events = response;	
-    		self.draw();  
-			}
-		}			
-	});	
-  } 	
-
-	var data = [];	
+	 var startdate ='';
+	 var cal_date_id =""; 
+  	 var localdata ="";
+       $(document).ready (function() {
+        	var calendarEl = document.getElementById('calendar');
+        	var calendar = new FullCalendar.Calendar(calendarEl, {
+        		headerToolbar: {
+//      	  		plugins: [ 'dayGrid', 'timeGrid' ],
+ 					left: 'prev, next, today',
+ 					center: 'title',
+ 					right: 'dayGridMonth,timeGridWeek, timeGridDay,listMonth',
+ 						ignoreTimezone: false
+ 					},
+ 					selectable: true,
+ //					editable: true,
+ 					select: this.select, 			       
+        	  		initialView: 'dayGridMonth',
+        	  		dateClick: function() {
+					    alert('a day has been clicked!');
+					  },
+					events:{
+					  	url: '/wordpress/wp-json/cloud_base/v1/field_duty',
+					  	method: 'GET',
+					  	extraParams:{ fc: '1'}  // tell rest endpoint we want FullCallendar data format. 
+					},
 	
-	var response=[];
-// get the day we need to schedule trades		
-	$.ajax({
-		type: "GET",
-		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
-		async: false,
-        cache: false,
-        timeout: 30000,
-		beforeSend: function (xhr){
-			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
-		},
-		data:{
-			start: startOfMonth.format('YYYY-MM-DD'),
-			stop: endOfMonth.format('YYYY-MM-DD'),
-			ec: true
-		},
-		success : function (response){
-			if(response){
-				var calendar = new Calendar('#calendar', response); 
-			}
-		}	
-	});
-
-	$('.event_cal_form').change(function() {	
-//	$('#instructor').change(function() {
-//alert(event.target.id);
-	var trade = event.target.id;
-	switch(trade){
-		case 'towpilot':
-			var trade_id = 1;
-			var trade_name = "Tow Pilot"
-			break;
-		case 'instructor':
-			var trade_id = 2;
-			var trade_name = "Instructor"
-			break;
-		case 'field_manager':
-			var trade_id = 3;
-			var trade_name = "Field Manager"
-		    break;
-		case 'assistant_field_manager':
-			var trade_id = 4;
-			var trade_name = "Assistant FM"
-	
-	}
-	
-	var dutyday = moment($("#dutyday").val()).format('YYYY-MM-DD');
-	var member_id = $("#"+trade).val();
-	var member_name = $("#"+trade).find('option:selected').text();
-  	if(confirm("Are you sure you want to assign " + member_name + " as " + trade_name + " on " + dutyday + "? " )) {
-
-//     let elements = document.querySelector('#calendar');
-//     elements.remove;
-
-  
-     	$.ajax({
- 		type: "PUT",
- 		url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
- 		async: true,
-         cache: false,
-         timeout: 30000,
- 		beforeSend: function (xhr){
- 			xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
- 		},
- 		data:{
- 			date: dutyday,
- 			member_id: member_id,
- 			trade_id: trade_id
- 		},
- 		success : function (response){
- 			if(response){
- 			 this.el = document.querySelector('#calendar');
- 			 this.el.removeChild(this.month);
- 				//var calendar = new Calendar('#calendar', response); 
-   alert(response);
- 			}
- 		}	
- 	});
-
-    
-    
-  }
-});
-	
-//		console.log(response);	
-// 	 var calendar = new Calendar('#calendar', response); 
-			 
+				eventClick: function(info) {
+//     		   	console.log(info);
+     		   		switch(info.event.groupId){
+     		   			case 'Tow Pilot': 
+     		   				$("#assigntp").removeClass('popup-content'); 
+     		   				break;
+     		   			case 'Instructor': 
+     		   				$("#assignins").removeClass('popup-content'); 
+     		   				break;
+     		   			case 'Field Manager': 
+     		   				$("#assignfm").removeClass('popup-content'); 
+     		   				break;
+     		   			case 'Assistant Field Manager': 
+     		   				$("#assignafm").removeClass('popup-content'); 
+     		   				break;     		   		
+     		   		}
+					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
+					$('#editdate').text(startdate);
+	  				$("#assignself").removeClass('popup-overlay'); 
+	  				
+	  				cal_date_id = info.event.id;	
+   				},				
+        	});
+     		calendar.render();
+              
+     		$('.event_cal_form').change(function() {
+		
+//      		   	console.log(startdate);
+//      		   	console.log(cal_date_id);
+ 				var trade = event.target.id;
+ 				switch(trade){
+					case 'towpilot':
+						var trade_id = 1;
+						var trade_name = "Tow Pilot";
+						break;
+					case 'instructor':
+						var trade_id = 2;
+						var trade_name = "Instructor";
+						break;
+					case 'field_manager':
+						var trade_id = 3;
+						var trade_name = "Field Manager";
+					    break;
+					case 'assistant_field_manager':
+						var trade_id = 4;
+						var trade_name = "Assistant FM";
+				}
+				var member_id = $("#"+trade).val();
+				var member_name = $("#"+trade).find('option:selected').text();
+  				if(confirm("Are you sure you want to assign " + member_name + " as " + trade_name + " on " + startdate + "? " )) {
+					
+					$.ajax({
+						type: "PUT",
+						url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
+						async: true,
+					     cache: false,
+					     timeout: 30000,
+						beforeSend: function (xhr){
+							xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
+						},
+						data:{
+							date: startdate,
+							trade_id : trade_id,
+							member_id: member_id
+						},
+						success : function (response){
+							calendar.refetchEvents();
+							hideassignpopup();				
+						}	
+					});	 		 
+  	 		   }
+     		   	
+     		});       
+     });	 
+	 	 	 
 	 }) // $(function) close	 
 	 $( window ).load(function() {
 
-	  });
-	 
-	 
+	 });
+	 	 
 })( jQuery );
 
+		function hideassignpopup() {
+			jQuery("#assignself").addClass("popup-overlay");
+			jQuery("#assignins").addClass("popup-content");
+			jQuery("#assigntp").addClass("popup-content");
+			jQuery("#assignfm").addClass("popup-content");
+			jQuery("#assignafm").addClass("popup-content");
+		}
 

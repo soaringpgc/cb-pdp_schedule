@@ -79,9 +79,9 @@ class Frontend {
 // 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/calendar.css'));	    
 // 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/css/styles.css'));	    
 // 	    wp_register_style( 'calendar_src_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.css'));	    
- 	    wp_register_style( 'event_calendar_css',  plugins_url('/cb-pdp_schedule/assets/css/event-calendar.css'));	    
+// 	    wp_register_style( 'event_calendar_css',  plugins_url('/cb-pdp_schedule/assets/css/event-calendar.css'));	    
                                                                                                               
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( 'event_calendar_css'), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
 	}
 
@@ -107,18 +107,17 @@ class Frontend {
 	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
-// 	    wp_register_script( 'calendar',  plugins_url('/cb-pdp_schedule/assets/js/calendar.js'));
-  	    wp_register_script( 'event_calendar',  plugins_url('/cb-pdp_schedule/assets/js/event-calendar.js'));	    
+ 	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
+ 	    	     	                                                
+//  	    wp_register_script( 'event_calendar',  plugins_url('/cb-pdp_schedule/assets/js/event-calendar.js'));	    
     
  //       wp_register_script( 'calendar',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.js'));	  
 
 // 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/test.js', array( 'jquery', 'jquery-ui-widget',
-// 		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment'), $this->version, false );		
-
-
+// 		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment', 'event-calendar'), $this->version, false );		
                      
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
-		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment',  'event_calendar'), $this->version, false );		
+		 'backbone', 'underscore',  'moment', 'calendar'), $this->version, false );		
     	wp_localize_script( $this->plugin_name, 'PDP_SCHEDULER', array(
     		'ajax_url' =>  admin_url('admin-ajax.php'),
     		'restURL' => esc_url_raw( rest_url() ),

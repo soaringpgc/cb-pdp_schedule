@@ -72,8 +72,43 @@ class Field_Duty extends \Cloud_Base_Rest {
 			$offset = $request['offset'];
 		} else {
 			$offset = 0; 
-		}		
+		}	
+		
+		
+		
+		if(isset($request['fc'])){
+			
+ 			if (isset($request['start'])){
+ 				$start = new \DateTime($request['start']);
+ 				if (isset($request['end'])){
+ 					$stop = new \DateTime($request['end']);
 
+  					$sql = $wpdb->prepare("SELECT f.id as id, c.calendar_date, c.session, f.trade, f.member_id, t.trade, t.id as tradeId FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id INNER JOIN {$trade_name} t ON f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
+					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 									
+ 				} else {
+  				$sql = $wpdb->prepare("SELECT f.id as id, c.calendar_date, c.session, f.trade, f.member_id FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id WHERE c.calendar_date = %s LIMIT %d OFFSET %d", $start->format("Y-m-d"), $limit, $offset );	 
+ 				}												
+ 			} else {
+				return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
+ 			} 	
+ 			$cdays = $wpdb->get_results($sql);
+
+			foreach($cdays as $value){ 
+				if($value->member_id != null) {
+					$f = get_user_meta($value->member_id, 'first_name', true  );
+  					$l = get_user_meta($value->member_id, 'last_name', true  );  	
+					$r = array ('id'=> $value->id, 'title'=>  $value->trade.": " .$f .' ' .$l , 'groupId'=>$value->trade, 'color'=>'green', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->tradeId );				
+				} else {
+				
+					$r = array ( 'id'=> $value->id, 'title'=>'No '.$value->trade. ' assigned', 'groupId'=>$value->trade, 'color'=>'red', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->tradeId  );				
+				}
+				array_push($results_array, $r );	
+			}	
+ 				
+			return new \WP_REST_Response ($results_array);
+		} 
+		
+		
  		if(isset($request['ec'])){
 			
  			if (isset($request['start'])){
@@ -171,8 +206,20 @@ class Field_Duty extends \Cloud_Base_Rest {
 	  	if (isset($request['member_id'] )  ){ // get id of the member
 			$member = $request['member_id'] ;
 		}
-// 
-   		if (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date		
+		if (isset($request['id'])){
+			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
+ 	 		$id = $wpdb->get_var($sql); 
+ 			if( $id == null ){
+ 				return new \WP_Error( 'Failed', esc_html__( 'Not Found', 'my-text-domain' ), array( 'status' => 404) );	     
+ 			} else {
+ 				$record = array( 'member_id'=>$member );		// update record 		 	 						
+ 				$result = $wpdb->update($field_name, $record, array('id' => $id ));	// update existing. 
+ 				$sql = $wpdb->prepare("SELECT * FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
+ 	 			$result = $wpdb->get_results($sql); 
+ 				return new \WP_REST_Response ( $result); 	 
+ 			}
+					
+		} elseif (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date		
  	   		$sql = $wpdb->prepare("SELECT id FROM {$calendar_name} WHERE `calendar_date` = %s" ,  $request['date']);	
  	 		$id = $wpdb->get_var($sql); 
  			if( $id == null ){
