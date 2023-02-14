@@ -76,10 +76,6 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-// 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/calendar.css'));	    
-// 	    wp_register_style( 'calendar_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/css/styles.css'));	    
-// 	    wp_register_style( 'calendar_src_css',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.css'));	    
-// 	    wp_register_style( 'event_calendar_css',  plugins_url('/cb-pdp_schedule/assets/css/event-calendar.css'));	    
                                                                                                               
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
@@ -108,33 +104,38 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
- 	    	     	                                                
-//  	    wp_register_script( 'event_calendar',  plugins_url('/cb-pdp_schedule/assets/js/event-calendar.js'));	    
-    
- //       wp_register_script( 'calendar',  plugins_url('/cb-pdp_schedule/assets/js/Calendar.js-main/src/calendarjs.js'));	  
-
-// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/test.js', array( 'jquery', 'jquery-ui-widget',
-// 		'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'moment', 'event-calendar'), $this->version, false );		
-                     
+ 	    	     	                                                                     
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
-		 'backbone', 'underscore',  'moment', 'calendar'), $this->version, false );		
+		 'underscore',  'moment', 'calendar'), $this->version, false );		
+
+		$enabled = get_option('cloudbase_enabled_sessions', false );
     	wp_localize_script( $this->plugin_name, 'PDP_SCHEDULER', array(
-    		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'restURL' => esc_url_raw( rest_url() ),
+//      		'nonce' => wp_create_nonce( 'wp_rest' ),
+//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    		)	
+    	);	
+    	$dateToBePassed = array(
+    	    'ajax_url' =>  admin_url('admin-ajax.php'),
     		'restURL' => esc_url_raw( rest_url() ),
      		'nonce' => wp_create_nonce( 'wp_rest' ),
      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-     		'current_user_id' => get_current_user_id()
-    		)	
-    	);	
-
+    		'current_user_id' => get_current_user_id(),
+     		'current_user_role' => $this->user_roles(),
+     		'enabled_sessions' => $enabled,
+     		'trade_authority' => $this->trade_authority(),
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	);    	
 	}
 	public function schedule_request( $atts = array() ) {
 
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-//			include ('views/html_cb_pdp_request_list_member.php' );
 			include ('pdp/html_cb_pdp_request_list_member.php' );
 		$output = ob_get_contents();
 
@@ -337,22 +338,43 @@ class Frontend {
      public function pdp_no_login(){
      	wp_redirect(home_url());
      } //
-     public function cleanData(&$str)
+     public function user_roles()
      {
-        // escape tab characters
-        $str = preg_replace("/\t/", "\\t", $str);
-        // escape new lines
-        $str = preg_replace("/\r?\n/", "\\n", $str);
-        // convert 't' and 'f' to boolean values
-        if($str == 't') $str = 'TRUE';
-        if($str == 'f') $str = 'FALSE';
-    
-        // force certain number/date formats to be imported as strings
-        if(preg_match("/^0/", $str) || preg_match("/^\+?\d{8,}$/", $str) || preg_match("/^\d{4}.\d{1,2}.\d{1,2}/", $str)) {
-          $str = "'$str";
-        }
-    
-        // escape fields that include double quotes
-        if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
+ 		if( is_user_logged_in() ) { // check if there is a logged in user 	 
+	 		$user = wp_get_current_user(); // getting & setting the current user 
+	 		$roles = ( array ) $user->roles; // obtaining the role 	 
+	 		if(in_array('administrator', $roles)) {
+	 			return('administrator');
+	 		} elseif(in_array('chief_flight', $roles)){
+	 			return('chief_flight');
+	 		}  elseif(in_array('cb_edit_towpilot' , $roles)){
+	 			return('cb_edit_towpilot');
+	 		}  elseif(in_array('chief_of_ops', $roles)){
+	 			return('chief_of_ops');
+	 		}  elseif(in_array('tow_pilot', $roles)){
+	 			return('tow_pilot');
+	 		}  elseif(in_array('cfi_g', $roles)){
+	 			return('cfi_g');
+	 		}  elseif(in_array('field_manager', $roles)){
+	 			return('field_manager');
+	 		}  elseif(in_array('assistant_field_manager', $roles)){
+	 			return('assistant_field_manager');
+	 		}
+	 	} else {		 
+			return array(); // if there is no logged in user return empty array  	 
+	 	}
+	 }
+     public function trade_authority()
+    	 {
+ 		if( is_user_logged_in() ) { // check if there is a logged in user 	 
+ 			$rest_request = new \WP_REST_REQUEST( 'GET', '/cloud_base/v1/trades' ) ;  
+   			$rest_request->set_query_params(array('session_start'=> 1));
+  			$rest_response = rest_do_request( $rest_request);      		
+ 			$server = rest_get_server();
+  			$data = $server->response_to_data( $rest_response, false );
+			return($data);			
+	 	} else {		 
+			return array(); // if there is no logged in user return empty array  	 
+	 	}
      }     
 }

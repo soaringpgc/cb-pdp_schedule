@@ -116,9 +116,7 @@ class Admin {
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
            return  $page_tabs_enhanced;
     }
-    public function calendar_setup_page(){
-    
-    }
+
 	public function cb_schedule_setup_response(){
 		$match = $_POST['selection'];	
      	check_admin_referer('schedule_page');
@@ -130,9 +128,9 @@ class Admin {
  			$s3 = $_POST['session3Start'];
  			$e3 = $_POST['session3end'];
  		
- 			$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/calendar' ) ;  
-  			$rest_request->set_query_params(array('s1'=> $s1, 's2'=> $s2,'s3'=> $s3, 'e3'=> $e3));
-   			$rest_response = rest_do_request( $rest_request);      		
+//  			$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/calendar' ) ;  
+//   			$rest_request->set_query_params(array('s1'=> $s1, 's2'=> $s2,'s3'=> $s3, 'e3'=> $e3));
+//    			$rest_response = rest_do_request( $rest_request);      		
 		
 		} elseif( strcmp($match, 'Update Daily') == 0 ){
 			// configure the days of the week to schedule	
@@ -148,36 +146,26 @@ class Admin {
  			} else {
   				$trade = array(0, 0, 0);
  			};		
-   			if (isset($_POST['editdates'] )){ // get id of the date
- 		
- 
- 
+   			if (isset($_POST['editdates'] )){ // get id of the date 
   	 	  		$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $_POST['editdates']);	
   	 			$id = $wpdb->get_var($sql); 
   				for ($t = 1 ; $t <= 3; $t++ )	{	// for each trade. 	
   					if($trade[$t-1] == "1"){
    						$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );		// new record 		 	 	
    	 		 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %s AND `trade`=%d",  $id, $t);	// does date and trade exist?
-   						$tid = $wpdb->get_var($sql); 
-    						
+   						$tid = $wpdb->get_var($sql);     						
    						if ($tid === null) {
-  							$result = $wpdb->insert($field_name, $record);	 // add new 
-  							
+  							$result = $wpdb->insert($field_name, $record);	 // add new  							
   						} else {
   							$result = $wpdb->update($field_name, $record, array('id' => $tid ));	// update existing. 
   						}		
   					}
   				}		    	
- 	 	    } 		
+ 	 	    } 					
+		}elseif(strcmp($match,'Enable Sessions') == 0 ){
+			$sessions = array ($_POST['enablesession'][0], $_POST['enablesession'][1],$_POST['enablesession'][2]);
 		
-		
-		
-// 			$rest_request = new \WP_REST_REQUEST( 'PUT', '/cloud_base/v1/calendar', array ('status'=>$response_code, 'response'=> $response_message, 'body_response'=> $response_body) ) ;  
-//   			$rest_request->set_query_params(array('date'=> $_POST['editdates'], 'scheduling'=> $_POST['holiday']));
-//    			$rest_response = rest_do_request( $rest_request);    
-// 				
-// 		}elseif(strcmp($match,'Enable Sessions') == 0 ){
-// 			update_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		  						
+			update_option('cloudbase_enabled_sessions', $sessions , false );		  						
 		}
 		wp_redirect('options-general.php?page=cloud_base&tab=html_seasion_setup');	
     	exit();    		

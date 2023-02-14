@@ -62,15 +62,16 @@ class Trades extends \Cloud_Base_Rest {
  		$table_name =  'wp_cloud_base_trades';
  		$cloud_base_authoritys = get_option('cloud_base_authoritys');
  // authority array is stored in WP options, It is created/updated on activation of Cloudbase plugin. 
- 		 	
+			 	
 		if(isset($request['id'])){			
 			$sql = $wpdb->prepare("SELECT * FROM {$table_name}  WHERE id = %d" , $request['id']);
  			$items = $wpdb->get_results($sql);
 // 		    return new \WP_REST_Response ($items); 	
 		} else {
-			$sql = $wpdb->prepare("SELECT * FROM {$table_name} ");
+		
+			$sql = "SELECT * FROM {$table_name}";
 			$items = $wpdb->get_results($sql);
-//		    return new \WP_REST_Response ($items); 
+//		    return new \WP_REST_Response ($sql); 
 		}	
 		if( $wpdb->num_rows > 0 ) {
 			foreach($items as $k=> $v){	
@@ -79,7 +80,8 @@ class Trades extends \Cloud_Base_Rest {
 			$items[$k]->authority_label =  $cloud_base_authoritys[$v->authority];
 			$items[$k]->override_authority_label =  $cloud_base_authoritys[$v->overrideauthority];
 			}			
- 		 }				
+ 		 }	
+ 			
 		return new \WP_REST_Response ($items); 	
 	}
 //  create new trade entry

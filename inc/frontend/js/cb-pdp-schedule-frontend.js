@@ -30,8 +30,21 @@
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
 	 $(function(){
+	 
+	 var current_user_role = passed_vars.current_user_role;
+	 var enabled_sessions = passed_vars.enabled_sessions;
+	 var trade_authority = passed_vars.trade_authority;
+	 var overide = [];
+ console.log(current_user_role)	; 
+ 
+ 	 trade_authority.forEach(function(trade){
+	 	overide.push(trade['overrideauthority']);
+	 });
+	overide.push('administrator');
+	 
+ console.log(overide)	; 
 	 var startdate ='';
-	 var cal_date_id =""; 
+//	 var cal_date_id =""; 
   	 var localdata ="";
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
@@ -57,7 +70,10 @@
 					},
 	
 				eventClick: function(info) {
+				hideassignpopup();		
 //     		   	console.log(info);
+				if(overide.includes(current_user_role)){
+					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
      		   		switch(info.event.groupId){
      		   			case 'Tow Pilot': 
      		   				$("#assigntp").removeClass('popup-content'); 
@@ -71,12 +87,53 @@
      		   			case 'Assistant Field Manager': 
      		   				$("#assignafm").removeClass('popup-content'); 
      		   				break;     		   		
-     		   		}
-					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
+     		   		}					
 					$('#editdate').text(startdate);
 	  				$("#assignself").removeClass('popup-overlay'); 
+	  				} else { 				
+ 						switch(current_user_role){
+							case 'tow_pilot':
+								var trade_id = 1;
+								var trade_name = "Tow Pilot";
+								break;
+							case 'cfi_g':
+								var trade_id = 2;
+								var trade_name = "Instructor";
+								break;
+							case 'field_manager':
+								var trade_id = 3;
+								var trade_name = "Field Manager";
+							    break;
+							case 'assistant_field_manager':
+								var trade_id = 4;
+								var trade_name = "Assistant FM";
+						}	
+  				if(confirm("You are signing up for " + trade_name + " on " + startdate + "? " )) {
+					
+					$.ajax({
+						type: "PUT",
+						url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+						async: true,
+					     cache: false,
+					     timeout: 30000,
+						beforeSend: function (xhr){
+							xhr.setRequestHeader('X-WP-Nounce',  passed_vars.nonce );
+						},
+						data:{
+							date: startdate,
+							trade_id : trade_id,
+							member_id: member_id
+						},
+						success : function (response){
+							calendar.refetchEvents();
+							hideassignpopup();				
+						}	
+					});	 		 
+  	 		   } 						
+						  				
 	  				
-	  				cal_date_id = info.event.id;	
+	  				}
+//	  				cal_date_id = info.event.id;	
    				},				
         	});
      		calendar.render();
@@ -109,12 +166,12 @@
 					
 					$.ajax({
 						type: "PUT",
-						url: PDP_SCHEDULER.restURL + 'cloud_base/v1/field_duty',
+						url: passed_vars.restURL + 'cloud_base/v1/field_duty',
 						async: true,
 					     cache: false,
 					     timeout: 30000,
 						beforeSend: function (xhr){
-							xhr.setRequestHeader('X-WP-Nounce',  PDP_SCHEDULER.nonce );
+							xhr.setRequestHeader('X-WP-Nounce',  passed_vars.nonce );
 						},
 						data:{
 							date: startdate,
@@ -126,8 +183,7 @@
 							hideassignpopup();				
 						}	
 					});	 		 
-  	 		   }
-     		   	
+  	 		   }     		   	
      		});       
      });	 
 	 	 	 

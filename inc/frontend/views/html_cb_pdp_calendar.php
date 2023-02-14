@@ -13,20 +13,21 @@
  */
 ?>
 
-<!-- 
-  <meta charset="UTF-8">
-
-  <title>CodePen - Event Calendar Widget</title>  popup-overlay
- -->
  <div style="text-align: center;" id="assignself" class="popup-overlay center"> 
 <?php
-$roles  = array ('tow_pilot', 'inactive', 'board_member', 'operations', 'cfi_g' , 'chief_of_ops', 'flight_edit', 'maintenance_editor', 'administrator');
-$capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operations', 'cb_edit_towpilot', 'flight_edit' )	;					
+// $roles  = array ('tow_pilot', 'inactive', 'board_member', 'operations', 'cfi_g' , 'chief_of_ops', 'flight_edit', 'maintenance_editor', 'administrator');
+// $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operations', 'cb_edit_towpilot', 'flight_edit' )	;					
 
-		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
-		$request->set_param( 'role', 'subscriber' );
-        $response = rest_do_request($request);
-		$pilots = $response->get_data();
+//  			$rest_request = new \WP_REST_REQUEST( 'GET', '/cloud_base/v1/trades' ) ;  
+//    			$rest_request->set_query_params(array('session_start'=> 1));
+//   			$rest_response = rest_do_request( $rest_request);      		
+//  			$server = rest_get_server();
+//   			$trade_authorities = $server->response_to_data( $rest_response, false );
+
+// 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
+// 		$request->set_param( 'role', 'subscriber' );
+//      $response = rest_do_request($request);
+// 		$pilots = $response->get_data();
 
 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 		$request->set_param( 'role', 'tow_pilot' );
@@ -50,7 +51,7 @@ $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operation
 		echo('<div id=editdate>  </div>');
 		
 		echo ('<form id="editdutyday" action="#" ><div >');
-     	if( current_user_can( 'manage_options' || 'cb_edit_cfig' ) ) {	
+     	if( current_user_can( 'manage_options') || current_user_can('cb_edit_cfig' ) ) {	
           echo ('<div id="assignins" class="popup-content"> <label for="instructor" style=color:black>Instructor: </label>
           <select class="event_cal_form" name="instructor" id="instructor" form="editdutyday">
           <option value="" selected>Instructor</option>');       
@@ -59,7 +60,7 @@ $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operation
            };             
           echo ( '</select></div> ');
 		}
-     	if( current_user_can( 'manage_options' || 'cb_edit_towpilot' ) ) {	
+     	if( current_user_can( 'manage_options') || current_user_can('cb_edit_towpilot' ) ) {	
           echo ('<div id="assigntp" class="popup-content"> <label for="towpilot" style=color:black>Tow Pilot: </label>
           <select class="event_cal_form" name="towpilot" id="towpilot" form="editdutyday">
           <option value="" selected>Tow Pilot</option>');       
@@ -68,7 +69,7 @@ $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operation
            };             
           echo ( '</select></div> ');
 		}
-     	if( current_user_can( 'manage_options' || 'operations' ) ) {	
+     	if( current_user_can( 'manage_options') || current_user_can('operations' ) ) {	
 
           echo ('<div id="assignfm" class="popup-content"> <label for="field_manager" style=color:black>Field Manager: </label>
           <select class="event_cal_form" name="field_manager" id="field_manager" form="editdutyday">
@@ -104,7 +105,6 @@ $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operation
 </div>
 
 <div id="calendar"></div>
-<p style=color:black >Click a date for details, Double Click to select or assign duty days. </p>
 
 <script>
 

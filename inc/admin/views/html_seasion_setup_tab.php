@@ -100,10 +100,9 @@ enable sign up for duty for each session.
  				submit_button('Update Year', 'primary', 'selection', true);		
  				echo '<hr>';         		 
 				$weekly_options =  get_option('cloudbase_tp_weekly' ) ; 
-         		$tp_options = $weekly_options[0];
+
          		$weekarray = array ('Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat' ); 
-         		$tradearray = array ('Tow Pilots', 'Instructors', 'Field Manager'); 
-         		
+         		$tradearray = array ('Tow Pilots', 'Instructors', 'Field Manager');         		
 				for($j=0; $j<=2; $j++ ){    
 				  	$tp_options = $weekly_options[$j]; 		
            			echo '<br><h4>'. $tradearray[$j].' Schedule: </h4>';         		
@@ -145,7 +144,7 @@ enable sign up for duty for each session.
   							 </label>
 					  </dd>';  					      		          		
 				submit_button('Add Holiday', 'primary', 'selection', true);		         		
-				$enabled = get_option('cloudbase_enabled_sessions', $_POST['enablesession'], false );		        		         		
+				$enabled = get_option('cloudbase_enabled_sessions', false );		
            		echo '<hr><dd id="rr-element" class="hform">
    						<label for="enablesession[0]">';
   						if ( $enabled[0] == '1' )	{
