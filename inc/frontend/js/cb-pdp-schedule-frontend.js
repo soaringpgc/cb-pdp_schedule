@@ -35,14 +35,14 @@
 	 var enabled_sessions = passed_vars.enabled_sessions;
 	 var trade_authority = passed_vars.trade_authority;
 	 var overide = [];
- console.log(current_user_role)	; 
+// console.log(passed_vars.nonce)	; 
  
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
 	 });
 	overide.push('administrator');
 	 
- console.log(overide)	; 
+// console.log(overide)	; 
 	 var startdate ='';
 //	 var cal_date_id =""; 
   	 var localdata ="";
@@ -60,20 +60,65 @@
  //					editable: true,
  					select: this.select, 			       
         	  		initialView: 'dayGridMonth',
-        	  		dateClick: function() {
-					    alert('a day has been clicked!');
+        	  		dateClick: function(date, jsEvent, view) {
+//         	  		console.log(date.dateStr);
+        	  			if (current_user_role == 'tow_pilot'){// 
+        	  			startdate= date.dateStr;
+        	  				if(confirm("You are signing up to Tow on " + startdate + "? " )) {								
+						   		$.ajax({
+						   			type: "PUT",
+						   			url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+						   			async: true,
+						   		   cache: false,
+						   		   timeout: 30000,
+						   			beforeSend: function (xhr){
+						   				xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+						   			},
+						   			data:{
+						   				date: startdate,
+						   				trade_id : "1",
+						   				member_id: passed_vars.current_user_id
+						   			},
+						   			success : function (response){
+						   				calendar.refetchEvents();
+						   				hideassignpopup();				
+						   			},
+						   			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        				   					alert("Status: " + textStatus); 
+        				   					alert("Error: " + errorThrown); 
+   						   			} 
+						   		});	 		 
+  	 		  			    } 	        	  			
+         	  			}						
+//					    alert('a day has been clicked!');
 					  },
-					events:{
-					  	url: '/wordpress/wp-json/cloud_base/v1/field_duty',
-					  	method: 'GET',
-					  	extraParams:{ fc: '1'}  // tell rest endpoint we want FullCallendar data format. 
-					},
+					events: function (info, successCallback, failureCallback) {
+               	     let start = moment(info.start.valueOf()).format('YYYY-MM-DD');
+               	     let end = moment(info.end.valueOf()).format('YYYY-MM-DD');
+//               	     console.log(info)	; 
+               	     $.ajax({
+               	         url: "/wordpress/wp-json/cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
+               	         type: 'GET',
+               	         headers: {
+               	             'X-WP-NONCE':passed_vars.nonce
+               	         }, success: function (response) {
+               	              successCallback(response);
+               	         }
+               	     });
+               	 },					  					  
+// It is absurd that FullCalendar has no way to include headers. 					  
+// 					events:{
+// 						headers: {  'X-WP-NONCE': passed_vars.nonce}, 
+// 					  	url: '/wordpress/wp-json/cloud_base/v1/field_duty',
+// 					  	method: 'GET',				
+// 					  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
+// 					},
 	
 				eventClick: function(info) {
-				hideassignpopup();		
+				hideassignpopup();	
+				startdate= moment(info.event.start).format('YYYY-MM-DD'); 	
 //     		   	console.log(info);
-				if(overide.includes(current_user_role)){
-					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
+				if(overide.includes(current_user_role)){					
      		   		switch(info.event.groupId){
      		   			case 'Tow Pilot': 
      		   				$("#assigntp").removeClass('popup-content'); 
@@ -90,7 +135,9 @@
      		   		}					
 					$('#editdate').text(startdate);
 	  				$("#assignself").removeClass('popup-overlay'); 
-	  				} else { 				
+	  				} else { 	
+	  				var taken = info.event.title.substring(0,2);
+//	  				console.log(info.event);			  		
  						switch(current_user_role){
 							case 'tow_pilot':
 								var trade_id = 1;
@@ -107,42 +154,45 @@
 							case 'assistant_field_manager':
 								var trade_id = 4;
 								var trade_name = "Assistant FM";
-						}	
-  				if(confirm("You are signing up for " + trade_name + " on " + startdate + "? " )) {
-					
-					$.ajax({
-						type: "PUT",
-						url: passed_vars.restURL + 'cloud_base/v1/field_duty',
-						async: true,
-					     cache: false,
-					     timeout: 30000,
-						beforeSend: function (xhr){
-							xhr.setRequestHeader('X-WP-Nounce',  passed_vars.nonce );
-						},
-						data:{
-							date: startdate,
-							trade_id : trade_id,
-							member_id: member_id
-						},
-						success : function (response){
-							calendar.refetchEvents();
-							hideassignpopup();				
-						}	
-					});	 		 
-  	 		   } 						
-						  				
-	  				
+						}
+						
+						if (info.event.groupId == trade_name ){
+							if (taken == 'No'){	
+  						   		if(confirm("You are signing up for " + trade_name + " on " + startdate + "? " )) {								
+						   			$.ajax({
+						   				type: "PUT",
+						   				url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+						   				async: true,
+						   			   cache: false,
+						   			   timeout: 30000,
+						   				beforeSend: function (xhr){
+						   					xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+						   				},
+						   				data:{
+						   					date: startdate,
+						   					trade_id : trade_id,
+						   					member_id: passed_vars.current_user_id
+						   				},
+						   				success : function (response){
+						   					calendar.refetchEvents();
+						   					hideassignpopup();				
+						   				},
+						   				error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        				   						alert("Status: " + textStatus); 
+        				   						alert("Error: " + errorThrown); 
+   						   					 } 
+						   			});	 		 
+  	 		  			    	} 	
+							} else {
+								alert( "That day is taken, contact Ops Manager to switch.");
+							}				  				
+  	 		  			}				
 	  				}
-//	  				cal_date_id = info.event.id;	
    				},				
         	});
-     		calendar.render();
-              
+     		calendar.render();              
      		$('.event_cal_form').change(function() {
-		
-//      		   	console.log(startdate);
-//      		   	console.log(cal_date_id);
- 				var trade = event.target.id;
+		 				var trade = event.target.id;
  				switch(trade){
 					case 'towpilot':
 						var trade_id = 1;
@@ -170,8 +220,8 @@
 						async: true,
 					     cache: false,
 					     timeout: 30000,
-						beforeSend: function (xhr){
-							xhr.setRequestHeader('X-WP-Nounce',  passed_vars.nonce );
+						beforeSend: function (xhr){ 
+							xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
 						},
 						data:{
 							date: startdate,

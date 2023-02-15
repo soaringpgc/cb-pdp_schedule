@@ -34,25 +34,25 @@ class Trades extends \Cloud_Base_Rest {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_get_trade' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),        	
+       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),        	
    		 	), array(
        		'methods'  => \WP_REST_Server::CREATABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_post_trade' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::EDITABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_update_trade' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::DELETABLE,
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_delete_trade' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_admin_access_check' ),  		      	
    		 	)) 
    		 );	
     }
