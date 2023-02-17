@@ -59,7 +59,7 @@ class Trades extends \Cloud_Base_Rest {
       
 	public function pdp_get_trade ( \WP_REST_Request $request) {
 		global $wpdb;
- 		$table_name =  'wp_cloud_base_trades';
+ 		$table_name =  $wpdb->prefix . 'cloud_base_trades';
  		$cloud_base_authoritys = get_option('cloud_base_authoritys');
  // authority array is stored in WP options, It is created/updated on activation of Cloudbase plugin. 
 			 	
@@ -87,7 +87,7 @@ class Trades extends \Cloud_Base_Rest {
 //  create new trade entry
 	public function pdp_post_trade ( \WP_REST_Request $request) {
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_trades';
+		$table_name =  $wpdb->prefix . 'cloud_base_trades';
 		$sessionMax = isset($request['sessionmax']) ? $request['sessionmax'] : 0;
 		$yearMin = isset($request['yearmin']) ? $request['yearmin'] : 0;
 		$authority = isset($request['authority']) ? $request['authority'] : "";
@@ -112,7 +112,7 @@ class Trades extends \Cloud_Base_Rest {
 //  update trade. 	
 	public function pdp_update_trade( \WP_REST_Request $request) {
  		global $wpdb; 
- 		$table_name =  'wp_cloud_base_trades';
+ 		$table_name =  $wpdb->prefix . 'cloud_base_trades';
  		if(isset($request['trade'])){
  			$record['trade'] =  $request['trade'] ;
  		}
@@ -143,7 +143,7 @@ class Trades extends \Cloud_Base_Rest {
 	public function pdp_delete_trade ( \WP_REST_Request $request) {
 	
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_trades';		
+		$table_name =  $wpdb->prefix . 'cloud_base_trades';		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'id missing', esc_html__( 'id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 		}	

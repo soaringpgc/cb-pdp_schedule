@@ -58,9 +58,9 @@ class Field_Duty extends \Cloud_Base_Rest {
     }      
 	public function pdp_get_field_duty( \WP_REST_Request $request) {
 	global $wpdb;
-		$table_name =  'wp_cloud_base_field_duty';
- 		$calendar_name =  'wp_cloud_base_calendar';
- 		$trade_name =  'wp_cloud_base_trades';
+		$table_name =  $wpdb->prefix . 'cloud_base_field_duty';
+ 		$calendar_name =  $wpdb->prefix . 'cloud_base_calendar';
+ 		$trade_name =  $wpdb->prefix . 'cloud_base_trades';
 		$results_array = array();
 
 		if(isset($request['limit'])){
@@ -139,7 +139,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 	public function pdp_post_field_duty( \WP_REST_Request $request) {
 
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_field_duty';
+		$table_name =  $wpdb->prefix . 'cloud_base_field_duty';
 		
 	// need calendar_id, trade_id, and member_id  	
 		if(isset($request['calendar_id']) && isset($request['trade_id']) && isset($request['member_id'])){	  
@@ -160,8 +160,8 @@ class Field_Duty extends \Cloud_Base_Rest {
 //  update field_duty. 	
 	public function pdp_update_field_duty( \WP_REST_Request $request) {
 		global $wpdb; 
- 		$calendar_name   =  'wp_cloud_base_calendar';
-		$field_name      =  'wp_cloud_base_field_duty';
+ 		$calendar_name   =  $wpdb->prefix . 'cloud_base_calendar';
+		$field_name      =  $wpdb->prefix . 'cloud_base_field_duty';
 
 		$member = null;
 	  	if (isset($request['member_id'] )  ){ // get id of the member
@@ -210,7 +210,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 	public function pdp_delete_field_duty( \WP_REST_Request $request) {
 
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_field_duty';		
+		$table_name =  $wpdb->prefix . 'loud_base_field_duty';		
 		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		

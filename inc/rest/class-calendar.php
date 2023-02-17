@@ -59,7 +59,7 @@ class Calendar extends \Cloud_Base_Rest {
       
 	public function pdp_get_dates( \WP_REST_Request $request) {
 		global $wpdb;
-		$table_name =  'wp_cloud_base_calendar';
+		$table_name =  $wpdb->prefix . 'cloud_base_calendar';
 		
 		if(isset($request['limit'])){
 			$limit = $request['limit'];
@@ -123,9 +123,9 @@ class Calendar extends \Cloud_Base_Rest {
 //  create new date
 	public function pdp_post_dates( \WP_REST_Request $request) {
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_calendar';
-		$field_name =  'wp_cloud_base_field_duty';
-		$trade_name =  'wp_cloud_base_trades';
+		$table_name = $wpdb->prefix .  'cloud_base_calendar';
+		$field_name = $wpdb->prefix .  'cloud_base_field_duty';
+		$trade_name = $wpdb->prefix . 'cloud_base_trades';
 		
 		if(isset($request['s1']) && isset($request['s2']) && isset($request['s3']) && isset($request['e3']) ){	  
 			
@@ -200,8 +200,8 @@ class Calendar extends \Cloud_Base_Rest {
 //  update dates.  Only used for holidays and special dates. 	
 	public function pdp_update_dates( \WP_REST_Request $request) {
  		global $wpdb; 
- 		$table_name =  'wp_cloud_base_calendar';
-		$field_name =  'wp_cloud_base_field_duty';
+ 		$table_name = $wpdb->prefix . 'cloud_base_calendar';
+		$field_name = $wpdb->prefix . 'cloud_base_field_duty';
 		
 		if(isset($request['scheduling'])){
 			$trade = explode(",", $request['scheduling']);
@@ -235,7 +235,7 @@ class Calendar extends \Cloud_Base_Rest {
 	// NOt implemented. 
 	
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_calendar';		
+		$table_name =  $wpdb->prefix . 'cloud_base_calendar';		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 		}		

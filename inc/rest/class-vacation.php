@@ -59,8 +59,8 @@ class Vacation extends \Cloud_Base_Rest {
       
 	public function pdp_get_vacation ( \WP_REST_Request $request) {
 		global $wpdb;
- 		$table_name =  'wp_cloud_base_vacation';
- 		$calendar_name =  'wp_cloud_base_calendar';
+ 		$table_name =  $wpdb->prefix . 'cloud_base_vacation';
+ 		$calendar_name =  $wpdb->prefix . 'cloud_base_calendar';
 // 		 	
 		if(isset($request['date'])){			
 			$sql = $wpdb->prepare("SELECT v.cfig_id FROM {$table_name} v INNER JOIN {$calendar_name} c ON v.vacation_date =c.id   WHERE c.calendar_date = %s" , $request['date']);
@@ -90,7 +90,7 @@ class Vacation extends \Cloud_Base_Rest {
 //  create new vacation entry
 	public function pdp_post_vacation ( \WP_REST_Request $request) {
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_vacation';
+		$table_name =  $wpdb->prefix . 'cloud_base_vacation';
 		
 	// need start of each session and days of week to schedule. 	
 		if(isset($request['s1']) && isset($request['s2']) && isset($request['cfig_id'])){	  
@@ -120,7 +120,7 @@ class Vacation extends \Cloud_Base_Rest {
 	public function pdp_delete_vacation ( \WP_REST_Request $request) {
 	
 		global $wpdb; 
-		$table_name =  'wp_cloud_base_vacation ';		
+		$table_name =  $wpdb->prefix . 'cloud_base_vacation ';		
 		if (!isset($request['id'])){
 			return new \WP_Error( 'Id missing', esc_html__( 'Id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
 		}	
