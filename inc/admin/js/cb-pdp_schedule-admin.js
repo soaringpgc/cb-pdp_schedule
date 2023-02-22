@@ -40,8 +40,8 @@
 			  	sync: function( method, model, options ){
 		   		return Backbone.sync(method, this, jQuery.extend( options, {
 		     			beforeSend: function (xhr) {
-		//      			alert(POST_SUBMITTER.nonce);
-		       		xhr.setRequestHeader( 'X-WP-NONCE', POST_SUBMITTER.nonce );
+		//      			alert(cp_schedule_admin_vars.nonce);
+		       		xhr.setRequestHeader( 'X-WP-NONCE', cp_schedule_admin_vars.nonce );
 		     			},
 		  			} ));	
 		  		},	
@@ -65,8 +65,8 @@
 		    	sync: function( method, model, options ){
 		    		return Backbone.sync(method, this, jQuery.extend( options, {
 		      			beforeSend: function (xhr) {
-		 //     			alert(POST_SUBMITTER.nonce);
-		        		xhr.setRequestHeader( 'X-WP-NONCE', POST_SUBMITTER.nonce );
+		 //     			alert(cp_schedule_admin_vars.nonce);
+		        		xhr.setRequestHeader( 'X-WP-NONCE', cp_schedule_admin_vars.nonce );
 		      			},
 		   			} ));	
 		   		},	
@@ -74,11 +74,11 @@
 		
 		    app.TradeTypeList = app.Collection.extend({
 		    	model: app.Cb_trade_type,
-		    	url: POST_SUBMITTER.root + 'cloud_base/v1/trades',  
+		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/trades',  
 		   	 }) ; 
 		    app.FieldDutyList = app.Collection.extend({
 		    	model: app.cb_field_duty,
-		    	url: POST_SUBMITTER.root + 'cloud_base/v1/field_duty',			
+		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/field_duty',			
 		    }) ; 
 // model view	
 	app.ModelView = Backbone.View.extend({

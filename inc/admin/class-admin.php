@@ -104,11 +104,32 @@ class Admin {
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
         wp_register_script( 'cb_pdp_schedule_admin_templates',  plugins_url('/cb-pdp_schedule/inc/admin/js/templates.js'));
 	    	    
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
-		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
+// 		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
 
 	}
 	public function add_admin_tab_calendar(  $page_tabs_enhanced){
+
+		add_action('admin_enqueue_scripts', function($hook) {
+			if($hook !== $this->plugin_screen_hook_suffix){
+				return;
+			}
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
+			array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
+// 			wp_enqueue_style( 'datepicker');
+//  			wp_enqueue_style( 'cloudbase_css');
+				//localize data for script			
+			
+     		$dateToBePassed = array(
+ 					'root' => esc_url_raw( rest_url() ),
+ 					'nonce' => wp_create_nonce( 'wp_rest' ),
+ 					'success' => __( 'Data Has been updated!', 'your-text-domain' ),
+ 					'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+ 					'current_user_id' => get_current_user_id()    	    	
+     			);   	
+     		wp_add_inline_script(  $this->cloud_base, 'const cp_schedule_admin_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+     		); 	});		
+	
            $page_tabs_enhanced[] = array( "tab"=>"html_seasion_setup" , "title"=> "Field Duty Setup", "page"=>"cloud_base",
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );
 
@@ -128,9 +149,9 @@ class Admin {
  			$s3 = $_POST['session3Start'];
  			$e3 = $_POST['session3end'];
  		
-//  			$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/calendar' ) ;  
-//   			$rest_request->set_query_params(array('s1'=> $s1, 's2'=> $s2,'s3'=> $s3, 'e3'=> $e3));
-//    			$rest_response = rest_do_request( $rest_request);      		
+ 			$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/calendar' ) ;  
+  			$rest_request->set_query_params(array('s1'=> $s1, 's2'=> $s2,'s3'=> $s3, 'e3'=> $e3));
+   			$rest_response = rest_do_request( $rest_request);      		
 		
 		} elseif( strcmp($match, 'Update Daily') == 0 ){
 			// configure the days of the week to schedule	
@@ -138,8 +159,8 @@ class Admin {
 	 		
 		}elseif(strcmp($match,'Add Holiday') == 0 ){
  	 		global $wpdb; 
-  			$table_name =  'wp_cloud_base_calendar';
- 			$field_name =  'wp_cloud_base_field_duty';
+  			$table_name =  $wpdb->prefix . 'cloud_base_calendar';
+ 			$field_name =  $wpdb->prefix . 'cloud_base_field_duty';
 		
  			if(isset($_POST['holiday'])){
  				$trade = $_POST['holiday'];

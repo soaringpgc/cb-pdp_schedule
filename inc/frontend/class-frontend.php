@@ -104,35 +104,47 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
- 	    	     	                                                                     
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
-		 'underscore',  'moment', 'calendar'), $this->version, false );		
+ 	    
+//NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
+// it is not call when NOT needed.!
 
-		$enabled = get_option('cloudbase_enabled_sessions', false );
-    	wp_localize_script( $this->plugin_name, 'PDP_SCHEDULER', array(
+
+ 	    	     	                                                                     
+// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+// 		 'underscore',  'moment', 'calendar'), $this->version, false );		
+
+// 		$enabled = get_option('cloudbase_enabled_sessions', false );
+//    	wp_localize_script( $this->plugin_name, 'PDP_SCHEDULER', array(
 //     		'ajax_url' =>  admin_url('admin-ajax.php'),
 //     		'restURL' => esc_url_raw( rest_url() ),
 //      		'nonce' => wp_create_nonce( 'wp_rest' ),
 //      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
 //      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-    		)	
-    	);	
-    	$dateToBePassed = array(
-    	    'ajax_url' =>  admin_url('admin-ajax.php'),
-    		'restURL' => esc_url_raw( rest_url() ),
-     		'nonce' => wp_create_nonce( 'wp_rest' ),
-     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-    		'current_user_id' => get_current_user_id(),
-     		'current_user_role' => $this->user_roles(),
-     		'enabled_sessions' => $enabled,
-     		'trade_authority' => $this->trade_authority(),
-    		);   	
-    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-    	);    	
+//    		)	
+//    	);	
+//     	$dateToBePassed = array(
+//     	    'ajax_url' =>  admin_url('admin-ajax.php'),
+//     		'restURL' => esc_url_raw( rest_url() ),
+//      		'nonce' => wp_create_nonce( 'wp_rest' ),
+//      		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//     		'current_user_id' => get_current_user_id(),
+//      		'current_user_role' => $this->user_roles(),
+//      		'enabled_sessions' => $enabled,
+//      		'trade_authority' => $this->trade_authority(),
+//     		);   	
+//     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+//     	);    	
 	}
 	public function schedule_request( $atts = array() ) {
+		add_action( 'wp_enqueue_script', function(){
 
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+ 				'underscore',  'moment', 'calendar'), $this->version, true  );	
+				
+			}		
+		);
+	
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
@@ -159,6 +171,24 @@ class Frontend {
 
 	} // schedule_request()	
 	public function cb_pdp_calendar( $atts = array() ) {
+
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+ 				'underscore',  'moment', 'calendar'), $this->version, true  );	
+			$enabled = get_option('cloudbase_enabled_sessions', false );
+
+    		$dateToBePassed = array(
+    		    'ajax_url' =>  admin_url('admin-ajax.php'),
+    			'restURL' => esc_url_raw( rest_url() ),
+     			'nonce' => wp_create_nonce( 'wp_rest' ),
+     			'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+     			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    			'current_user_id' => get_current_user_id(),
+     			'current_user_role' => $this->user_roles(),
+     			'enabled_sessions' => $enabled,
+     			'trade_authority' => $this->trade_authority(),
+    			);   	
+    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    		); 
 
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
