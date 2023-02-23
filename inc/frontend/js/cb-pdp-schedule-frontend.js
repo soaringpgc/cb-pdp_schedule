@@ -97,7 +97,7 @@
                	     let end = moment(info.end.valueOf()).format('YYYY-MM-DD');
 //               	     console.log(info)	; 
                	     $.ajax({
-               	         url: "/wordpress/wp-json/cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
+               	         url: passed_vars.restURL + "cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
                	         type: 'GET',
                	         headers: {
                	             'X-WP-NONCE':passed_vars.nonce

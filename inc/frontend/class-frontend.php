@@ -189,7 +189,6 @@ class Frontend {
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
     		); 
-
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
