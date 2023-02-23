@@ -4,173 +4,28 @@
  * The file is enqueued from inc/frontend/class-frontend.php.
  */
 
-tr.border_bottom td {
-  border-bottom: 1px solid black;
-}
-#cb_pdp_body{
-	background-color: #444444;
-}	
-.cb-pdp-main-box
-{
-	background-color: rbha( 0,0,0,0);
-	max-width: 100%;
-	align-content: center;
 
-}
-.pdp-inner-box
-{
-	background-color: #555555;
-	opacity: 0.95;
-	max-width: 80%;
-	align-content: center;
-	border: 25px solid black;
-}
-.pdp-inner-box a:link {
-	color: #1e90ff;
-}
-.pdp-inner-box a:visited {
-	color: #00008b;
-}
-
-.fl_style1 {	font-size: 18px;
-	font-weight: bold;
-}
-.pdp-small-text{
-	
-	background-color: #001E5B;
-	color: #FFFF66;
-	font-size: 16px;
-}
-
-.BoldMetrics
-{
-	font-weight: bold;
-	font-size: 14px;
-	color: #F3F3F3;
-	text-align: center;
-	background-color: "#5B444F"
-}
 tr{
  white-space: nowrap
 }
-.button-flightlog{
-	color:white !important;
-	font-size: 20px;
-	width:25px;
-	height:25px;
-}
-.button-start{
-	background-color:green !important; 
-	border-radius: 50%;
-}
-.button-stop{
-	background-color:red !important;
-	border-radius: 25%;
-}
-.button-start.clicked{
-	background-color:red !important; 
-	border-radius: 50%;
-}
-.button-stop.clicked{
-	background-color:green !important; 
-	border-radius: 50%;
-}
 
-.fl_style1 
-{
-	font-size: 18px;
-	font-weight: bold;
-	color: #FFFFFF;
+#assign_trade_popup {
+  display:none;
+  position: absolute; 
+  top: 40%;
+  left: 40%;
+  width: 200px;
+  height: 100px;
+  background-color:  white  ;
+  z-index: 1000;
+  border-style: double;
 }
-
-.fl_style3 {font-size: 16px; font-weight: bold; }
-.fl_style16 {color: #CCCCCC; }
-.fl_style24 {color: #000000}
-.fl_style25 {font-size: 18px; font-weight: bold; color: #000000; }
-.fl_style27 {font-size: 18px; font-weight: bold; color: #000000; }
-
-.fl_style29 {
-	color: #7DFF7D;
-	font-weight: bold;
-	font-fl_style: italic;
-	font-size: 16px;
+#assign_tradeSelect{
+   z-index: 1000;
+   position: absolute;
+   top: 130px;
+   left: 50px;
 }
-.fl_style30 {
-	color: #FFFFFF;
-	font-weight: bold;
-	font-fl_style: italic;
-}
-.fl_style34 
-{
-	font-size: 14px;
-	font-weight: bold;
-	color: #000000;
-	font-style: italic;
-	text-align: center;
-	background-color: white;
-}
-.fl_style34hd 
-{
-	font-size: 14px;
-	font-weight: bold;
-	color: #000000;
-	font-style: italic;
-	text-align: center;
-	background-color: #66ccff;
-}
-
-.fl_style35 
-{
-	color: #F7F7F9;
-	font-weight: bold;
-	text-align: center;
-	font-size: 14px;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.fl_style37 
-{
-	color: #FFFFFF;
-	font-size: 12px;
-}
-.fl_style39 
-{
-	color: #DBDDE6;
-	font-weight: bold;
-	font-size: 14px;
-	font-style: italic;
-}
-.fl_style41 
-{
-	color: #DBDDE6;
-	font-weight: bold;
-	font-style: italic;
-	font-size: 14px;
-}
-.fl_style43 
-{color: #DBDDE6; font-style: italic; }
-.fl_style44 
-{color: #C2C7E2; font-weight: bold; }
-.fl_style45 
-{
-	color: #6666FF;
-	font-size: 14px;
-}
-.popup-overlay {
-	display:none;
-/*   visibility:hidden; */
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(0%, -50%);  background: #ffffff;
-  border: 3px solid #666666;
-  width: 50%;
-  height: 50%;
-  left: 25%;
-  height:"350px"; 
-  overflow-y:auto;
-  overflow-x:auto
-}
-
 .popup-content {
 	display:none;
 /* 	visibility:hidden; */

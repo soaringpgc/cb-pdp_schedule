@@ -10,10 +10,11 @@
  *
  * @package    Cloud_Base
  * @subpackage Cloud_Base/public/partials
+ 
+
  */
 ?>
-
- <div style="text-align: center;" id="assignself" class="popup-overlay center"> 
+ <div style="text-align: center;" id="assign_trade_popup"> 
 <?php
 // $roles  = array ('tow_pilot', 'inactive', 'board_member', 'operations', 'cfi_g' , 'chief_of_ops', 'flight_edit', 'maintenance_editor', 'administrator');
 // $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operations', 'cb_edit_towpilot', 'flight_edit' )	;					
@@ -24,10 +25,6 @@
 //  			$server = rest_get_server();
 //   			$trade_authorities = $server->response_to_data( $rest_response, false );
 
-// 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
-// 		$request->set_param( 'role', 'subscriber' );
-//      $response = rest_do_request($request);
-// 		$pilots = $response->get_data();
 
 		$request = new WP_REST_Request('GET', '/cloud_base/v1/pilots');
 		$request->set_param( 'role', 'tow_pilot' );
@@ -86,7 +83,7 @@
            };             
           echo ( '</select></div> ');
 			}
-//		echo('<input type="button" value="Cancel"  onclick= jQuery("#assignself").addClass("popup-overlay") >'); //
+//		echo('<input type="button" value="Cancel"  onclick= jQuery("#assign_trade_popup").addClass("popup-overlay") >'); //
 
 		echo('<input type="button" value="Cancel"  onclick="hideassignpopup()" >'); //
  		echo ('<input type="hidden" id="dutyday" name="dutyday" value="" >');

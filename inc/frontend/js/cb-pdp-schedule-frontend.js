@@ -58,8 +58,9 @@
  					},
  					selectable: true,
  //					editable: true,
- 					select: this.select, 			       
-        	  		initialView: 'dayGridMonth',
+ 					select: this.select, 		
+//  	       	  		initialView: 'dayGridMonth',	       
+        	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
         	  		dateClick: function(date, jsEvent, view) {
 //         	  		console.log(date.dateStr);
         	  			if (current_user_role == 'tow_pilot'){// 
@@ -134,7 +135,9 @@
      		   				break;     		   		
      		   		}					
 					$('#editdate').text(startdate);
-	  				$("#assignself").removeClass('popup-overlay'); 
+// 	  				$("#assign_trade_popup").removeClass('popup-overlay'); 
+
+	  				$("#assign_trade_popup").show(); 
 	  				} else { 	
 	  				var taken = info.event.title.substring(0,2);
 //	  				console.log(info.event);			  		
@@ -245,7 +248,8 @@
 })( jQuery );
 
 		function hideassignpopup() {
-			jQuery("#assignself").addClass("popup-overlay");
+			jQuery("#assign_trade_popup").hide(); 
+// 			jQuery("#assign_trade_popup").addClass("popup-overlay");
 			jQuery("#assignins").addClass("popup-content");
 			jQuery("#assigntp").addClass("popup-content");
 			jQuery("#assignfm").addClass("popup-content");
