@@ -76,7 +76,9 @@ class Trades extends \Cloud_Base_Rest {
 		if( $wpdb->num_rows > 0 ) {
 			foreach($items as $k=> $v){	
 //	NTFS: The CAPABILITY is stored in the database, however it does not look pretty
-// use the above array to reverse lookup the primary AUTHORITY that can signoff an item. 			
+// use the above array to reverse lookup the primary AUTHORITY that can signoff an item. 	
+			$wp_roles = new \WP_Roles();
+			$items[$k]->role_label =  $wp_roles->roles[$v->role]['name'];    //  display name of role. 					
 			$items[$k]->authority_label =  $cloud_base_authoritys[$v->authority];
 			$items[$k]->override_authority_label =  $cloud_base_authoritys[$v->overrideauthority];
 			}			
@@ -92,13 +94,14 @@ class Trades extends \Cloud_Base_Rest {
 		$yearMin = isset($request['yearmin']) ? $request['yearmin'] : 0;
 		$authority = isset($request['authority']) ? $request['authority'] : "";
 		$over_ride_authority = isset($request['over_ride_authority']) ? $request['over_ride_authority'] : "";
-		
-	// need start of each session and days of week to schedule. 	
+		$trade_role = isset($request['role']) ? $request['role'] : "inactive"; // default role with least authority. 
+ 	
 		if(isset($request['trade']) ){	  
  		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `trade` = %s " ,   $request['trade']);	
 			$result = $wpdb->get_results($sql); ; 
 		    if( $result == null) {
-		    	$record = array('trade'=>$request['trade'], 'authority'=>$request['authority'], 'overrideauthority'=>$request['over_ride_authority'], 'sessionmax'=>$request['sessionMax'], 'yearmin'=>$request['yearMin'] );
+		    	$record = array('trade'=>$request['trade'], 'authority'=>$request['authority'], 'role' => $trade_role,
+		    	'overrideauthority'=>$request['over_ride_authority'], 'sessionmax'=>$request['sessionMax'], 'yearmin'=>$request['yearMin'] );
 		    	$wpdb->insert($table_name, $record );
 		    	return new \WP_REST_Response ( $wpdb->insert($table_name, $record )); 
 		    } else {
@@ -115,6 +118,9 @@ class Trades extends \Cloud_Base_Rest {
  		$table_name =  $wpdb->prefix . 'cloud_base_trades';
  		if(isset($request['trade'])){
  			$record['trade'] =  $request['trade'] ;
+ 		}
+ 		 if(isset($request['role'])){
+ 			$record['role'] =  $request['role'] ;
  		}
  		if(isset($request['authority'])){
  			$record['authority'] =  $request['authority'] ;

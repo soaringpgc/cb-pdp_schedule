@@ -103,7 +103,7 @@
    		update: function(){
 			var localmodel = this.model;
  			$("div.editform").addClass('editing');
- 			   console.log( "edit" );
+// 			   console.log( "edit" );
              // 			
              // NTFS this requires the form id's to be the same as the model id's.
              // we are looping over the form, picking up the id's and then getting the 
@@ -234,7 +234,7 @@
       	});
  //    	alert(JSON.stringify(formData));
       	var updateModel = this.collection.get(formData.id);
-        updateModel.save(formData, {wait: true, error: function(model, response, error){
+        	updateModel.save(formData, {wait: true, error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"]) 
       				}         

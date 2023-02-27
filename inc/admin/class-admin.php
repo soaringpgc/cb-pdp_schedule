@@ -97,29 +97,16 @@ class Admin {
 		 * The Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
-		 */
+		 */  
 	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
 	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
         wp_register_script( 'cb_pdp_schedule_admin_templates',  plugins_url('/cb-pdp_schedule/inc/admin/js/templates.js'));
 	    	    
-// 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
-// 		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
+		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
 
-	}
-	public function add_admin_tab_calendar(  $page_tabs_enhanced){
-
-		add_action('admin_enqueue_scripts', function($hook) {
-			if($hook !== $this->plugin_screen_hook_suffix){
-				return;
-			}
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
-			array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
-// 			wp_enqueue_style( 'datepicker');
-//  			wp_enqueue_style( 'cloudbase_css');
-				//localize data for script			
-			
      		$dateToBePassed = array(
  					'root' => esc_url_raw( rest_url() ),
  					'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -127,8 +114,35 @@ class Admin {
  					'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
  					'current_user_id' => get_current_user_id()    	    	
      			);   	
-     		wp_add_inline_script(  $this->cloud_base, 'const cp_schedule_admin_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-     		); 	});		
+     		wp_add_inline_script(  $this->plugin_name, 'const cp_schedule_admin_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+     		); 
+
+	}
+	public function add_admin_tab_calendar(  $page_tabs_enhanced){
+
+// Need to revisit this, moving enque script here works for cloudbase, however as this is a plugin to
+// cloudbase it does nto work. Should be a work around. -dsj ( want to move here so scripts are only
+// enqueue when necessary. )
+
+// 		add_action('admin_enqueue_scripts', function($hook) {
+// 			if($hook !== $this->plugin_screen_hook_suffix){
+// 				return;
+// 			}
+// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
+// 			array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
+// // 			wp_enqueue_style( 'datepicker');
+// //  			wp_enqueue_style( 'cloudbase_css');
+// 				//localize data for script			
+// 			
+//      		$dateToBePassed = array(
+//  					'root' => esc_url_raw( rest_url() ),
+//  					'nonce' => wp_create_nonce( 'wp_rest' ),
+//  					'success' => __( 'Data Has been updated!', 'your-text-domain' ),
+//  					'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//  					'current_user_id' => get_current_user_id()    	    	
+//      			);   	
+//      		wp_add_inline_script(  $this->plugin_name, 'const cp_schedule_admin_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+//      		); 	});		
 	
            $page_tabs_enhanced[] = array( "tab"=>"html_seasion_setup" , "title"=> "Field Duty Setup", "page"=>"cloud_base",
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );

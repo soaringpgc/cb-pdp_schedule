@@ -10,22 +10,30 @@ if( current_user_can( 'manage_options' ) ) {
   echo ('   <h3>Trade Types</h3>
   <DIV id="addtradetypes">   
    <form id="addtradetypes" action="#" >
-<div>
-    
+  <div>    
     	<input type = "hidden"
             id = "id"
             size = "2"
             value = ""
             name = "id"/>
-    
-        <div class="hform">           		   
+        <div class="hform">   
+        <label for="trade" style=color:black>Trade: </label>                  		   
         <input type = "text"
             id = "trade"
             size = "20"
             title = "trade ." 
             name = "trade"/> 
            </div> 
-        <div class="hform">           		
+		<div class="hform">	
+        <label for="role" style=color:black>role: </label>      		
+		<select name ="role" id="role" name="role" >');
+			
+		wp_dropdown_roles( $selected = 'inactive');	
+		
+		echo ('</select>  </div>
+
+        <div class="hform">   
+        <label for="authority" style=color:black>Authority: </label>          		
 		<select name ="authority" id="authority" name="authority" >
 			<option value="0"> Select Authority </option>
 			');
@@ -36,7 +44,8 @@ if( current_user_can( 'manage_options' ) ) {
 				echo ('<option value="' . $key . '">' . $authority . '</option>');
 			}	
 		echo ('</select>         </div>
-        <div class="hform">    
+        <div class="hform"> 
+        <label for="overrideauthority" style=color:black>Over Ride Authority: </label>       
 		<select name ="overrideauthority" id="overrideauthority"  >
 			<option value="0"> Select Over Ride Authority </option>
 			');
@@ -47,15 +56,17 @@ if( current_user_can( 'manage_options' ) ) {
 				echo ('<option value="' . $key . '">' . $authority . '</option>');
 			}	
 		echo ('</select>        </div>
-        <div class="hform">    
+        <div class="hform">   
+        <label for="sessionmax" style=color:black>Max per Session: </label>    
 		 <input type = "number"
             id = "sessionmax"
             title = "sessionmax ." 
             name = "sessionmax"
             min = "0" max = "15" /> 
                </div>
-        <div class="hform">        
-		 <input type = "number"
+        <div class="hform">
+        <label for="yearmin" style=color:black>Min per Year: </label>            
+		<input type = "number"
             id = "yearmin"
             title = "yearmin ." 
             name = "yearmin"
@@ -67,7 +78,8 @@ if( current_user_can( 'manage_options' ) ) {
             size = "2"
             value = ""
             name = "active"/> 
-        <button id="add" class="view">Add</button>
+        <label for="add" style=color:black>Add</label>      
+        <button id="add" class="view">Submit</button>
         <button id="update" class="cb_edit">Update</button>
         </div>
        
@@ -85,6 +97,9 @@ if( current_user_can( 'manage_options' ) ) {
         </div>
         <div class="Cell2" >
             <p>Trade</p>
+        </div>
+        <div class="Cell2" >
+            <p>Role</p>
         </div>
         <div class="Cell" >
             <p>Authority</p>

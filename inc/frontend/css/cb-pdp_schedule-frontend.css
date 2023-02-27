@@ -11,14 +11,15 @@ tr{
 
 #assign_trade_popup {
   display:none;
-  position: absolute; 
+  position: fixed; 
   top: 40%;
   left: 40%;
   width: 200px;
-  height: 100px;
-  background-color:  white  ;
+  height: 110px;
+  background-color:  rgba(255, 255, 255, 1.0) ;
   z-index: 1000;
   border-style: double;
+  border-color: blue;
 }
 #assign_tradeSelect{
    z-index: 1000;

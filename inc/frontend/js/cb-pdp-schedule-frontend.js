@@ -34,26 +34,25 @@
 	 var current_user_role = passed_vars.current_user_role;
 	 var enabled_sessions = passed_vars.enabled_sessions;
 	 var trade_authority = passed_vars.trade_authority;
+	 var current_user_role_name =  passed_vars.current_user_role_name;
+	 var current_user_can =  passed_vars.user_can;
 	 var overide = [];
-// console.log(passed_vars.nonce)	; 
- 
+	 
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
 	 });
-	overide.push('administrator');
-	 
-// console.log(overide)	; 
+	 overide.push('manage_options');
+
 	 var startdate ='';
-//	 var cal_date_id =""; 
   	 var localdata ="";
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
         		headerToolbar: {
 //      	  		plugins: [ 'dayGrid', 'timeGrid' ],
- 					left: 'prev, next, today',
+ 					left: 'prev, timeGridWeek',
  					center: 'title',
- 					right: 'dayGridMonth,timeGridWeek, timeGridDay,listMonth',
+ 					right: 'dayGridMonth, next',
  						ignoreTimezone: false
  					},
  					selectable: true,
@@ -62,7 +61,6 @@
 //  	       	  		initialView: 'dayGridMonth',	       
         	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
         	  		dateClick: function(date, jsEvent, view) {
-//         	  		console.log(date.dateStr);
         	  			if (current_user_role == 'tow_pilot'){// 
         	  			startdate= date.dateStr;
         	  				if(confirm("You are signing up to Tow on " + startdate + "? " )) {								
@@ -82,7 +80,7 @@
 						   			},
 						   			success : function (response){
 						   				calendar.refetchEvents();
-						   				hideassignpopup();				
+						   				hideassignpopup( );				
 						   			},
 						   			error: function(XMLHttpRequest, textStatus, errorThrown) { 
         				   					alert("Status: " + textStatus); 
@@ -91,12 +89,10 @@
 						   		});	 		 
   	 		  			    } 	        	  			
          	  			}						
-//					    alert('a day has been clicked!');
 					  },
 					events: function (info, successCallback, failureCallback) {
                	     let start = moment(info.start.valueOf()).format('YYYY-MM-DD');
                	     let end = moment(info.end.valueOf()).format('YYYY-MM-DD');
-//               	     console.log(info)	; 
                	     $.ajax({
                	         url: passed_vars.restURL + "cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
                	         type: 'GET',
@@ -116,52 +112,37 @@
 // 					},
 	
 				eventClick: function(info) {
-				hideassignpopup();	
-				startdate= moment(info.event.start).format('YYYY-MM-DD'); 	
-//     		   	console.log(info);
-				if(overide.includes(current_user_role)){					
-     		   		switch(info.event.groupId){
-     		   			case 'Tow Pilot': 
-     		   				$("#assigntp").removeClass('popup-content'); 
-     		   				break;
-     		   			case 'Instructor': 
-     		   				$("#assignins").removeClass('popup-content'); 
-     		   				break;
-     		   			case 'Field Manager': 
-     		   				$("#assignfm").removeClass('popup-content'); 
-     		   				break;
-     		   			case 'Assistant Field Manager': 
-     		   				$("#assignafm").removeClass('popup-content'); 
-     		   				break;     		   		
-     		   		}					
-					$('#editdate').text(startdate);
-// 	  				$("#assign_trade_popup").removeClass('popup-overlay'); 
 
-	  				$("#assign_trade_popup").show(); 
-	  				} else { 	
-	  				var taken = info.event.title.substring(0,2);
-//	  				console.log(info.event);			  		
- 						switch(current_user_role){
-							case 'tow_pilot':
-								var trade_id = 1;
-								var trade_name = "Tow Pilot";
-								break;
-							case 'cfi_g':
-								var trade_id = 2;
-								var trade_name = "Instructor";
-								break;
-							case 'field_manager':
-								var trade_id = 3;
-								var trade_name = "Field Manager";
-							    break;
-							case 'assistant_field_manager':
-								var trade_id = 4;
-								var trade_name = "Assistant FM";
+				info.jsEvent.preventDefault(); 
+				hideassignpopup( );	
+				startdate= moment(info.event.start).format('YYYY-MM-DD'); 
+				var trade_clicked = info.event.groupId;	
+				let i= 0;
+				for( i; i < trade_authority.length; ++i){
+					if( trade_authority[i].trade == trade_clicked  ){
+						var trade_id = trade_authority[i].id;
+					break;
+					}
+				}
+				if(overide.includes(current_user_can)){												
+					$('#editdate').text(startdate);
+	
+						let i= 0;
+						for( i; i < trade_authority.length; ++i){
+							if( trade_authority[i].trade == trade_clicked && (current_user_can == trade_authority[i].overrideauthority ||  current_user_can == 'manage_options' )){
+								$("#"+trade_authority[i].trade.replace(/ /g, '')+'_').removeClass('popup-content'); 
+ 								$("#assign_trade_popup").show(); 
+// 								var trade_id = trade_authority[i].id;
+								var trade_name = trade_authority[i].trade;
+							break;
+							}
 						}
-						
-						if (info.event.groupId == trade_name ){
-							if (taken == 'No'){	
-  						   		if(confirm("You are signing up for " + trade_name + " on " + startdate + "? " )) {								
+
+	  				} else if( current_user_role_name == info.event.groupId ){ 
+	  					var taken = info.event.title.substring(0,2);
+
+							if (taken == 'No' || current_user_role_name == 'Tow Pilot' ){	
+  						   		if(confirm("You are signing up for " + info.event.groupId  + " on " + startdate + "? " )) {								
 						   			$.ajax({
 						   				type: "PUT",
 						   				url: passed_vars.restURL + 'cloud_base/v1/field_duty',
@@ -178,7 +159,7 @@
 						   				},
 						   				success : function (response){
 						   					calendar.refetchEvents();
-						   					hideassignpopup();				
+						   					hideassignpopup( );				
 						   				},
 						   				error: function(XMLHttpRequest, textStatus, errorThrown) { 
         				   						alert("Status: " + textStatus); 
@@ -188,35 +169,25 @@
   	 		  			    	} 	
 							} else {
 								alert( "That day is taken, contact Ops Manager to switch.");
-							}				  				
-  	 		  			}				
+							}				  								
 	  				}
    				},				
         	});
      		calendar.render();              
      		$('.event_cal_form').change(function() {
-		 				var trade = event.target.id;
- 				switch(trade){
-					case 'towpilot':
-						var trade_id = 1;
-						var trade_name = "Tow Pilot";
+		 		var trade = event.target.id;
+				var member_id =   $("#"+trade).val();
+				var member_name = $("#"+trade).find('option:selected').text();		
+				var trade_name = event.target.id.replace(/_/g, ' '); 		
+		 	
+				for( let i=0; i < trade_authority.length; ++i){
+					if( trade_authority[i].trade == trade_name  ){						
+						$("#"+trade_authority[i].trade.replace(/ /g, '')+'_').removeClass('popup-content'); 
+						var trade_id = trade_authority[i].id;					
 						break;
-					case 'instructor':
-						var trade_id = 2;
-						var trade_name = "Instructor";
-						break;
-					case 'field_manager':
-						var trade_id = 3;
-						var trade_name = "Field Manager";
-					    break;
-					case 'assistant_field_manager':
-						var trade_id = 4;
-						var trade_name = "Assistant FM";
-				}
-				var member_id = $("#"+trade).val();
-				var member_name = $("#"+trade).find('option:selected').text();
-  				if(confirm("Are you sure you want to assign " + member_name + " as " + trade_name + " on " + startdate + "? " )) {
-					
+					}
+				}		 				
+  				if(confirm("Are you sure you want to assign " + member_name + " as " + trade_name + " on " + startdate + "? " )) {					
 					$.ajax({
 						type: "PUT",
 						url: passed_vars.restURL + 'cloud_base/v1/field_duty',
@@ -233,8 +204,12 @@
 						},
 						success : function (response){
 							calendar.refetchEvents();
-							hideassignpopup();				
-						}	
+							hideassignpopup( );				
+						},
+						error : function(response){
+							alert(response);
+							hideassignpopup( );		
+						}
 					});	 		 
   	 		   }     		   	
      		});       
@@ -246,13 +221,17 @@
 	 });
 	 	 
 })( jQuery );
-
-		function hideassignpopup() {
-			jQuery("#assign_trade_popup").hide(); 
-// 			jQuery("#assign_trade_popup").addClass("popup-overlay");
-			jQuery("#assignins").addClass("popup-content");
-			jQuery("#assigntp").addClass("popup-content");
-			jQuery("#assignfm").addClass("popup-content");
-			jQuery("#assignafm").addClass("popup-content");
+	
+			function hideassignpopup( ) {
+			var trade_authority = passed_vars.trade_authority;
+				for(let i=0; i < trade_authority.length; ++i){
+					jQuery("#"+trade_authority[i].trade.replace(/ /g, '')+'_').addClass('popup-content'); 
+				}				
+ 			jQuery("#assign_trade_popup").hide(); 
+ 			
+// 			jQuery("#assignins").addClass("popup-content");
+// 			jQuery("#assigntp").addClass("popup-content");
+// 			jQuery("#assignfm").addClass("popup-content");
+// 			jQuery("#assignafm").addClass("popup-content");
 		}
 

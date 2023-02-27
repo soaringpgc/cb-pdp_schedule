@@ -184,8 +184,11 @@ class Frontend {
      			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
+     			'current_user_role_name' => wp_roles()->get_names()[ $this->user_roles() ] ,
      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
+//      			'authorities' => get_option('cloud_base_authoritys'),
+     			'user_can' => $this->user_can()
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
     		); 
@@ -370,16 +373,18 @@ class Frontend {
      public function user_roles()
      {
  		if( is_user_logged_in() ) { // check if there is a logged in user 	 
-	 		$user = wp_get_current_user(); // getting & setting the current user 
+	 		$user = wp_get_current_user(); // getting the current user 
 	 		$roles = ( array ) $user->roles; // obtaining the role 	 
 	 		if(in_array('administrator', $roles)) {
 	 			return('administrator');
 	 		} elseif(in_array('chief_flight', $roles)){
 	 			return('chief_flight');
-	 		}  elseif(in_array('cb_edit_towpilot' , $roles)){
-	 			return('cb_edit_towpilot');
+	 		}  elseif(in_array('chief_tow' , $roles)){
+	 			return('chief_tow');
 	 		}  elseif(in_array('chief_of_ops', $roles)){
 	 			return('chief_of_ops');
+	 		}  elseif(in_array('operations' , $roles)){
+	 			return('operations');
 	 		}  elseif(in_array('tow_pilot', $roles)){
 	 			return('tow_pilot');
 	 		}  elseif(in_array('cfi_g', $roles)){
@@ -391,6 +396,21 @@ class Frontend {
 	 		}
 	 	} else {		 
 			return array(); // if there is no logged in user return empty array  	 
+	 	}
+	 }
+	 public function user_can()
+     {
+     	$capabiliteis = array( 'manage_options', 'chief_flight', 'chief_tow', 
+ 			'edit_gc_operations',  'cb_edit_instruction', 'edit_gc_tow', 'field_manager', 
+ 			'assistant_field_manager', 'read' );		
+ 		if( is_user_logged_in() ) { // check if there is a logged in user 	 						
+ 			forEach($capabiliteis as $c ){
+ 				if (current_user_can( $c ) ){
+ 					return($c);
+ 				}
+ 		 	}
+ 	 	} else {		 
+			return a; // if there is no logged in user return empty array  	 
 	 	}
 	 }
      public function trade_authority()
