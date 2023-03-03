@@ -75,8 +75,10 @@ class Frontend {
 		 * The Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
-		 */
-                                                                                                              
+		 */                    
+		 
+//		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css?ver=6.1.1', array( ), $this->version, 'all' );
+//        wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css';                                                                                             
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
 	}
@@ -171,7 +173,7 @@ class Frontend {
 
 	} // schedule_request()	
 	public function cb_pdp_calendar( $atts = array() ) {
-
+			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 			$enabled = get_option('cloudbase_enabled_sessions', false );
@@ -184,7 +186,7 @@ class Frontend {
      			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
-     			'current_user_role_name' => wp_roles()->get_names()[ $this->user_roles() ] ,
+     			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
 //      			'authorities' => get_option('cloud_base_authoritys'),
@@ -395,7 +397,7 @@ class Frontend {
 	 			return('assistant_field_manager');
 	 		}
 	 	} else {		 
-			return array(); // if there is no logged in user return empty array  	 
+			return null ; // if there is no logged in user return empty array  	 
 	 	}
 	 }
 	 public function user_can()
@@ -410,7 +412,7 @@ class Frontend {
  				}
  		 	}
  	 	} else {		 
-			return a; // if there is no logged in user return empty array  	 
+			return('read');  	 
 	 	}
 	 }
      public function trade_authority()

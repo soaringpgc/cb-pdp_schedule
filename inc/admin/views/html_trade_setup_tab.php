@@ -83,9 +83,9 @@ if( current_user_can( 'manage_options' ) ) {
         <button id="update" class="cb_edit">Update</button>
         </div>
        
-    </form></DIV>');
+    </form></div>');
 }    
-?>    
+?>   
 </div>
 <div  class="Table">
     <div class="Title">

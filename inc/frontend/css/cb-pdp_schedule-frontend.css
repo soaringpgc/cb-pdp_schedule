@@ -16,7 +16,7 @@ tr{
   left: 40%;
   width: 200px;
   height: 110px;
-  background-color:  rgba(255, 255, 255, 1.0) ;
+  background-color:  rgba(150, 150, 150, 1.0) ;
   z-index: 1000;
   border-style: double;
   border-color: blue;
@@ -54,4 +54,12 @@ optgroup.nofly{
 	background-color: #000000;
 	color: #ffffff;
 }
+/* 
+body .fc { 
+   font-size: 1.0em;  <--- change here for general 
+}
 
+.fc-event {
+    font-size: .85em;} 
+    
+*/

@@ -118,8 +118,9 @@
 
 ?> 
  
- </div>
+</div>
 
+<!-- 
 <div id="fullCalModal" style="display:none; text-align: center; ">
   <div>ID: <span id="modalID"></span></div>
  <div>Title: <span id="modalTitle"></span></div>
@@ -127,6 +128,7 @@
  <div>Start Date: <span id="modalStartDate"></span></div>
  <div>End Date: <span id="modalEndDate"></span></div>
 </div>
+ -->
 
 <div id="calendar"></div>
 
@@ -134,6 +136,92 @@
 
 
 </script>
+<style>
+
+.fc-event {
+    font-size: .85em;} 
+/* 
+#calendar {
+    width: 200px;
+    margin: 0 auto;
+    font-size: 10px;
+}
+.fc-header-title h2 {
+    font-size: .9em;
+    white-space: normal !important;
+}
+.fc-view-month .fc-event, .fc-view-agendaWeek .fc-event {
+    font-size: 0;
+    overflow: hidden;
+    height: 2px;
+}
+.fc-view-agendaWeek .fc-event-vert {
+    font-size: 0;
+    overflow: hidden;
+    width: 2px !important;
+}
+.fc-agenda-axis {
+    width: 20px !important;
+    font-size: .7em;
+}
+
+.fc-button-content {
+    padding: 0;
+}
+
+https://stackoverflow.com/questions/5372328/tiny-version-of-fullcalendar
+ */
+ 
+ /* 
+#calendar {
+    width: 200px;
+    margin: 0 auto;
+    font-size: 10px;
+}
+.fc-toolbar {
+    font-size: .9em;
+}
+.fc-toolbar h2 {
+    font-size: 12px;
+    white-space: normal !important;
+}
+/* click +2 more for popup */
+/* 
+.fc-more-cell a {
+    display: block;
+    width: 85%;
+    margin: 1px auto 0 auto;
+    border-radius: 3px;
+    background: grey;
+    color: transparent;
+    overflow: hidden;
+    height: 4px;
+}
+.fc-more-popover {
+    width: 100px;
+}
+.fc-view-month .fc-event, .fc-view-agendaWeek .fc-event, .fc-content {
+    font-size: 0;
+    overflow: hidden;
+    height: 2px;
+}
+.fc-view-agendaWeek .fc-event-vert {
+    font-size: 0;
+    overflow: hidden;
+    width: 2px !important;
+}
+.fc-agenda-axis {
+    width: 20px !important;
+    font-size: .7em;
+}
+
+.fc-button-content {
+    padding: 0;
+}
+ 
+ */
+</style>
+
 
 
  

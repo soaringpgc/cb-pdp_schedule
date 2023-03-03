@@ -41,7 +41,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.35;
+   	$db_version = 0.36;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -112,6 +112,7 @@ function create_cb_scheduling_database(){
       $sql = "CREATE TABLE ". $table_name . " (
       	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       	trade tinytext,
+      	role varchar(40),
       	authority varchar(30),
       	overrideauthority varchar(30),
       	sessionmax int,

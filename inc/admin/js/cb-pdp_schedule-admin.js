@@ -134,7 +134,7 @@
     			wait: true,			
     			error: function(model, response) {
     				var parsedmessage = JSON.parse(response.responseText);
-    				 alert(JSON.stringify(parsedmessage.message));
+//    				 alert(JSON.stringify(parsedmessage.message));
     				},	
     			success: (function(model, response){
             		this.remove();  
@@ -146,9 +146,6 @@
 	app.tradeTypeView = app.ModelView.extend({
 	    template: tradetypetemplate,     
 	});
-	app.TowFeeView = app.ModelView.extend({
-	    template: feeitemtemplate,
-	});		    
 
 	app.CollectionView =  Backbone.View.extend({         
       initialize: function(){
@@ -232,8 +229,9 @@
       		formData[el.id] = $(el).val();
       	  }
       	});
- //    	alert(JSON.stringify(formData));
+     
       	var updateModel = this.collection.get(formData.id);
+//       		alert(JSON.stringify(formData));
         	updateModel.save(formData, {wait: true, error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"]) 
