@@ -106,11 +106,10 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
+//  	    wp_register_script( 'calendar_daygrid',' https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js');
  	    
 //NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
-// it is not call when NOT needed.!
-
-
+// it is not called when NOT needed.!
  	    	     	                                                                     
 // 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
 // 		 'underscore',  'moment', 'calendar'), $this->version, false );		

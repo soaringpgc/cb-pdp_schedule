@@ -38,42 +38,51 @@
    		    return;
    		}
    		$user = get_user_by('ID', $_POST['member_id'] );
-
  		$user_meta = get_userdata($_POST['member_id']  );
 		$display_name = $user_meta->first_name .' '.  $user_meta->last_name;
 		$user_roles=$user_meta->roles; 
 		list( $role_id, $role_name) = fd_user_role($user_roles);
 
    		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
-//  $enabled_sessions= array( '1', '1', '0'); 	
+//   $enabled_sessions= array( '1', '1', '0'); 	
  		
-   		foreach( $enabled_sessions as $k=>$v){
-   			
+   		foreach( $enabled_sessions as $k=>$v){   			
    			if($v == '1'){
    				$session = $k+1;
    				$selected = array();	
    				for($i=1; $i<4; $i++){
    					$choice = 'choice' . $session . '_' . $i ; 
-   					$sql = $wpdb->prepare("Select calendar_date from {$table_calendar} where id = %d", $_POST[$choice]);   	
-   					$selected['session_'.$i]= $_POST[$choice] ;			
-   					$choices[$k][$i] = $wpdb->get_var($sql);;     						
-   				}   		
+   					if(isset($_POST[$choice]) && ($_POST[$choice] != "" )){
+   						$sql = $wpdb->prepare("Select calendar_date from {$table_calendar} where id = %d", $_POST[$choice]);   	
+   						$selected['choice_'.$i]= $_POST[$choice] ;			
+   						$choices[$k][$i] = $wpdb->get_var($sql);    		
+   					} else {
+   						$choices[$k][$i] = null;   
+   					}				
+   				}     				  				
+   				if ( !is_null( $choices[$k][1]) ){
+   					$pref_array = array( 'member_id'=>$user->id , 'trade'=>$role_id, 'session'=>$session, 'year'=>date('Y') );
+   					// see if a record exists for this year, member, trade and session 
+   					$sql = $wpdb->prepare("Select id from {$table_preferences} where member_id = %d  AND trade=%d AND session=%d  AND year=%d ", 
+   						$user->id, $role_id, $session, date('Y') );   	
+   					$record_id = $wpdb->get_var($sql);    					
+   					if(is_null($record_id)){ // record does not exist create new
+   						$wpdb->insert($table_preferences, array_merge($pref_array , $selected));
+   					} else { // recored exists, update existing. 
+   						$wpdb->update($table_preferences, $selected, array('id'=> $record_id));
+   					}
+   				}
    			}
-   				$pref_array = array( 'member_id'=>$user->id , 'trade'=>$role_id, 'session'=>$session   , 'year'=>date('Y') );
-//   			$wpdb->insert($table_preferences, array_merge($pref_array , $selected));
-
-//    			   		var_dump(array_merge ($pref_array , $selected) );
-//    					die();
-   		}   		
+   		}     		 		
    		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name . '\r\n'; 
-		if( $enabled_sessions[0] == '1' ){
+		if( $enabled_sessions[0] == '1' &&  !is_null( $choices[0][1])){
    			$msg .=  'for Session 1; First Choice: ' . $choices[0][1] . ' Second Choice: ' . $choices[0][2] . ' Third Choice: ' . $choices[0][3] .'\r\n';
 		}	
-		if( $enabled_sessions[1] == '1' ){
+		if( $enabled_sessions[1] == '1'  && !is_null( $choices[1][1]) ){
 			$msg .=  'and is requesting the following dates for session 2 \r\n'; 
    			$msg .=  'First Choice: ' . $choices[1][1] . ' Second Choice: ' . $choices[1][2] . ' Third Choice: ' . $choices[1][3] .'\r\n';
 		}
-		if( $enabled_sessions[2] == '1' ){
+		if( $enabled_sessions[2] == '1'  && !is_null( $choices[2][1]) ){
 			$msg .=  'and is requesting the following dates session 3 \r\n'; 
    			$msg .=  'First Choice: ' . $choices[2][1] . ' Second Choice: ' . $choices[2][2] . ' Third Choice: ' . $choices[2][3] .'\r\n';
 		}
@@ -89,17 +98,26 @@
 		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 		$headers .= 'From: <webmaster@pgcsoaring.com>' . "\r\n";
 
- 		mail($to,$subject,$msg,$headers);
+  		mail($to,$subject,$msg,$headers);
+		echo('<p> Your selections have been accepted</p> ');
 	}
-	
+/*
+*  This function displayes the choices avaliable. The form is submitted back to itself
+*	and will be processed by the above function. 
+*
+*/	
 	function display_fd_choices(){
+		if( isset($_POST['member_id'])){
+			return;
+		}
 		global $wpdb;
 		$user = wp_get_current_user();
 		$user_meta = get_userdata( $user->id );
 		$display_name = $user_meta->first_name .' '.  $user_meta->last_name;
 		$user_roles=$user_meta->roles; 		
 		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
-// $enabled_sessions= array( '1', '1', '0');
+		
+//  $enabled_sessions= array( '1', '1', '0');
 		$label_text = array('First', 'Second', 'Third');
 		$table_calendar =  $wpdb->prefix . 'cloud_base_calendar';
  		$table_field_duty =  $wpdb->prefix . 'cloud_base_field_duty';	

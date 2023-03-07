@@ -36,12 +36,11 @@ class Activator {
     	create_cb_scheduling_database();
     	set_default_cb_schedule_configuration();
 	}
-}
- 
+} 
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.4;
+   	$db_version = 0.41;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -145,7 +144,7 @@ function create_cb_scheduling_database(){
       	year YEAR,
       	choice_1 int,
       	choice_2 int,
-      	choice_3 int
+      	choice_3 int,
       	PRIMARY KEY  (id)
       );" . $charset_collate  . ";";
       dbDelta($sql);	      

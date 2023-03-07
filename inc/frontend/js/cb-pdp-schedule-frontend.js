@@ -49,18 +49,17 @@
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
         		headerToolbar: {
-//      	  		plugins: [ 'dayGrid', 'timeGrid' ],
+//        	  		plugins: [ dayGrid, timeGrid ],
  					left: 'prev, timeGridWeek',
  					center: 'title',
  					right: 'dayGridMonth, next',
  						ignoreTimezone: false
  					},
- 					hiddenDays: [ 1, 2, 4, 5],
+//  					hiddenDays: [ 1, 2, 4, 5],
  					selectable: true,
- //					editable: true,
- 					select: this.select, 		
-//  	       	  		initialView: 'dayGridMonth',	       
-        	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
+ 					select: this.select, 
+         	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
+         	  		duration: { days: 14},
         	  		dateClick: function(date, jsEvent, view) {
         	  			if (current_user_role == 'tow_pilot'){// 
         	  			startdate= date.dateStr;
@@ -133,7 +132,6 @@
 							if( trade_authority[i].trade == trade_clicked && (current_user_can == trade_authority[i].overrideauthority ||  current_user_can == 'manage_options' )){
 								$("#"+trade_authority[i].trade.replace(/ /g, '')+'_').removeClass('popup-content'); 
  								$("#assign_trade_popup").show(); 
-// 								var trade_id = trade_authority[i].id;
 								var trade_name = trade_authority[i].trade;
 							break;
 							}
@@ -214,8 +212,7 @@
 					});	 		 
   	 		   }     		   	
      		});       
-     });	 
-	 	 	 
+     	});	  	 
 	 }) // $(function) close	 
 	 $( window ).load(function() {
 
@@ -223,16 +220,11 @@
 	 	 
 })( jQuery );
 	
-			function hideassignpopup( ) {
-			var trade_authority = passed_vars.trade_authority;
-				for(let i=0; i < trade_authority.length; ++i){
-					jQuery("#"+trade_authority[i].trade.replace(/ /g, '')+'_').addClass('popup-content'); 
-				}				
- 			jQuery("#assign_trade_popup").hide(); 
- 			
-// 			jQuery("#assignins").addClass("popup-content");
-// 			jQuery("#assigntp").addClass("popup-content");
-// 			jQuery("#assignfm").addClass("popup-content");
-// 			jQuery("#assignafm").addClass("popup-content");
-		}
+function hideassignpopup( ) {
+	var trade_authority = passed_vars.trade_authority;
+		for(let i=0; i < trade_authority.length; ++i){
+			jQuery("#"+trade_authority[i].trade.replace(/ /g, '')+'_').addClass('popup-content'); 
+		}				
+ 	jQuery("#assign_trade_popup").hide();  	
+}
 
