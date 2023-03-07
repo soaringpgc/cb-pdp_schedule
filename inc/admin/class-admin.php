@@ -169,8 +169,21 @@ class Admin {
 		
 		} elseif( strcmp($match, 'Update Daily') == 0 ){
 			// configure the days of the week to schedule	
-			update_option('cloudbase_tp_weekly', $_POST['weekschedule'], false );		  				
-	 		
+			global $wpdb;
+ 			$table_trade =  $wpdb->prefix . 'cloud_base_trades';
+			$sql='SELECT  * FROM ' . $table_trade;
+			$trade_object = $wpdb->get_results($sql); 
+			
+			$numb_trades = $wpdb->num_rows;
+			for($k1 = 0; $k1 < $numb_trades; $k1++ ){
+				for($k2 = 0; $k2 < 7; $k2++ ){
+					$weekly_options[$k1][$k2] = '0';
+					if(isset($_POST['weekschedule'][$k1][$k2] )){
+						$weekly_options[$k1][$k2] = '1';
+					}
+				}
+			}				
+ 			update_option('cloudbase_tp_weekly', $weekly_options, false );		  				
 		}elseif(strcmp($match,'Add Holiday') == 0 ){
  	 		global $wpdb; 
   			$table_name =  $wpdb->prefix . 'cloud_base_calendar';

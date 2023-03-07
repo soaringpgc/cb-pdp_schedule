@@ -172,14 +172,14 @@ class Calendar extends \Cloud_Base_Rest {
   			 	   		$id = $wpdb->insert_id;  // get the id of the record just inserted. 
   			 	   		$c++;
   			 	   	};	
-//    			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
-//    			 		$max_t = $wpdb->get_var($sql); 
-			 	 	$max_t = 3; // fixed at three for now until I fix the schedule_days options in settings. 
+   			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
+   			 		$max_t = $wpdb->get_var($sql); 
+// 			 	 	$max_t = 3; // fixed at three for now until I fix the schedule_days options in settings. 
 							// may return up to $max_t recrords
 					if( $sessions[$j] === '0'){
 						$max_t = 1;						
 					}	
-			 	 	for ($t = 1 ; $t <= $max_t; $t++ )	{	
+			 	 	for ($t = 1 ; $t < $max_t; $t++ )	{	
 			 	 		if($schedule_days[$t-1][$i->format('w')] == 1 ){ // if the weekday has a schedule flag for this trade create an entry in the field duty table. 
 			 	 			$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );				 	 	
 		 	 				$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %d  AND `trade` = %d ",  $id, $t);	

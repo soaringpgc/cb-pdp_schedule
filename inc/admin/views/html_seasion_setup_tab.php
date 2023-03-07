@@ -102,9 +102,27 @@ enable sign up for duty for each session.
 				$weekly_options =  get_option('cloudbase_tp_weekly' ) ; 
 
          		$weekarray = array ('Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat' ); 
-         		$tradearray = array ('Tow Pilots', 'Instructors', 'Field Manager');         		
-				for($j=0; $j<=2; $j++ ){    
-				  	$tp_options = $weekly_options[$j]; 		
+
+				global $wpdb;
+ 				$table_trade =  $wpdb->prefix . 'cloud_base_trades';
+				$sql='SELECT * FROM ' . $table_trade;
+				$trade_object = $wpdb->get_results($sql); 
+				$tradearray  = array();
+				foreach ($trade_object as $trade ){
+					array_push($tradearray, $trade->trade);  //array_push($tradearray, $trade->id=>$trade->trade);
+				}
+				$numb_trades = sizeof( $tradearray);
+// ntfs: this will be a problem if the trade ids are not in sequencial order in the database!
+//  This is something that will need tobe revisited later. 
+// also see in REST/class-field-duty.php (fc=1 option set.)	perhaps easer to insure
+// trade ids are in sequence?!!! 
+//          		$tradearray = array ('Tow Pilots', 'Instructors', 'Field Manager');         		
+				for($j=0; $j < $numb_trades; $j++ ){  
+					if ( isset($weekly_options[$j])) { 
+				  		$tp_options = $weekly_options[$j]; 
+				  	} else {
+				  		$tp_options = array ('0', '0', '0', '0', '0', '0', '0',);
+				  	}				  		
            			echo '<br><h4>'. $tradearray[$j].' Schedule: </h4>';         		
  					for( $i = 0; $i<= 6; $i++ ){
           				echo '<dd id="rr-element" class="hform2">

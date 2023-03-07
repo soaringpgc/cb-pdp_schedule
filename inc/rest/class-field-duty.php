@@ -66,21 +66,18 @@ class Field_Duty extends \Cloud_Base_Rest {
 		if(isset($request['limit'])){
 			$limit = $request['limit'];
 		} else {
-			$limit = 40; 
+			$limit = 60; 
 		}
 		if(isset($request['offset'])){
 			$offset = $request['offset'];
 		} else {
 			$offset = 0; 
-		}	
-		
-		if(isset($request['fc'])){
-			
+		}			
+		if(isset($request['fc'])){			
  			if (isset($request['start'])){
  				$start = new \DateTime($request['start']);
  				if (isset($request['end'])){
  					$stop = new \DateTime($request['end']);
-
   					$sql = $wpdb->prepare("SELECT f.id as id, c.calendar_date, c.session, f.trade, f.member_id, t.trade, t.id as tradeId FROM {$calendar_name} c INNER JOIN {$table_name} f ON c.id=f.calendar_id INNER JOIN {$trade_name} t ON f.trade = t.id WHERE c.calendar_date BETWEEN %s AND %s  ORDER BY c.calendar_date LIMIT %d OFFSET %d" ,  
 					$start->format("Y-m-d"), $stop->format("Y-m-d"), $limit, $offset );	 									
  				} else {
@@ -111,8 +108,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 		 	$results = $wpdb->get_results($sql);
 			return new \WP_REST_Response ($results);
 		}		
- 					
-				 
+ 									 
  		if (isset($request['start'])){
  			$start = new \DateTime($request['start']);
  			if (isset($request['stop'])){
