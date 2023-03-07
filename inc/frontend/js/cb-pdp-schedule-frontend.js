@@ -55,6 +55,7 @@
  					right: 'dayGridMonth, next',
  						ignoreTimezone: false
  					},
+ 					hiddenDays: [ 1, 2, 4, 5],
  					selectable: true,
  //					editable: true,
  					select: this.select, 		

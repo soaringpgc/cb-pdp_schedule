@@ -14,7 +14,7 @@
 
  */
 ?>
- <div style="text-align: center;" id="assign_trade_popup"> 
+ <div style="text-align: center; " id="assign_trade_popup" > 
 <?php
 // $roles  = array ('tow_pilot', 'inactive', 'board_member', 'operations', 'cfi_g' , 'chief_of_ops', 'flight_edit', 'maintenance_editor', 'administrator');
 // $capabiliteis = array('cb_edit_cfig', 'cb_edit_instruction',  'cb_edit_operations', 'cb_edit_towpilot', 'flight_edit' )	;					
@@ -120,17 +120,8 @@
  
 </div>
 
-<!-- 
-<div id="fullCalModal" style="display:none; text-align: center; ">
-  <div>ID: <span id="modalID"></span></div>
- <div>Title: <span id="modalTitle"></span></div>
- <div>Location: <span id="modalLocation"></span></div>
- <div>Start Date: <span id="modalStartDate"></span></div>
- <div>End Date: <span id="modalEndDate"></span></div>
-</div>
- -->
 
-<div id="calendar"></div>
+<div id="calendar" "></div>
 
 <script>
 
@@ -141,6 +132,7 @@
 .fc-event {
     font-size: .85em;} 
 /* 
+style="transform:scale(.5)
 #calendar {
     width: 200px;
     margin: 0 auto;

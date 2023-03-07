@@ -204,7 +204,17 @@ class Frontend {
 
 		return $output;
 	} // cb_pdp_calendart()	
-		
+	public function cb_pdp_select_fd( $atts = array() ) {
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		ob_start();	    	
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+			include ('views/html_cb_pdp_select_fd.php' );
+			field_duty_submit_request();
+			display_fd_choices();
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	} //cb_pdp_select_fd
 	/**
 	 * This function brings up the flight details page. This is where glider, pilot
 	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
@@ -363,6 +373,7 @@ class Frontend {
 		add_shortcode( 'cb_pgc_schedule_request', array( $this, 'schedule_request' ) );
 		add_shortcode( 'cb_pgc_instructor_portal', array( $this, 'instructor_portal' ) );
 		add_shortcode( 'cb_pdp_calendar', array( $this, 'cb_pdp_calendar' ) );
+		add_shortcode( 'cb_pdp_select_fd', array( $this, 'cb_pdp_select_fd' ) );
 
 	} // register_shortcodes()
 	/**

@@ -41,7 +41,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.36;
+   	$db_version = 0.4;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -135,7 +135,20 @@ function create_cb_scheduling_database(){
 	VALUES (%d, %s, %s, %s, %d, %d ) ON DUPLICATE KEY UPDATE id=id", '4', 'Assistant Manager', 'read', 'edit_gc_operations','1', '3');	
 	$wpdb->query($sql);		
 
-      
+      $table_name = $wpdb->prefix . "cloud_base_duty_day_member_preferences";
+      // create basic calendar
+      $sql = "CREATE TABLE ". $table_name . " (
+      	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+      	trade tinytext,
+      	member_id int(10) UNSIGNED NOT NULL,
+      	session int,
+      	year YEAR,
+      	choice_1 int,
+      	choice_2 int,
+      	choice_3 int
+      	PRIMARY KEY  (id)
+      );" . $charset_collate  . ";";
+      dbDelta($sql);	      
 	//  Set the version of the Database
 	update_option("cloud_base_schedule_db_version", $db_version);
 	}

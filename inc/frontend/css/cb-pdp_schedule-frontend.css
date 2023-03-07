@@ -54,6 +54,10 @@ optgroup.nofly{
 	background-color: #000000;
 	color: #ffffff;
 }
+.hform {
+	float:left;
+	margin-right:20px;
+}
 /* 
 body .fc { 
    font-size: 1.0em;  <--- change here for general 
