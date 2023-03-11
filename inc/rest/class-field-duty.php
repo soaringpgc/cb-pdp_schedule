@@ -160,7 +160,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 		$field_name      =  $wpdb->prefix . 'cloud_base_field_duty';
 
 		$member = null;
-	  	if (isset($request['member_id'] )  ){ // get id of the member
+	  	if (isset($request['member_id']) &&  !($request['member_id'] ==0 )) { // get id of the member leave at null if zero 
 			$member = $request['member_id'] ;
 		}
 		if (isset($request['id'])){

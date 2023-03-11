@@ -30,13 +30,13 @@
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
 	 $(function(){
-	 
 	 var current_user_role = passed_vars.current_user_role;
 	 var enabled_sessions = passed_vars.enabled_sessions;
 	 var trade_authority = passed_vars.trade_authority;
 	 var current_user_role_name =  passed_vars.current_user_role_name;
 	 var current_user_can =  passed_vars.user_can;
 	 var overide = [];
+	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
 	 
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
@@ -55,11 +55,11 @@
  					right: 'dayGridMonth, next',
  						ignoreTimezone: false
  					},
-//  					hiddenDays: [ 1, 2, 4, 5],
+  					hiddenDays: hidded_days,
  					selectable: true,
  					select: this.select, 
          	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
-         	  		duration: { days: 14},
+//          	  		duration: { days: 14},
         	  		dateClick: function(date, jsEvent, view) {
         	  			if (current_user_role == 'tow_pilot'){// 
         	  			startdate= date.dateStr;
@@ -90,7 +90,8 @@
   	 		  			    } 	        	  			
          	  			}						
 					  },
-					events: function (info, successCallback, failureCallback) {
+					 events: function (info, successCallback, failureCallback) {
+	
                	     let start = moment(info.start.valueOf()).format('YYYY-MM-DD');
                	     let end = moment(info.end.valueOf()).format('YYYY-MM-DD');
                	     $.ajax({
@@ -112,21 +113,30 @@
 // 					},
 	
 				eventClick: function(info) {
-
-				info.jsEvent.preventDefault(); 
-				hideassignpopup( );	
-				startdate= moment(info.event.start).format('YYYY-MM-DD'); 
-				var trade_clicked = info.event.groupId;	
-				let i= 0;
-				for( i; i < trade_authority.length; ++i){
-					if( trade_authority[i].trade == trade_clicked  ){
-						var trade_id = trade_authority[i].id;
-					break;
-					}
-				}
-				if(overide.includes(current_user_can)){												
-					$('#editdate').text(startdate);
+					var assigned_member = info.event.title.split(': ')[1] ;				  
+					info.jsEvent.preventDefault(); 
+					hideassignpopup( );	
+					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
+					var trade_clicked = info.event.groupId;	
+					var trade_select = trade_clicked.replace(' ', '_');
+					let i= 0;
+					for( i; i < trade_authority.length; ++i){
+						if( trade_authority[i].trade == trade_clicked  ){
+							var trade_id = trade_authority[i].id;
+						break;
+						}
+					};
+					// create a list of trade members and their user Id (tradelist)
+					var tradelist = {};
+					$("#" + trade_select + " option").each(function(){
+							 	tradelist[($(this).text())] =($(this).val());
+					})
+					// now use the tradelist to look up the pilot's user id to set the default 
+					// in the select block.  
+					$("#" + trade_select + "").val( tradelist[assigned_member]);
 	
+					if(overide.includes(current_user_can)){												
+						$('#editdate').text(startdate);	
 						let i= 0;
 						for( i; i < trade_authority.length; ++i){
 							if( trade_authority[i].trade == trade_clicked && (current_user_can == trade_authority[i].overrideauthority ||  current_user_can == 'manage_options' )){
@@ -136,39 +146,38 @@
 							break;
 							}
 						}
-
 	  				} else if( current_user_role_name == info.event.groupId ){ 
 	  					var taken = info.event.title.substring(0,2);
 
-							if (taken == 'No' || current_user_role_name == 'Tow Pilot' ){	
-  						   		if(confirm("You are signing up for " + info.event.groupId  + " on " + startdate + "? " )) {								
-						   			$.ajax({
-						   				type: "PUT",
-						   				url: passed_vars.restURL + 'cloud_base/v1/field_duty',
-						   				async: true,
-						   			   cache: false,
-						   			   timeout: 30000,
-						   				beforeSend: function (xhr){
-						   					xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-						   				},
-						   				data:{
-						   					date: startdate,
-						   					trade_id : trade_id,
-						   					member_id: passed_vars.current_user_id
-						   				},
-						   				success : function (response){
-						   					calendar.refetchEvents();
-						   					hideassignpopup( );				
-						   				},
-						   				error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        				   						alert("Status: " + textStatus); 
-        				   						alert("Error: " + errorThrown); 
-   						   					 } 
-						   			});	 		 
-  	 		  			    	} 	
-							} else {
-								alert( "That day is taken, contact Ops Manager to switch.");
-							}				  								
+						if (taken == 'No' || current_user_role_name == 'Tow Pilot' ){	
+  							if(confirm("You are signing up for " + info.event.groupId  + " on " + startdate + "? " )) {								
+								$.ajax({
+									type: "PUT",
+									url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+									async: true,
+								   cache: false,
+								   timeout: 30000,
+									beforeSend: function (xhr){
+										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+									},
+									data:{
+										date: startdate,
+										trade_id : trade_id,
+										member_id: passed_vars.current_user_id
+									},
+									success : function (response){
+										calendar.refetchEvents();
+										hideassignpopup( );				
+									},
+									error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        									alert("Status: " + textStatus); 
+        									alert("Error: " + errorThrown); 
+   									} 
+								});	 		 
+  	 		  			 	} 	
+						} else {
+							alert( "That day is taken, contact Ops Manager to switch.");
+						}				  								
 	  				}
    				},				
         	});

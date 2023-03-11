@@ -147,12 +147,7 @@ class Trades extends \Cloud_Base_Rest {
 			
 //  delete trade entry. 	
 	public function pdp_delete_trade ( \WP_REST_Request $request) {
-	
-		global $wpdb; 
-		$table_name =  $wpdb->prefix . 'cloud_base_trades';		
-		if (!isset($request['id'])){
-			return new \WP_Error( 'id missing', esc_html__( 'id is required', 'my-text-domain' ), array( 'status' => 400 ) );		
-		}	
-		$wpdb->delete($table_name , array('id'=> $request['id']));	
+		return new \WP_Error( 'Not allowed', esc_html__( 'Trade delete not allowed', 'my-text-domain' ), array( 'status' => 405 ) );	
+		
 	}	
 }

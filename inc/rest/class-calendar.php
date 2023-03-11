@@ -34,13 +34,13 @@ class Calendar extends \Cloud_Base_Rest {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_get_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),        	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),        	
    		 	), array(
        		'methods'  => \WP_REST_Server::CREATABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_post_dates' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),  		      	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),  		      	
    		 	), array(
    		 	'methods'  => \WP_REST_Server::EDITABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
@@ -173,13 +173,11 @@ class Calendar extends \Cloud_Base_Rest {
   			 	   		$c++;
   			 	   	};	
    			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
-   			 		$max_t = $wpdb->get_var($sql); 
-// 			 	 	$max_t = 3; // fixed at three for now until I fix the schedule_days options in settings. 
-							// may return up to $max_t recrords
+   			 		$max_t = $wpdb->get_var($sql);  
 					if( $sessions[$j] === '0'){
 						$max_t = 1;						
 					}	
-			 	 	for ($t = 1 ; $t < $max_t; $t++ )	{	
+			 	 	for ($t = 1 ; $t <= $max_t; $t++ )	{	
 			 	 		if($schedule_days[$t-1][$i->format('w')] == 1 ){ // if the weekday has a schedule flag for this trade create an entry in the field duty table. 
 			 	 			$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );				 	 	
 		 	 				$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %d  AND `trade` = %d ",  $id, $t);	
@@ -212,8 +210,14 @@ class Calendar extends \Cloud_Base_Rest {
   		if (isset($request['date'] )){ // get id of the date
  	   		$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $request['date']);	
  	 		$id = $wpdb->get_var($sql); 
+
+   			$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
+   			$max_t = $wpdb->get_var($sql);  
+			if( $sessions[$j] === '0'){
+				$max_t = 1;						
+			}	
 			
- 			for ($t = 1 ; $t <= 3; $t++ )	{	// for each trade. 	
+ 			for ($t = 1 ; $t <= $max_t; $t++ )	{	// for each trade. 	
  				if($trade[$t-1] == "1"){
   					$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );		// new record 		 	 	
   	 	 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %s AND `trade`=%d",  $id, $t);	// does date and trade exist?

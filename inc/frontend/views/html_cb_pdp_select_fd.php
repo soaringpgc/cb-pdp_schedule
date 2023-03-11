@@ -74,17 +74,17 @@
    				}
    			}
    		}     		 		
-   		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name . '\r\n'; 
+   		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name .  "\r\n";
 		if( $enabled_sessions[0] == '1' &&  !is_null( $choices[0][1])){
    			$msg .=  'for Session 1; First Choice: ' . $choices[0][1] . ' Second Choice: ' . $choices[0][2] . ' Third Choice: ' . $choices[0][3] .'\r\n';
 		}	
 		if( $enabled_sessions[1] == '1'  && !is_null( $choices[1][1]) ){
 			$msg .=  'and is requesting the following dates for session 2 \r\n'; 
-   			$msg .=  'First Choice: ' . $choices[1][1] . ' Second Choice: ' . $choices[1][2] . ' Third Choice: ' . $choices[1][3] .'\r\n';
+   			$msg .=  'First Choice: ' . $choices[1][1] . ' Second Choice: ' . $choices[1][2] . ' Third Choice: ' . $choices[1][3] . "\r\n";
 		}
 		if( $enabled_sessions[2] == '1'  && !is_null( $choices[2][1]) ){
 			$msg .=  'and is requesting the following dates session 3 \r\n'; 
-   			$msg .=  'First Choice: ' . $choices[2][1] . ' Second Choice: ' . $choices[2][2] . ' Third Choice: ' . $choices[2][3] .'\r\n';
+   			$msg .=  'First Choice: ' . $choices[2][1] . ' Second Choice: ' . $choices[2][2] . ' Third Choice: ' . $choices[2][3] . "\r\n";
 		}
 		$subject = "Field Duty Selection for: " . $display_name ;
 
@@ -94,6 +94,7 @@
 		foreach ( $ops_emails as $m ){
 			$to .= $m->user_email .', ';
 		};
+		$to .= $user_meta->user_email; 
 		$headers = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 		$headers .= 'From: <webmaster@pgcsoaring.com>' . "\r\n";

@@ -173,6 +173,21 @@ class Frontend {
 	} // schedule_request()	
 	public function cb_pdp_calendar( $atts = array() ) {
 			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+// not working quite the way I expected. 
+			$show_days = shortcode_atts(array( 'show_days'=>'all'), $atts, 'cb_pdp_calendar' )['show_days'];
+
+			switch($show_days){
+				case 'all'    : $hide_days = array();
+				break;
+				case 'three'  : $hide_days = array(1, 2, 4, 5 );
+				break;
+				case 'weekend': $hide_days = array(1, 2, 4, 5 );
+				break;
+				case 'week'   : $hide_days = array(0, 6);
+				break;
+			}
+						
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 			$enabled = get_option('cloudbase_enabled_sessions', false );
@@ -189,7 +204,8 @@ class Frontend {
      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
 //      			'authorities' => get_option('cloud_base_authoritys'),
-     			'user_can' => $this->user_can()
+     			'user_can' => $this->user_can(),
+     			'hide_days' => $hide_days
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
     		); 

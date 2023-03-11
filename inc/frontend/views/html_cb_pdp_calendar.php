@@ -66,9 +66,9 @@
  				$duty_trade = get_users(['role__in' => [$trade->role] ] );
        	 		echo ('<div id="'.str_replace(' ','',$trade->trade).'_" class="popup-content"> <label for="'.$tl.'" style=color:black>'.$trade->trade.': </label>
        	 		<select class="event_cal_form" name="'.$tl.'" id="'.str_replace(' ', '_', $trade->trade).'" form="editdutyday">
-       	 		<option value="" selected>'.$trade->trade.'</option>');       
+       	 		<option value=NULL>'.$trade->trade.'</option>');       
      				  foreach($duty_trade as $key){ 	
-     				  	echo '<option value=' . $key->ID . '>'. $key->last_name . ', '. $key->first_name . '</option>';
+     				  	echo '<option value=' . $key->ID . '>'. $key->first_name . ' '. $key->last_name . '</option>';
        	 		 };             
        	 		echo ( '</select></div> ');
 			}		
