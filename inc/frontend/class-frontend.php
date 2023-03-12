@@ -173,10 +173,8 @@ class Frontend {
 	} // schedule_request()	
 	public function cb_pdp_calendar( $atts = array() ) {
 			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-
 // not working quite the way I expected. 
 			$show_days = shortcode_atts(array( 'show_days'=>'all'), $atts, 'cb_pdp_calendar' )['show_days'];
-
 			switch($show_days){
 				case 'all'    : $hide_days = array();
 				break;
@@ -196,14 +194,13 @@ class Frontend {
     		    'ajax_url' =>  admin_url('admin-ajax.php'),
     			'restURL' => esc_url_raw( rest_url() ),
      			'nonce' => wp_create_nonce( 'wp_rest' ),
-     			'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-     			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+//      			'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+//      			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
      			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
-//      			'authorities' => get_option('cloud_base_authoritys'),
      			'user_can' => $this->user_can(),
      			'hide_days' => $hide_days
     			);   	
@@ -405,10 +402,14 @@ class Frontend {
 	 		$roles = ( array ) $user->roles; // obtaining the role 	 
 	 		if(in_array('administrator', $roles)) {
 	 			return('administrator');
-	 		} elseif(in_array('chief_flight', $roles)){
-	 			return('chief_flight');
-	 		}  elseif(in_array('chief_tow' , $roles)){
-	 			return('chief_tow');
+	 		} elseif(in_array('cfig_scheduler', $roles)){
+	 			return('cfig_scheduler');
+	 		} elseif(in_array('tow_scheduler', $roles)){
+	 			return('tow_scheduler');
+// 	 		} elseif(in_array('chief_flight', $roles)){
+// 	 			return('chief_flight');
+// 	 		}  elseif(in_array('chief_tow' , $roles)){
+// 	 			return('chief_tow');
 	 		}  elseif(in_array('chief_of_ops', $roles)){
 	 			return('chief_of_ops');
 	 		}  elseif(in_array('operations' , $roles)){
@@ -428,9 +429,9 @@ class Frontend {
 	 }
 	 public function user_can()
      {
-     	$capabiliteis = array( 'manage_options', 'chief_flight', 'chief_tow', 
- 			'edit_gc_operations',  'cb_edit_instruction', 'edit_gc_tow', 'field_manager', 
- 			'assistant_field_manager', 'read' );		
+     	$capabiliteis = array( 'manage_options', 'cfig_scheduler', 'tow_scheduler', 'chief_flight',
+     		 'chief_tow', 'edit_gc_operations',  'cb_edit_instruction', 'edit_gc_tow', 
+     		'field_manager', 'assistant_field_manager', 'read' );		
  		if( is_user_logged_in() ) { // check if there is a logged in user 	 						
  			forEach($capabiliteis as $c ){
  				if (current_user_can( $c ) ){

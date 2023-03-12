@@ -59,36 +59,38 @@
  					selectable: true,
  					select: this.select, 
          	  		initialView: window.innerWidth >= 765 ? 'dayGridMonth' : 'listWeek',
-//          	  		duration: { days: 14},
         	  		dateClick: function(date, jsEvent, view) {
-        	  			if (current_user_role == 'tow_pilot'){// 
-        	  			startdate= date.dateStr;
-        	  				if(confirm("You are signing up to Tow on " + startdate + "? " )) {								
-						   		$.ajax({
-						   			type: "PUT",
-						   			url: passed_vars.restURL + 'cloud_base/v1/field_duty',
-						   			async: true,
-						   		   cache: false,
-						   		   timeout: 30000,
-						   			beforeSend: function (xhr){
-						   				xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-						   			},
-						   			data:{
-						   				date: startdate,
-						   				trade_id : "1",
-						   				member_id: passed_vars.current_user_id
-						   			},
-						   			success : function (response){
-						   				calendar.refetchEvents();
-						   				hideassignpopup( );				
-						   			},
-						   			error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        				   					alert("Status: " + textStatus); 
-        				   					alert("Error: " + errorThrown); 
-   						   			} 
-						   		});	 		 
-  	 		  			    } 	        	  			
-         	  			}						
+        	  			calendar.gotoDate(date.dateStr);
+         	  			calendar.changeView('dayGridDay');
+        	  		
+//         	  			if (current_user_role == 'tow_pilot'){
+//         	  			startdate= date.dateStr;
+//         	  				if(confirm("You are signing up to Tow on " + startdate + "? " )) {								
+// 						   		$.ajax({
+// 						   			type: "PUT",
+// 						   			url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+// 						   			async: true,
+// 						   		   cache: false,
+// 						   		   timeout: 30000,
+// 						   			beforeSend: function (xhr){
+// 						   				xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+// 						   			},
+// 						   			data:{
+// 						   				date: startdate,
+// 						   				trade_id : "1",
+// 						   				member_id: passed_vars.current_user_id
+// 						   			},
+// 						   			success : function (response){
+// 						   				calendar.refetchEvents();
+// 						   				hideassignpopup( );				
+// 						   			},
+// 						   			error: function(XMLHttpRequest, textStatus, errorThrown) { 
+//         				   					alert("Status: " + textStatus); 
+//         				   					alert("Error: " + errorThrown); 
+//    						   			} 
+// 						   		});	 		 
+//   	 		  			    } 	        	  			
+//          	  			}						
 					  },
 					 events: function (info, successCallback, failureCallback) {
 	
@@ -134,7 +136,7 @@
 					// now use the tradelist to look up the pilot's user id to set the default 
 					// in the select block.  
 					$("#" + trade_select + "").val( tradelist[assigned_member]);
-	
+	console.log(overide, current_user_can);
 					if(overide.includes(current_user_can)){												
 						$('#editdate').text(startdate);	
 						let i= 0;
