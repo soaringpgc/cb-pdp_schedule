@@ -58,6 +58,12 @@ optgroup.nofly{
 	float:left;
 	margin-right:20px;
 }
+.choices_panel{
+  background-color: #f1f1f1;
+	color: #1e90ff ;
+	font-size: 14px;
+	font-style: italic;
+}
 /* 
 body .fc { 
    font-size: 1.0em;  <--- change here for general 

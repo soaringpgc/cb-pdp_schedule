@@ -73,20 +73,19 @@
    					}
    				}
    			}
-   		}     		 		
-   		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name .  "\r\n";
+   		}   
+   		$msg = 'Member: ' . $display_name . ', ' . $role_name . "<br>\n";  		 		
+//    		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name .  "\n";
 		if( $enabled_sessions[0] == '1' &&  !is_null( $choices[0][1])){
-   			$msg .=  'for Session 1; First Choice: ' . $choices[0][1] . ' Second Choice: ' . $choices[0][2] . ' Third Choice: ' . $choices[0][3] .'\r\n';
+   			$msg .=  'Session 1 First: ' . $choices[0][1] . ', Second: ' . $choices[0][2] . ', Third: ' . $choices[0][3] ."<br>\n";
 		}	
 		if( $enabled_sessions[1] == '1'  && !is_null( $choices[1][1]) ){
-			$msg .=  'and is requesting the following dates for session 2 \r\n'; 
-   			$msg .=  'First Choice: ' . $choices[1][1] . ' Second Choice: ' . $choices[1][2] . ' Third Choice: ' . $choices[1][3] . "\r\n";
+   			$msg .=  'Session 2 First: ' . $choices[1][1] . ', Second: ' . $choices[1][2] . ', Third: ' . $choices[1][3] . "<br>\n";
 		}
 		if( $enabled_sessions[2] == '1'  && !is_null( $choices[2][1]) ){
-			$msg .=  'and is requesting the following dates session 3 \r\n'; 
-   			$msg .=  'First Choice: ' . $choices[2][1] . ' Second Choice: ' . $choices[2][2] . ' Third Choice: ' . $choices[2][3] . "\r\n";
+   			$msg .=  'Session 3 First: ' . $choices[2][1] . ', Second : ' . $choices[2][2] . ', Third: ' . $choices[2][3] . "<br>\n";
 		}
-		$subject = "Field Duty Selection for: " . $display_name ;
+		$subject = "Field Duty Selection for: " . $display_name .', ' . $role_name  ;
 
 		$sql = "SELECT wp_users.user_email FROM wp_users INNER JOIN wp_usermeta ON wp_users.ID = wp_usermeta.user_id WHERE wp_usermeta.meta_value like '%operations%' "; 
 		$ops_emails = $wpdb->get_results($sql);
@@ -95,11 +94,10 @@
 			$to .= $m->user_email .', ';
 		};
 		$to .= $user_meta->user_email; 
-		$headers = "MIME-Version: 1.0" . "\r\n";
-		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-		$headers .= 'From: <webmaster@pgcsoaring.com>' . "\r\n";
-
-  		mail($to,$subject,$msg,$headers);
+		$headers = "MIME-Version: 1.0" . "\n";
+		$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
+		$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
+   		mail($to,$subject,$msg,$headers);
 		echo('<p> Your selections have been accepted</p> ');
 	}
 /*
@@ -119,7 +117,7 @@
 		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
 		
 //  $enabled_sessions= array( '1', '1', '0');
-		$label_text = array('First', 'Second', 'Third');
+		$label_text = array('1st', '2ed', '3ed');
 		$table_calendar =  $wpdb->prefix . 'cloud_base_calendar';
  		$table_field_duty =  $wpdb->prefix . 'cloud_base_field_duty';	
 		
@@ -130,7 +128,7 @@
  			$sql = "SELECT c.id, c.calendar_date FROM {$table_calendar} c INNER JOIN {$table_field_duty} f ON  c.id=f.calendar_id WHERE f.trade = " . $role_id . " AND  f.member_id IS NULL AND c.session =" . ($i+1) . ' AND c.calendar_date >= CURDATE()';
 			$session_dates[$i] = $wpdb->get_results($sql);
 		}
-		echo (' <div>Member: ' .$display_name . '</div>');
+		echo ('<div class="choices_panel" >  <div>Member: ' .$display_name . '</div>');
 		echo (' <div>Profession: ' .$role_name. '</div>');
 		echo (' <div>Select your prefered Duty days:</div><br>');	
 		echo ('<form id="selectdutyday"  name="selectdutyday" method="post" >');
@@ -154,7 +152,7 @@
    				echo('</select></div></td></tr>');		
    			}
    		}
-		echo('</table>');
+		echo('</table></div>');
 		    wp_nonce_field( 'submit_field_duty' ); 
 			if (in_array("field_manager", $user_roles)){
 			

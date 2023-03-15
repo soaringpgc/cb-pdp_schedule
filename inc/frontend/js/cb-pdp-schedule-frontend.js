@@ -136,7 +136,6 @@
 					// now use the tradelist to look up the pilot's user id to set the default 
 					// in the select block.  
 					$("#" + trade_select + "").val( tradelist[assigned_member]);
-	console.log(overide, current_user_can);
 					if(overide.includes(current_user_can)){												
 						$('#editdate').text(startdate);	
 						let i= 0;
@@ -148,7 +147,7 @@
 							break;
 							}
 						}
-	  				} else if( current_user_role_name == info.event.groupId ){ 
+	  				} else if( info.event.groupId.includes(current_user_role_name) ){ 
 	  					var taken = info.event.title.substring(0,2);
 
 						if (taken == 'No' || current_user_role_name == 'Tow Pilot' ){	
