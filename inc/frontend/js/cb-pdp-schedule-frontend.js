@@ -48,6 +48,7 @@
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
+// set up calendar
         		headerToolbar: {
 //        	  		plugins: [ dayGrid, timeGrid ],
  					left: 'prev, timeGridWeek',
@@ -92,8 +93,8 @@
 //   	 		  			    } 	        	  			
 //          	  			}						
 					  },
-					 events: function (info, successCallback, failureCallback) {
-	
+		// fetch the existing events and display 			  
+					 events: function (info, successCallback, failureCallback) {	
                	     let start = moment(info.start.valueOf()).format('YYYY-MM-DD');
                	     let end = moment(info.end.valueOf()).format('YYYY-MM-DD');
                	     $.ajax({
@@ -113,14 +114,14 @@
 // 					  	method: 'GET',				
 // 					  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
 // 					},
-	
+	    // If an event is click on decide what to do. 
 				eventClick: function(info) {
 					var assigned_member = info.event.title.split(': ')[1] ;				  
 					info.jsEvent.preventDefault(); 
 					hideassignpopup( );	
 					startdate= moment(info.event.start).format('YYYY-MM-DD'); 
 					var trade_clicked = info.event.groupId;	
-					var trade_select = trade_clicked.replace(' ', '_');
+					var trade_select = trade_clicked.replace(/ /g, '_');
 					let i= 0;
 					for( i; i < trade_authority.length; ++i){
 						if( trade_authority[i].trade == trade_clicked  ){
@@ -130,6 +131,7 @@
 					};
 					// create a list of trade members and their user Id (tradelist)
 					var tradelist = {};
+
 					$("#" + trade_select + " option").each(function(){
 							 	tradelist[($(this).text())] =($(this).val());
 					})
@@ -149,8 +151,7 @@
 						}
 	  				} else if( info.event.groupId.includes(current_user_role_name) ){ 
 	  					var taken = info.event.title.substring(0,2);
-
-						if (taken == 'No' || current_user_role_name == 'Tow Pilot' ){	
+						if (taken == 'No' ){ // || current_user_role_name == 'Tow Pilot' ){	
   							if(confirm("You are signing up for " + info.event.groupId  + " on " + startdate + "? " )) {								
 								$.ajax({
 									type: "PUT",
@@ -176,13 +177,42 @@
    									} 
 								});	 		 
   	 		  			 	} 	
-						} else {
+						} else if ( (info.event.extendedProps.member_id == passed_vars.current_user_id)  && current_user_role_name == 'Tow Pilot' ) {
+							  	if(confirm("You are canceling duty for " + info.event.groupId  + " on " + startdate + "? " )) {								
+								$.ajax({
+									type: "PUT",
+									url: passed_vars.restURL + 'cloud_base/v1/field_duty',
+									async: true,
+								   cache: false,
+								   timeout: 30000,
+									beforeSend: function (xhr){
+										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+									},
+									data:{
+										date: startdate,
+										trade_id : trade_id,
+										member_id: 0
+									},
+									success : function (response){
+										calendar.refetchEvents();
+										hideassignpopup( );				
+									},
+									error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        									alert("Status: " + textStatus); 
+        									alert("Error: " + errorThrown); 
+   									} 
+								});	 		 
+  	 		  			 	} 
+						}
+						else {
 							alert( "That day is taken, contact Ops Manager to switch.");
 						}				  								
 	  				}
    				},				
         	});
-     		calendar.render();              
+	// render the calendar
+     		calendar.render();  
+    // if a trade is changed, ask for confirmation and assign.             
      		$('.event_cal_form').change(function() {
 		 		var trade = event.target.id;
 				var member_id =   $("#"+trade).val();

@@ -149,6 +149,10 @@ class Admin {
 
            $page_tabs_enhanced[] = array( "tab"=>"html_trade_setup" , "title"=> "Trade Setup", "page"=>"cloud_base",
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
+           
+            $page_tabs_enhanced[] = array( "tab"=>"html_instruction_setup" , "title"=> "Instruction Setup", "page"=>"cloud_base",
+           "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
+           
            return  $page_tabs_enhanced;
     }
 

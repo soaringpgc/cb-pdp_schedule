@@ -63,7 +63,7 @@ class Vacation extends \Cloud_Base_Rest {
  		$calendar_name =  $wpdb->prefix . 'cloud_base_calendar';
 // 		 	
 		if(isset($request['date'])){			
-			$sql = $wpdb->prepare("SELECT v.cfig_id FROM {$table_name} v INNER JOIN {$calendar_name} c ON v.vacation_date =c.id   WHERE c.calendar_date = %s" , $request['date']);
+			$sql = $wpdb->prepare("SELECT v.member_id FROM {$table_name} v INNER JOIN {$calendar_name} c ON v.vacation_date =c.id   WHERE c.calendar_date = %s" , $request['date']);
  			$items = $wpdb->get_results($sql);
  		    return new \WP_REST_Response ($items); 	
 //  			$i=0;
@@ -73,8 +73,8 @@ class Vacation extends \Cloud_Base_Rest {
 // 				$i++;
 // 			}
 // 			return new \WP_REST_Response ($vac_list); 
-		} elseif (isset($request['cfig_id']))	{
-			$sql = $wpdb->prepare("SELECT c.id as 'cid', c.calendar_date, v.cfig_id  FROM {$calendar_name} c INNER JOIN {$table_name} v ON v.vacation_date = c.id  WHERE v.cfig_id = %d" , $request['cfig_id']);
+		} elseif (isset($request['member_id']))	{
+			$sql = $wpdb->prepare("SELECT c.id as 'cid', c.calendar_date, v.member_id  FROM {$calendar_name} c INNER JOIN {$table_name} v ON v.vacation_date = c.id  WHERE v.member_id = %d" , $request['member_id']);
 			$items = $wpdb->get_results($sql);
 			return new \WP_REST_Response ($items); 
 		} else {
@@ -82,7 +82,7 @@ class Vacation extends \Cloud_Base_Rest {
 			$date2 = clone $date1;
 			$date2->modify('+14 day');
 			$date2->format("Y-m-d"); 
-			$sql = $wpdb->prepare("SELECT v.cfig_id, c.id as 'cid', v.id as 'vid', c.calendar_date FROM {$table_name} v INNER JOIN {$calendar_name} c ON v.vacation_date = c.id  WHERE c.calendar_date BETWEEN %s AND %s" , $date1->format("Y-m-d"), $date2->format("Y-m-d"));
+			$sql = $wpdb->prepare("SELECT v.member_id, c.id as 'cid', v.id as 'vid', c.calendar_date FROM {$table_name} v INNER JOIN {$calendar_name} c ON v.vacation_date = c.id  WHERE c.calendar_date BETWEEN %s AND %s" , $date1->format("Y-m-d"), $date2->format("Y-m-d"));
 			$items = $wpdb->get_results($sql);
 		    return new \WP_REST_Response ($items); 
 		}	
@@ -93,7 +93,7 @@ class Vacation extends \Cloud_Base_Rest {
 		$table_name =  $wpdb->prefix . 'cloud_base_vacation';
 		
 	// need start of each session and days of week to schedule. 	
-		if(isset($request['s1']) && isset($request['s2']) && isset($request['cfig_id'])){	  
+		if(isset($request['s1']) && isset($request['s2']) && isset($request['member_id'])){	  
 			
 		    $s1 =  $request['s1'] ;
 		    $s2 =  $request['s2'] ;
@@ -103,11 +103,11 @@ class Vacation extends \Cloud_Base_Rest {
 		    }
 		    $s = 0;
  		    for( $i = $s1; $i <= $s2; $i++){
- 		    	$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `cfig_id` = %d AND `vacation_date` = %d" ,   $request['cfig_id'],  $i);	
+ 		    	$sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `member_id` = %d AND `vacation_date` = %d" ,   $request['member_id'],  $i);	
  		    	$result = $wpdb->get_results($sql); ; 	
 		    	if( $result == null) {
 		    		$s++;
-		    		$record = array('cfig_id'=>$request['cfig_id'], 'vacation_date'=> $i );
+		    		$record = array('member_id'=>$request['member_id'], 'vacation_date'=> $i );
 		    		$wpdb->insert($table_name, $record );
 		    	}		    	
  		    }

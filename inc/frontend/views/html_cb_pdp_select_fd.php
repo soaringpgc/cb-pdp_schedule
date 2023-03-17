@@ -117,7 +117,7 @@
 		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
 		
 //  $enabled_sessions= array( '1', '1', '0');
-		$label_text = array('1st', '2ed', '3ed');
+		$label_text = array('1st', '2nd', '3ed');
 		$table_calendar =  $wpdb->prefix . 'cloud_base_calendar';
  		$table_field_duty =  $wpdb->prefix . 'cloud_base_field_duty';	
 		

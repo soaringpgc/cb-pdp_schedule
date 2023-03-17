@@ -137,40 +137,40 @@ class Frontend {
 //     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
 //     	);    	
 	}
-	public function schedule_request( $atts = array() ) {
-		add_action( 'wp_enqueue_script', function(){
-
-			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
- 				'underscore',  'moment', 'calendar'), $this->version, true  );	
-				
-			}		
-		);
+// 	public function schedule_request( $atts = array() ) {
+// 		add_action( 'wp_enqueue_script', function(){
+// 
+// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+//  				'underscore',  'moment', 'calendar'), $this->version, true  );	
+// 				
+// 			}		
+// 		);
+// 	
+// 		ob_start();
+// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+// 			include ('pdp/html_cb_pdp_request_list_member.php' );
+// 		$output = ob_get_contents();
+// 
+// 		ob_end_clean();
+// 
+// 		return $output;
+// 
+// 	} // schedule_request()	
 	
-		ob_start();
-	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-			include ('pdp/html_cb_pdp_request_list_member.php' );
-		$output = ob_get_contents();
-
-		ob_end_clean();
-
-		return $output;
-
-	} // schedule_request()	
-	
-	public function instructor_portal( $atts = array() ) {
-
-		ob_start();
-	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-			include ('pdp/html_cb_pdp_request_list_cfig.php' );
-		$output = ob_get_contents();
-
-		ob_end_clean();
-
-		return $output;
-
-	} // schedule_request()	
+// 	public function instructor_portal( $atts = array() ) {
+// 
+// 		ob_start();
+// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+// 			include ('pdp/html_cb_pdp_request_list_cfig.php' );
+// 		$output = ob_get_contents();
+// 
+// 		ob_end_clean();
+// 
+// 		return $output;
+// 
+// 	} // schedule_request()	
 	public function cb_pdp_calendar( $atts = array() ) {
 			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 // not working quite the way I expected. 
@@ -227,153 +227,183 @@ class Frontend {
 		ob_end_clean();
 		return $output;
 	} //cb_pdp_select_fd
-	/**
-	 * This function brings up the flight details page. This is where glider, pilot
-	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
-	 * take off/landing time and tow alitude. 
-	 */
-     public function cb_pdp_training_request(){ 
-      	if (isset($_GET['page'])){
-    		switch($_GET['page']){
-     			case('enter_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
-     				break;	
-    			case('enter_request_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
-     				break;	
-     			case('enter_request_member'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
-     				break;	
-     			case('enter_vacay'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
-     				break;	
-     			case('enter_request'):
-     				include_once( 'pdp/html_cb_pdp_request_enter.php');
-     				break;	
-    			case('list_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
-     				break;	
-   				case('list_member'):
-     				include_once( 'pdp/html_cb_pdp_request_list_member.php');
-     				break;	
-   				case('list'):
-     				include_once( 'pdp/html_cb_pdp_request_list.php');
-     				break;	
-     			case('modify_cfig_auto'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
-     				break;
-    			case('modify_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
-     				break;
-   				case('modify_cfig2_auto'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
-     				break;
-    			case('modify_member'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
-     				break;
-    			case('vacation_view_cfig_by_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
-     				break;		
-     			case('cfig_schedule_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
-     				break;	 
-     			case('vacation_view'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
-     				break;	
-    			case('vacay_modify'):
-     				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
-     				break;	     		   		     				    				    		   		
-     		}
-     	} elseif(isset($_POST['page'])){
- 
-       		switch($_POST['page']){
-     			case('enter_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
-     				break;	
-    			case('enter_request_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
-     				break;	
-     			case('enter_request_member'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
-     				break;	
-     			case('enter_vacay'):
-     				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
-     				break;	
-     			case('enter_request'):
-     				include_once( 'pdp/html_cb_pdp_request_enter.php');
-     				break;	
-    			case('list_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
-     				break;	
-   				case('list_member'):
-     				include_once( 'pdp/html_cb_pdp_request_list_member.php');
-     				break;	
-   				case('list'):
-     				include_once( 'pdp/html_cb_pdp_request_list.php');
-     				break;	
-     			case('modify_cfig_auto'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
-     				break;
-    			case('modify_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
-     				break;
-   				case('modify_cfig2_auto'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
-     				break;
-    			case('modify_member'):
-     				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
-     				break;	
-    			case('vacation_view_cfig_by_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
-     				break;		
-     			case('cfig_schedule_cfig'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
-     				break;	 
-     			case('vacation_view'):
-     				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
-     				break;	
-    			case('vacay_modify'):
-     				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
-     				break;	     		   		     				    				    		   		
-     		}       		
-     	} else {
-       		include_once( 'pdp/html_cb_pdp_request_list_member.php');
-     	}
+	public function cb_pdp_vac_view( $atts = array() ) {
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-     } //cb_pdp_training_request()
-     public function pdp_cfig_schedule(){ 
-//     	if (isset($_GET['key'])) {
-			$return_page = $_GET['source_page'];
-     		include_once( 'pdp/html_cb_pdp_vacation_view.php');
-//     	}else {
-//     		wp_redirect($_GET['source_page']);
-//     	}
-     } //pdp_cfig_schedule()     
-     
- /**
- * This function updates the takeoff and landing time. 
- *  if varable $_POST['start'] is "1" (true), it updates the take off time if 
- *  anything else it update landing time. It is called via admin-ajax and javascript. 
- *
- */
-     public function pdp_update_time(){
-		global $PGCwp; // database handle for accessing wordpress db
-		global $PGCi;  // database handle for PDP external db
-    
-     	if (isset($_POST['key'])) {
-     		$key = $_POST['key'];
-     		if($_POST['start'] == '1'){
-     			$PGCwp->update('pgc_flightsheet', array('Takeoff'=> $_POST['thetime']), array('Key'=> $key)); 
-     		} else {
-     			$sql = $PGCwp->prepare( "SELECT `Takeoff` FROM  pgc_flightsheet WHERE `Key` = %d", $key);
-     			$start_time = \DateTime::createFromFormat('H:i:s', $PGCwp->get_var($sql));			
-     			$landing_time =\DateTime::createFromFormat('H:i:s', $_POST['thetime']);
-     			$delta = $landing_time->diff($start_time);
-     			$dec_delta = round($delta->h + $delta->i/60, 2, PHP_ROUND_HALF_UP); 		
-     			$PGCwp->update('pgc_flightsheet', array('Landing'=> $_POST['thetime'], 'Time'=>$dec_delta), array('Key'=> $key)); 
-     		}
-      	}		
-     } //pdp_update_time()    
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-vacation_view.js', array( 'jquery', 'jquery-ui-widget',
+ 				'underscore',  'moment', 'calendar'), $this->version, true  );	
+
+    		$dateToBePassed = array(
+    		    'ajax_url' =>  admin_url('admin-ajax.php'),
+    			'restURL' => esc_url_raw( rest_url() ),
+     			'nonce' => wp_create_nonce( 'wp_rest' ),
+    			'current_user_id' => get_current_user_id(),
+     			'current_user_role' => $this->user_roles(),
+     			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+
+    			);   	
+    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    		); 
+
+
+		ob_start();	    	
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+			include ('views/html_cb_vac_view.php' );
+// 			field_duty_submit_request();
+// 			display_fd_choices();
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	} //cb_pdp_vac_view	
+	public function cb_pdp_instruction_request( $atts = array() ) {
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 'jquery-ui-widget',
+ 				'underscore',  'moment', 'calendar'), $this->version, true  );	
+    		$dateToBePassed = array(
+    		    'ajax_url' =>  admin_url('admin-ajax.php'),
+    			'restURL' => esc_url_raw( rest_url() ),
+     			'nonce' => wp_create_nonce( 'wp_rest' ),
+    			'current_user_id' => get_current_user_id(),
+     			'current_user_role' => $this->user_roles(),
+     			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+
+    			);   	
+    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    		); 
+
+
+		ob_start();	    	
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+			include ('views/html_cb_pdp_instruction_request.php' );
+// 			field_duty_submit_request();
+// 			display_fd_choices();
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	} //cb_pdp_instruction_request		
+// 	 /*
+// 	 * This function brings up the flight details page. This is where glider, pilot
+// 	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
+// 	 * take off/landing time and tow alitude. 
+// 	 */
+//      public function cb_pdp_training_request(){ 
+//       	if (isset($_GET['page'])){
+//     		switch($_GET['page']){
+//      			case('enter_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
+//      				break;	
+//     			case('enter_request_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
+//      				break;	
+//      			case('enter_request_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
+//      				break;	
+//      			case('enter_vacay'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
+//      				break;	
+//      			case('enter_request'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter.php');
+//      				break;	
+//     			case('list_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
+//      				break;	
+//    				case('list_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_list_member.php');
+//      				break;	
+//    				case('list'):
+//      				include_once( 'pdp/html_cb_pdp_request_list.php');
+//      				break;	
+//      			case('modify_cfig_auto'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
+//      				break;
+//     			case('modify_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
+//      				break;
+//    				case('modify_cfig2_auto'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
+//      				break;
+//     			case('modify_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
+//      				break;
+//     			case('vacation_view_cfig_by_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
+//      				break;		
+//      			case('cfig_schedule_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
+//      				break;	 
+//      			case('vacation_view'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
+//      				break;	
+//     			case('vacay_modify'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
+//      				break;	     		   		     				    				    		   		
+//      		}
+//      	} elseif(isset($_POST['page'])){
+//  
+//        		switch($_POST['page']){
+//      			case('enter_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
+//      				break;	
+//     			case('enter_request_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
+//      				break;	
+//      			case('enter_request_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
+//      				break;	
+//      			case('enter_vacay'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
+//      				break;	
+//      			case('enter_request'):
+//      				include_once( 'pdp/html_cb_pdp_request_enter.php');
+//      				break;	
+//     			case('list_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
+//      				break;	
+//    				case('list_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_list_member.php');
+//      				break;	
+//    				case('list'):
+//      				include_once( 'pdp/html_cb_pdp_request_list.php');
+//      				break;	
+//      			case('modify_cfig_auto'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
+//      				break;
+//     			case('modify_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
+//      				break;
+//    				case('modify_cfig2_auto'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
+//      				break;
+//     			case('modify_member'):
+//      				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
+//      				break;	
+//     			case('vacation_view_cfig_by_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
+//      				break;		
+//      			case('cfig_schedule_cfig'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
+//      				break;	 
+//      			case('vacation_view'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
+//      				break;	
+//     			case('vacay_modify'):
+//      				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
+//      				break;	     		   		     				    				    		   		
+//      		}       		
+//      	} else {
+//        		include_once( 'pdp/html_cb_pdp_request_list_member.php');
+//      	}
+// 
+//      } //cb_pdp_training_request()
+//      public function pdp_cfig_schedule(){ 
+// //     	if (isset($_GET['key'])) {
+// 			$return_page = $_GET['source_page'];
+//      		include_once( 'pdp/html_cb_pdp_vacation_view.php');
+// //     	}else {
+// //     		wp_redirect($_GET['source_page']);
+// //     	}
+//      } //pdp_cfig_schedule()     
                	
 	/**
 	 * Registers all shortcodes at once
@@ -382,10 +412,12 @@ class Frontend {
 	 */
 	public function register_shortcodes() {
 
-		add_shortcode( 'cb_pgc_schedule_request', array( $this, 'schedule_request' ) );
-		add_shortcode( 'cb_pgc_instructor_portal', array( $this, 'instructor_portal' ) );
+// 		add_shortcode( 'cb_pgc_schedule_request', array( $this, 'schedule_request' ) );
+// 		add_shortcode( 'cb_pgc_instructor_portal', array( $this, 'instructor_portal' ) );
 		add_shortcode( 'cb_pdp_calendar', array( $this, 'cb_pdp_calendar' ) );
 		add_shortcode( 'cb_pdp_select_fd', array( $this, 'cb_pdp_select_fd' ) );
+		add_shortcode( 'cb_pdp_vac_view', array( $this, 'cb_pdp_vac_view' ) );
+		add_shortcode( 'cb_pdp_instruction_request', array( $this, 'cb_pdp_instruction_request' ) );
 
 	} // register_shortcodes()
 	/**

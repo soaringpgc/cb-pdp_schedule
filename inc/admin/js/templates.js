@@ -1,4 +1,4 @@
-// Status Types 
+// Trade Types 
   var tradetypetemplate = _.template(`
    <div class="Cell0"  id = "id" > <%= id %></div>
      <div >
@@ -11,6 +11,15 @@
      <label class="Cell" > <%= override_authority_label %>  </label>
      <label class="Cell" > <%= sessionmax %>  </label>
      <label class="Cell" > <%= yearmin %>  </label>
+     <div class="Cell"> <button class="delete" ">Delete</button></div>
+   </div>
+      
+`);
+// Instruction Types 
+  var instructiontypetemplate = _.template(`
+   <div class="Cell0"  id = "id" > <%= id %></div>
+     <div >
+     <label class="Cell2" > <%= request_type %></label>
      <div class="Cell"> <button class="delete" ">Delete</button></div>
    </div>
       

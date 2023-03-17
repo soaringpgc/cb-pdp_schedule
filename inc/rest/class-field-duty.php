@@ -34,7 +34,7 @@ class Field_Duty extends \Cloud_Base_Rest {
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
         	'callback' => array( $this, 'pdp_get_field_duty' ),
         	// Here we register our permissions callback. The callback is fired before the main callback to check if the current user can access the endpoint.
-       		'permission_callback' => array($this, 'cloud_base_members_access_check' ),        	
+       		'permission_callback' => array($this, 'cloud_base_dummy_access_check' ),        	
    		 	), array(
        		'methods'  => \WP_REST_Server::CREATABLE,  
         	// Here we register our callback. The callback is fired when this endpoint is matched by the WP_REST_Server class.
@@ -72,7 +72,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 			$offset = $request['offset'];
 		} else {
 			$offset = 0; 
-		}			
+		}			//  'member_id'=>$value->member_id,
 		if(isset($request['fc'])){			
  			if (isset($request['start'])){
  				$start = new \DateTime($request['start']);
@@ -87,14 +87,14 @@ class Field_Duty extends \Cloud_Base_Rest {
 				return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );
  			} 	
  			$cdays = $wpdb->get_results($sql);
-
+// return new \WP_REST_Response ($cdays);
 			foreach($cdays as $value){ 
 				if($value->member_id != null) {
 					$f = get_user_meta($value->member_id, 'first_name', true  );
   					$l = get_user_meta($value->member_id, 'last_name', true  );  	
-					$r = array ('id'=> $value->id, 'title'=>  $value->trade.": " .$f .' ' .$l , 'groupId'=>$value->trade, 'color'=>'green', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->tradeId );				
+					$r = array ('id'=> $value->id, 'title'=>  $value->trade.": " .$f .' ' .$l , 'groupId'=>$value->trade, 'color'=>'green', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->trade,  'member_id'=>$value->member_id );				
 				} else {				
-					$r = array ( 'id'=> $value->id, 'title'=>'No '.$value->trade. ' assigned', 'groupId'=>$value->trade, 'color'=>'red', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->tradeId  );				
+					$r = array ( 'id'=> $value->id, 'title'=>'No '.$value->trade. ' assigned', 'groupId'=>$value->trade, 'color'=>'red', 'start'=> $value->calendar_date, 'session'=>$value->session, 'tradeId'=>$value->trade );				
 				}
 				array_push($results_array, $r );	
 			}	

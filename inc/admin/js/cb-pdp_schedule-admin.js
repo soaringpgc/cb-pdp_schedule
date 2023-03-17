@@ -46,20 +46,27 @@
 		  			} ));	
 		  		},	
 			});
-			app.Cb_trade_type= app.Model.extend({
+			app.cb_trade_type= app.Model.extend({
 				initialize: function(){
 				},	
 			    defaults: {		
 				},
 				wait: true	
 			} );
-			app.cb_field_duty= app.Model.extend({
+// 			app.cb_field_duty= app.Model.extend({
+// 				initialize: function(){
+// 				},	
+// 			    defaults: {		
+// 				},
+// 				wait: true	
+// 			} );
+			app.cb_instruction_type= app.Model.extend({
 				initialize: function(){
 				},	
 			    defaults: {		
 				},
 				wait: true	
-			} );	 
+			} );		 
     // collections	
 		    app.Collection = Backbone.Collection.extend({	
 		    	sync: function( method, model, options ){
@@ -73,13 +80,17 @@
 		   	 }) ; 
 		
 		    app.TradeTypeList = app.Collection.extend({
-		    	model: app.Cb_trade_type,
+		    	model: app.cb_trade_type,
 		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/trades',  
 		   	 }) ; 
-		    app.FieldDutyList = app.Collection.extend({
-		    	model: app.cb_field_duty,
-		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/field_duty',			
-		    }) ; 
+// 		    app.FieldDutyList = app.Collection.extend({
+// 		    	model: app.cb_field_duty,
+// 		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/field_duty',			
+// 		    }) ; 
+		    app.InstructionTypeList = app.Collection.extend({
+		    	model: app.cb_instruction_type,
+		    	url: cp_schedule_admin_vars.root + 'cloud_base/v1/instruction_type',  
+		   	 }) ; 		    
 // model view	
 	app.ModelView = Backbone.View.extend({
 		tagName: 'div',
@@ -146,7 +157,9 @@
 	app.tradeTypeView = app.ModelView.extend({
 	    template: tradetypetemplate,     
 	});
-
+	app.instructionTypeView = app.ModelView.extend({
+	    template: instructiontypetemplate,     
+	});
 	app.CollectionView =  Backbone.View.extend({         
       initialize: function(){
 //      	console.log('the view has been initialized. ');
@@ -265,11 +278,27 @@
       		this.$el.append( itemView.render().el);   
         }
 	 });
-  
+	app.InstructionTypesView = app.CollectionView.extend({
+	 	el: '#instruction_types', 
+		localDivTag: '#addInstructiontypes Div',
+	 	preinitialize(){
+	 	   this.collection = new app.InstructionTypeList();
+	 	},	
+        renderItem: function(item){
+            var expandedView = app.instructionTypeView.extend({ localDivTag:this.localDivTag });
+            var itemView = new expandedView({
+//      		var itemView = new app.AircraftView({
+      	  		model: item
+      		})
+      		this.$el.append( itemView.render().el);   
+        }
+	 });  
  $(function(){
    if (typeof cb_admin_tab !== 'undefined' ){
    		switch(cb_admin_tab){
    			case "trade_types" : new app.TradeTypesView();
+   			break;
+   			case "instruction_types" : new app.InstructionTypesView();
    			break;
    		}
    	} else {

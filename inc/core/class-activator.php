@@ -40,7 +40,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.41;
+   	$db_version = 0.5;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -62,7 +62,8 @@ function create_cb_scheduling_database(){
       // create basic calendar
       $sql = "CREATE TABLE ". $table_name . " (
       	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-      	cfig_id int(10) UNSIGNED NOT NULL,
+      	member_id int(10) UNSIGNED NOT NULL,
+      	trade_id  int(10) UNSIGNED,
       	vacation_date int(10),
       	PRIMARY KEY  (id)
       );" . $charset_collate  . ";";

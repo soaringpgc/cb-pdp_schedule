@@ -115,6 +115,10 @@ class Init {
  		$plugin_rest = new Rest\Field_Duty( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
  		$this->loader->add_action( 'rest_api_init', $plugin_rest, 'register_routes');
 
+		$plugin_rest = new Rest\Instruction_type( $this->get_plugin_name(), $this->get_version(), $this->get_plugin_text_domain() );
+ 		$this->loader->add_action( 'rest_api_init', $plugin_rest, 'register_routes');
+ 
+
 	}
 
 	/**
