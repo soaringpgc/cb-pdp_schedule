@@ -51,25 +51,67 @@
   					}, 
  					selectable: true,
  					select: this.select, 
-         	  		initialView: 'timeGrid',	
+         	  		initialView: 'timeGrid',	// agendaDay
 					dateClick: function(info){
-						alert('clicked ' + info.dateStr);
+					$('#editinstruction').removeClass('popup-content');
+					$('#calendar').addClass('popup-content');
+					$('#requested_date').val(info.dateStr);
 					},
+					events:{
+					  	url: '/wordpress/wp-json/cloud_base/v1/instruction',
+					  	method: 'GET',				
+					  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
+					},
+
+					
+// 					$('#cfig_accept').dialog({
+// 
+//     autoOpen: true,
+//     buttons: {
+// 
+//         Yes: function() {
+// 
+//             alert("Yes!");
+//             $(this).dialog("close");
+//         },
+//         No: function() {
+// 
+//             alert("No!");
+//             $(this).dialog("close");
+// 
+//         },
+//         Maybe: function() {
+// 
+//             alert("Maybe!");
+//             $(this).dialog("close");
+//         }
+// 
+//     },
+//     width: "400px"});
+// 
+// 					
+// 						alert('clicked ' + info.dateStr);
+// 						
+						
+
 // 					select: function(info){
 // 						alert('selected ' + info.startStr + ' to ' + info.endStr);
 // 						console.log(info);
 // 					},	
-					firstDat: 1,
-					  visibleRange: {
+// 					firstDat: 1,
+					visibleRange: {
  					   start: saturday,
  					   end: sunday
  					 }, 
  					 slotMinTime: "08:00:00",
- 					 slotMaxTime: "12:00:00"					
+ 					 slotMaxTime: "12:00:00",			
 			  });
 			calendar.render();    
  		});
-
+  	$('#cancel').on('click', function(){ 
+     alert("button is clicked");
+    restore_page_settings();
+    });
  
 	 }) // $(function) close	 
 	 $( window ).load(function() {
@@ -82,5 +124,12 @@
 		}
 	 	 
 })( jQuery );
+
+function hideinstructionrequest( ) {
+	jQuery('#editinstruction').addClass('popup-content'); 	
+	jQuery('#calendar').removeClass('popup-content');
+	
+}
+
 	
 

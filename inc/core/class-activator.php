@@ -40,7 +40,7 @@ class Activator {
 function create_cb_scheduling_database(){
    	global $wpdb;
    	$charset_collate = $wpdb->get_charset_collate();
-   	$db_version = 0.5;
+   	$db_version = 0.55;
    	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
    
    	if (get_option("cloud_base_schedule_db_version") != $db_version){ 
@@ -74,12 +74,12 @@ function create_cb_scheduling_database(){
       $sql = "CREATE TABLE ". $table_name . " (
       	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       	member_id int(10) UNSIGNED NOT NULL,
-      	member_weight int(5),
       	enter_date date,
-      	request_date int,
+      	request_date date,
       	cfig1_id int(10),
       	cfig_confirmed boolean,
       	cfig2_id int(10),
+      	inst_type int(10),
       	assigned_cfig_id int(10),
       	scheduling_assistance boolean,
       	request_notes tinytext,
@@ -161,6 +161,5 @@ function set_default_cb_schedule_configuration(){
 		$cb_weekly = array( $cb_tp_weekly, $cb_ins_weekly, $cb_fm_weekly );
 		update_option('cloudbase_tp_weekly', $cb_weekly, false );		
 		update_option('cloudbase_enabled_sessions', array('0','0','0') );								    
-	}
-	
+	}	
 }

@@ -46,6 +46,10 @@ tr{
 .popup-overlay.active{
 visibility:visible;
 }
+.student_hidden{
+	visibility: hidden;
+	display: none;
+}
 
 .popup-content.active {
 visibility:visible;
@@ -64,6 +68,41 @@ optgroup.nofly{
 	font-size: 14px;
 	font-style: italic;
 }
+// table CSS 
+.table-container {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+.table-heading {
+    font-weight: bold;
+    display: table-caption;
+    background-color: #e9e9e9;
+    text-align: center;
+    padding: 8px;
+    line-height: 21px;
+    font-size: 18px;
+}
+
+.table-row {
+    display: table-row;
+    text-align: center;
+}
+.table-row-shade {
+    display: table-row;
+    text-align: center;
+    background-color: #e9e9e9;
+}
+
+.table-col {
+    display: table-cell;
+    text-align: center;
+    padding: 4px;
+    border: 1px solid #ca8327;
+}
+
 /* 
 body .fc { 
    font-size: 1.0em;  <--- change here for general 

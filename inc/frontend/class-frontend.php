@@ -77,8 +77,8 @@ class Frontend {
 		 * class.
 		 */                    
 		 
-//		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css?ver=6.1.1', array( ), $this->version, 'all' );
-//        wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css';                                                                                             
+ 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css', array( ), $this->version, 'all' );
+//         wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css';                                                                                             
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
 	}
@@ -106,6 +106,8 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
+   	    wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	    
+ 	    
 //  	    wp_register_script( 'calendar_daygrid',' https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js');
  	    
 //NOTE :NTFS!!!!  enqueue_scripts and add_inline script moved to the shortcode callback so 
@@ -259,7 +261,7 @@ class Frontend {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 'jquery-ui-widget',
- 				'underscore',  'moment', 'calendar'), $this->version, true  );	
+ 				'underscore',  'moment', 'calendar', 'jqueryui'), $this->version, true  );	
     		$dateToBePassed = array(
     		    'ajax_url' =>  admin_url('admin-ajax.php'),
     			'restURL' => esc_url_raw( rest_url() ),
@@ -276,8 +278,8 @@ class Frontend {
 		ob_start();	    	
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 			include ('views/html_cb_pdp_instruction_request.php' );
-// 			field_duty_submit_request();
-// 			display_fd_choices();
+ 			instruction_Request_submit();
+			display_instruction_Request();
 		$output = ob_get_contents();
 		ob_end_clean();
 		return $output;
