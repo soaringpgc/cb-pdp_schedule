@@ -77,8 +77,8 @@ class Frontend {
 		 * class.
 		 */                    
 		 
- 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css', array( ), $this->version, 'all' );
-//         wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css';                                                                                             
+//  		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css', array( ), $this->version, 'all' );
+        wp_enqueue_style(  'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');                                                                                             
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
 	}
@@ -106,7 +106,7 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
-   	    wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	    
+        wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	    
  	    
 //  	    wp_register_script( 'calendar_daygrid',' https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js');
  	    
@@ -139,40 +139,7 @@ class Frontend {
 //     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
 //     	);    	
 	}
-// 	public function schedule_request( $atts = array() ) {
-// 		add_action( 'wp_enqueue_script', function(){
-// 
-// 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
-//  				'underscore',  'moment', 'calendar'), $this->version, true  );	
-// 				
-// 			}		
-// 		);
-// 	
-// 		ob_start();
-// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-// 			include ('pdp/html_cb_pdp_request_list_member.php' );
-// 		$output = ob_get_contents();
-// 
-// 		ob_end_clean();
-// 
-// 		return $output;
-// 
-// 	} // schedule_request()	
-	
-// 	public function instructor_portal( $atts = array() ) {
-// 
-// 		ob_start();
-// 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
-// 			include ('pdp/html_cb_pdp_request_list_cfig.php' );
-// 		$output = ob_get_contents();
-// 
-// 		ob_end_clean();
-// 
-// 		return $output;
-// 
-// 	} // schedule_request()	
+
 	public function cb_pdp_calendar( $atts = array() ) {
 			$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 // not working quite the way I expected. 
@@ -188,7 +155,7 @@ class Frontend {
 				break;
 			}
 						
- 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 'jquery-ui-widget',
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 			$enabled = get_option('cloudbase_enabled_sessions', false );
 
@@ -232,7 +199,7 @@ class Frontend {
 	public function cb_pdp_vac_view( $atts = array() ) {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
- 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-vacation_view.js', array( 'jquery', 'jquery-ui-widget',
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-vacation_view.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 
     		$dateToBePassed = array(
@@ -259,9 +226,19 @@ class Frontend {
 	} //cb_pdp_vac_view	
 	public function cb_pdp_instruction_request( $atts = array() ) {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
+		if(!is_user_logged_in()){
+ 			return;
+		}
 
- 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 'jquery-ui-widget',
+ 			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar', 'jqueryui'), $this->version, true  );	
+			$current_user = wp_get_current_user();
+// 			$current_cap =array();
+// 			foreach ($current_user->allcaps as $k=>$v ){
+// 				if (strpos($k, "cb_" ) !== false) {
+// 					array_push(	$current_cap, $k);
+// 				} 
+// 			}
     		$dateToBePassed = array(
     		    'ajax_url' =>  admin_url('admin-ajax.php'),
     			'restURL' => esc_url_raw( rest_url() ),
@@ -269,12 +246,10 @@ class Frontend {
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
      			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
-
+				'current_user_caps' => $this->user_cb_capability($current_user)
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-    		); 
-
-
+    		);
 		ob_start();	    	
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 			include ('views/html_cb_pdp_instruction_request.php' );
@@ -284,128 +259,6 @@ class Frontend {
 		ob_end_clean();
 		return $output;
 	} //cb_pdp_instruction_request		
-// 	 /*
-// 	 * This function brings up the flight details page. This is where glider, pilot
-// 	 * instructor, tow pilot and tug are selected. Also corrections can be make to 
-// 	 * take off/landing time and tow alitude. 
-// 	 */
-//      public function cb_pdp_training_request(){ 
-//       	if (isset($_GET['page'])){
-//     		switch($_GET['page']){
-//      			case('enter_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
-//      				break;	
-//     			case('enter_request_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
-//      				break;	
-//      			case('enter_request_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
-//      				break;	
-//      			case('enter_vacay'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
-//      				break;	
-//      			case('enter_request'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter.php');
-//      				break;	
-//     			case('list_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
-//      				break;	
-//    				case('list_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_list_member.php');
-//      				break;	
-//    				case('list'):
-//      				include_once( 'pdp/html_cb_pdp_request_list.php');
-//      				break;	
-//      			case('modify_cfig_auto'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
-//      				break;
-//     			case('modify_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
-//      				break;
-//    				case('modify_cfig2_auto'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
-//      				break;
-//     			case('modify_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
-//      				break;
-//     			case('vacation_view_cfig_by_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
-//      				break;		
-//      			case('cfig_schedule_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
-//      				break;	 
-//      			case('vacation_view'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
-//      				break;	
-//     			case('vacay_modify'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
-//      				break;	     		   		     				    				    		   		
-//      		}
-//      	} elseif(isset($_POST['page'])){
-//  
-//        		switch($_POST['page']){
-//      			case('enter_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_cfig.php');
-//      				break;	
-//     			case('enter_request_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_member_by_cfig.php');
-//      				break;	
-//      			case('enter_request_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_member.php');
-//      				break;	
-//      			case('enter_vacay'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter_vacay.php');
-//      				break;	
-//      			case('enter_request'):
-//      				include_once( 'pdp/html_cb_pdp_request_enter.php');
-//      				break;	
-//     			case('list_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_list_cfig.php');
-//      				break;	
-//    				case('list_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_list_member.php');
-//      				break;	
-//    				case('list'):
-//      				include_once( 'pdp/html_cb_pdp_request_list.php');
-//      				break;	
-//      			case('modify_cfig_auto'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig_auto.php');
-//      				break;
-//     			case('modify_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig.php');
-//      				break;
-//    				case('modify_cfig2_auto'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_cfig2_auto.php');
-//      				break;
-//     			case('modify_member'):
-//      				include_once( 'pdp/html_cb_pdp_request_modify_member.php');
-//      				break;	
-//     			case('vacation_view_cfig_by_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig_by_cfig.php');
-//      				break;		
-//      			case('cfig_schedule_cfig'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view_cfig.php');
-//      				break;	 
-//      			case('vacation_view'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacation_view.php');
-//      				break;	
-//     			case('vacay_modify'):
-//      				include_once( 'pdp/html_cb_pdp_request_vacy_modify.php');
-//      				break;	     		   		     				    				    		   		
-//      		}       		
-//      	} else {
-//        		include_once( 'pdp/html_cb_pdp_request_list_member.php');
-//      	}
-// 
-//      } //cb_pdp_training_request()
-//      public function pdp_cfig_schedule(){ 
-// //     	if (isset($_GET['key'])) {
-// 			$return_page = $_GET['source_page'];
-//      		include_once( 'pdp/html_cb_pdp_vacation_view.php');
-// //     	}else {
-// //     		wp_redirect($_GET['source_page']);
-// //     	}
-//      } //pdp_cfig_schedule()     
                	
 	/**
 	 * Registers all shortcodes at once
@@ -440,8 +293,8 @@ class Frontend {
 	 			return('cfig_scheduler');
 	 		} elseif(in_array('tow_scheduler', $roles)){
 	 			return('tow_scheduler');
-// 	 		} elseif(in_array('chief_flight', $roles)){
-// 	 			return('chief_flight');
+	 		} elseif(in_array('schedule_assist', $roles)){
+	 			return('schedule_assist');
 // 	 		}  elseif(in_array('chief_tow' , $roles)){
 // 	 			return('chief_tow');
 	 		}  elseif(in_array('chief_of_ops', $roles)){
@@ -465,16 +318,14 @@ class Frontend {
      {
      	$capabiliteis = array( 'manage_options', 'cfig_scheduler', 'tow_scheduler', 'chief_flight',
      		 'chief_tow', 'edit_gc_operations',  'cb_edit_instruction', 'edit_gc_tow', 
-     		'field_manager', 'assistant_field_manager', 'read' );		
+     		'field_manager', 'assistant_field_manager', 'read', 'schedule_assist', 'read' );		
  		if( is_user_logged_in() ) { // check if there is a logged in user 	 						
  			forEach($capabiliteis as $c ){
  				if (current_user_can( $c ) ){
  					return($c);
  				}
  		 	}
- 	 	} else {		 
-			return('read');  	 
-	 	}
+ 	 	} 
 	 }
      public function trade_authority()
     	 {
@@ -488,5 +339,15 @@ class Frontend {
 	 	} else {		 
 			return array(); // if there is no logged in user return empty array  	 
 	 	}
-     }     
+     }
+     public function user_cb_capability($user){
+     	// requires user object      		
+   		$current_cap =array();
+			foreach ($user->allcaps as $k=>$v ){
+				if (strpos($k, "cb_" ) !== false) {
+					array_push(	$current_cap, $k);
+			} 
+		}
+        return($current_cap ) ;     
+     }
 }

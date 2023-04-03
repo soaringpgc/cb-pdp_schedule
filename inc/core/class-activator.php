@@ -75,7 +75,7 @@ function create_cb_scheduling_database(){
       	id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
       	member_id int(10) UNSIGNED NOT NULL,
       	enter_date date,
-      	request_date date,
+      	request_date DateTime,
       	cfig1_id int(10),
       	cfig_confirmed boolean,
       	cfig2_id int(10),

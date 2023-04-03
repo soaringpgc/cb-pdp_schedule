@@ -66,7 +66,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 		if(isset($request['limit'])){
 			$limit = $request['limit'];
 		} else {
-			$limit = 60; 
+			$limit = 80; 
 		}
 		if(isset($request['offset'])){
 			$offset = $request['offset'];

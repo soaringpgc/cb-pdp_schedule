@@ -21,6 +21,18 @@ tr{
   border-style: double;
   border-color: blue;
 }
+#assigned_instructor {
+  display:none;
+  position: fixed; 
+  top: 40%;
+  left: 40%;
+  width: 200px;
+  height: 110px;
+  background-color:  rgba(150, 150, 150, 1.0) ;
+  z-index: 1000;
+  border-style: double;
+  border-color: blue;
+}
 #assign_tradeSelect{
    z-index: 1000;
    position: absolute;
@@ -47,6 +59,10 @@ tr{
 visibility:visible;
 }
 .student_hidden{
+	visibility: hidden;
+	display: none;
+}
+.instructor_hidden{
 	visibility: hidden;
 	display: none;
 }
@@ -101,6 +117,12 @@ optgroup.nofly{
     text-align: center;
     padding: 4px;
     border: 1px solid #ca8327;
+}
+.ui-dialog{
+
+position: fixed;
+z-index: 99999;
+
 }
 
 /* 

@@ -93,6 +93,7 @@
 //   	 		  			    } 	        	  			
 //          	  			}						
 					  },
+					 eventOrder: "id",	
 		// fetch the existing events and display 			  
 					 events: function (info, successCallback, failureCallback) {	
                	     let start = moment(info.start.valueOf()).format('YYYY-MM-DD');
@@ -106,7 +107,7 @@
                	              successCallback(response);
                	         }
                	     });
-               	 },					  					  
+               	 },		      		  					  
 // It is absurd that FullCalendar has no way to include headers. 					  
 // 					events:{
 // 						headers: {  'X-WP-NONCE': passed_vars.nonce}, 

@@ -36,22 +36,15 @@
      				  	echo '<option value=' . $key->ID . '>'. $key->first_name . ' '. $key->last_name . '</option>';
        	 		 };             
        	 		echo ( '</select></div> ');
-			}		
-		
+			}				
  		}		
-
-
 		echo('<input type="button" value="Cancel"  onclick="hideassignpopup()" >'); //
  		echo ('<input type="hidden" id="dutyday" name="dutyday" value="" >');
 		echo('</div></form> ');
 
-?> 
- 
+?>  
 </div>
-
-
 <div id="calendar" "></div>
-
 <script>
 
 
