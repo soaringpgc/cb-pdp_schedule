@@ -4,7 +4,7 @@
 </script>
 
 
-<div style="display:inline-block"  align:left id="trade_types"  class="trade_type editform" >
+<div style="display:inline-block"  align:left id="trade_types"  class="editform" >
 <?php 			
 if( current_user_can( 'manage_options' ) ) {	
   echo ('   <h3>Trade Types</h3>
@@ -73,11 +73,6 @@ if( current_user_can( 'manage_options' ) ) {
             min = "0" max = "25"/> 	
         </div>
         <div class="hform">         	
-        <input type = "hidden"
-            id = "active"
-            size = "2"
-            value = ""
-            name = "active"/> 
         <label for="add" style=color:black>Add</label>      
         <button id="add" class="view">Submit</button>
         <button id="update" class="cb_edit">Update</button>

@@ -16,3 +16,6 @@ dd label input {
 	margin-right:2px;
 	width: 10px;
 }
+.hiding{
+	display: none;
+}

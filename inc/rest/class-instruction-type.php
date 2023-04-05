@@ -72,27 +72,27 @@ class Instruction_type extends \Cloud_Base_Rest {
 	public function pdp_post_instruction ( \WP_REST_Request $request) {
 		global $wpdb; 
 		$table_name =  $wpdb->prefix . 'cloud_base_instruction_type';	
-		if(isset($request['instruction']) ){	  
- 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `request_type` = %s " ,   $request['trade']);	
+		if(isset($request['request_type']) ){	  
+ 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE request_type = %s " ,   $request['request_type']);	
 			$result = $wpdb->get_results($sql); ; 
 		    if( $result == null) {
-		    	$record = array('request_type'=>$request['instruction'] );
+		    	$record = array('request_type'=>$request['request_type'] );
 		    	return new \WP_REST_Response ( $wpdb->insert($table_name, $record )); 
 		    } else {
 		    	return new \WP_Error( 'duplicate', esc_html__( 'instruction type exists', 'my-text-domain' ), array( 'status' => 409) );
 		    }							
 	     } else {	     
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter', 'my-text-domain' ), array( 'status' => 422) );	     
  	     }
 	}	
 //  update instruction type . 	
 	public function pdp_update_instruction( \WP_REST_Request $request) {
  		global $wpdb; 
  		$table_name =  $wpdb->prefix . 'cloud_base_instruction_type';
- 		if(isset($request['instruction'])){
- 			$record['request_type'] =  $request['instruction'] ;
+ 		if(isset($request['request_type'])){
+ 			$record = array('request_type' =>$request['request_type']);		
  		}
- 		if (isset($request['id']) && (isset($request['instruction'])) ){
+ 		if (isset($request['id']) && (isset($request['request_type'])) ){
 		    if (isset($request['id'])  ){		    
 		    	$result = $wpdb->update($table_name, $record, array('id' => $request['id'] ));
 		    }		

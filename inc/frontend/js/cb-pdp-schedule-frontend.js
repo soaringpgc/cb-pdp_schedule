@@ -44,7 +44,7 @@
 	 overide.push('manage_options');
 
 	 var startdate ='';
-  	 var localdata ="";
+//   	 var localdata ="";
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -101,6 +101,7 @@
                	     $.ajax({
                	         url: passed_vars.restURL + "cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
                	         type: 'GET',
+               	         cache: "no-store", 
                	         headers: {
                	             'X-WP-NONCE':passed_vars.nonce
                	         }, success: function (response) {

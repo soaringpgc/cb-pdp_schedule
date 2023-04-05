@@ -80,7 +80,7 @@ class Trades extends \Cloud_Base_Rest {
 			$wp_roles = new \WP_Roles();
 			$items[$k]->role_label =  $wp_roles->roles[$v->role]['name'];    //  display name of role. 					
 			$items[$k]->authority_label =  $cloud_base_authoritys[$v->authority];
-			$items[$k]->override_authority_label =  $cloud_base_authoritys[$v->overrideauthority];
+			$items[$k]->overrideauthoritylabel =  $cloud_base_authoritys[$v->overrideauthority];
 			}			
  		 }	
  			
@@ -93,16 +93,15 @@ class Trades extends \Cloud_Base_Rest {
 		$sessionMax = isset($request['sessionmax']) ? $request['sessionmax'] : 0;
 		$yearMin = isset($request['yearmin']) ? $request['yearmin'] : 0;
 		$authority = isset($request['authority']) ? $request['authority'] : "";
-		$over_ride_authority = isset($request['over_ride_authority']) ? $request['over_ride_authority'] : "";
+		$over_ride_authority = isset($request['overrideauthority']) ? $request['overrideauthority'] : "";
 		$trade_role = isset($request['role']) ? $request['role'] : "inactive"; // default role with least authority. 
  	
 		if(isset($request['trade']) ){	  
- 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE `trade` = %s " ,   $request['trade']);	
+ 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE trade = %s " ,   $request['trade']);	
 			$result = $wpdb->get_results($sql); ; 
 		    if( $result == null) {
 		    	$record = array('trade'=>$request['trade'], 'authority'=>$request['authority'], 'role' => $trade_role,
-		    	'overrideauthority'=>$request['over_ride_authority'], 'sessionmax'=>$request['sessionMax'], 'yearmin'=>$request['yearMin'] );
-		    	$wpdb->insert($table_name, $record );
+		    	'overrideauthority'=>$over_ride_authority , 'sessionmax'=>$sessionMax, 'yearmin'=>$yearMin);
 		    	return new \WP_REST_Response ( $wpdb->insert($table_name, $record )); 
 		    } else {
 		    	return new \WP_Error( 'duplicate', esc_html__( 'trade exists', 'my-text-domain' ), array( 'status' => 409) );
@@ -147,7 +146,16 @@ class Trades extends \Cloud_Base_Rest {
 			
 //  delete trade entry. 	
 	public function pdp_delete_trade ( \WP_REST_Request $request) {
-		return new \WP_Error( 'Not allowed', esc_html__( 'Trade delete not allowed', 'my-text-domain' ), array( 'status' => 405 ) );	
+ 		global $wpdb; 
+ 		$table_name =  $wpdb->prefix . 'cloud_base_trades';	
+		if (!isset($request['id'])){
+			return new \WP_Error( 'Id missing', esc_html__( 'ID is required', 'my-text-domain' ), array( 'status' => 400 ) );		
+		} else {
+			$wpdb->delete($table_name, array( 'id' => $request['id']) );
+			return new \WP_REST_Response ( 'success'); 	 	
+		}
+		
+//  		return new \WP_Error( 'Not allowed', esc_html__( 'Trade delete not allowed', 'my-text-domain' ), array( 'status' => 405 ) );	
 		
 	}	
 }

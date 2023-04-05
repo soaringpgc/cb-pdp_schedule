@@ -248,8 +248,7 @@ class Frontend {
      			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
 				'current_user_caps' => $this->user_cb_capability($current_user)
     			);   	
-    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-    		);
+    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'  );
 		ob_start();	    	
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 			include ('views/html_cb_pdp_instruction_request.php' );

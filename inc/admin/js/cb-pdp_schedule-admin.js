@@ -144,7 +144,7 @@
 			{
     			wait: true,			
     			error: function(model, response) {
-    				var parsedmessage = JSON.parse(response.responseText);
+//     				var parsedmessage = JSON.parse(response.responseText);
 //    				 alert(JSON.stringify(parsedmessage.message));
     				},	
     			success: (function(model, response){
@@ -178,6 +178,7 @@
       	'click #update' : 'updateItem'
       },
       addItem: function(e){
+       console.log($(this.localDivTag));
       	e.preventDefault();
       	var formData ={};
       	// grab all of the input fields
@@ -201,7 +202,7 @@
       			formData[el.id] = $(el).val();
       		}
       	});
-//  alert(JSON.stringify(formData));
+    console.log(formData);
       	this.collection.create( formData, {wait: true, error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"]) 
@@ -244,8 +245,8 @@
       	});
      
       	var updateModel = this.collection.get(formData.id);
-//       		alert(JSON.stringify(formData));
-        	updateModel.save(formData, {wait: true, error: function(model, response, error){
+//        		alert(JSON.stringify(formData));
+        		updateModel.save(formData, {wait: true, error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"]) 
       				}         
@@ -280,7 +281,7 @@
 	 });
 	app.InstructionTypesView = app.CollectionView.extend({
 	 	el: '#instruction_types', 
-		localDivTag: '#addInstructiontypes Div',
+		localDivTag: '#addinstructiontypes Div',
 	 	preinitialize(){
 	 	   this.collection = new app.InstructionTypeList();
 	 	},	

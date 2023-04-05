@@ -24,7 +24,6 @@
 
 		echo('<div id=editdate>  </div>');
 		echo ('<form id="editdutyday" action="#" ><div >');
-
   		foreach($trades as $trade ){	
   			$tl =	str_replace(' ', '_', $trade->trade);	
 			if( current_user_can( 'manage_options') || current_user_can($trade->overrideauthority) ) {	

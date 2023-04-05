@@ -4,12 +4,12 @@
 </script>
 
 
-<div style="display:inline-block"  align:left id="instruction_types"  class="instruction_types editform" >
+<div style="display:inline-block"  align:left id="instruction_types"  class="editform" >
 <?php 			
 if( current_user_can( 'manage_options' ) ) {	
   echo ('   <h3>Instruction Types</h3>
-  <DIV id="instruction_types">   
-   <form id="instruction_types" action="#" >
+  <DIV id="addinstructiontypes">   
+   <form id="addinstructiontypes" action="#" >
   <div>    
     	<input type = "hidden"
             id = "id"
@@ -17,18 +17,17 @@ if( current_user_can( 'manage_options' ) ) {
             value = ""
             name = "id"/>
         <div class="hform">   
-        <label for="instruction_type" style=color:black>Instruction: </label>                  		   
+        <label for="request_type" style=color:black>Instruction: </label>                  		   
         <input type = "text"
-            id = "instruction_type"
+            id = "request_type"
             size = "30"
-            name = "instruction_type"/> 
+            name = "request_type"/> 
            </div> 
         <div class="hform">         	
         <label for="add" style=color:black>Add</label>      
         <button id="add" class="view">Submit</button>
         <button id="update" class="cb_edit">Update</button>
         </div>
-       
     </form></div>');
 }    
 ?>   
@@ -38,9 +37,11 @@ if( current_user_can( 'manage_options' ) ) {
         <p>Instruction Types</p>
     </div>
     <div class="Heading">
+<!-- 
         <div class="Cell0"  >
             <p>ID</p>
         </div>
+ -->
         <div class="Cell2" >
             <p>Instruction</p>
         </div>
