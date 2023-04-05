@@ -61,10 +61,10 @@
    					}				
    				}     				  				
    				if ( !is_null( $choices[$k][1]) ){
-   					$pref_array = array( 'member_id'=>$user->id , 'trade'=>$role_id, 'session'=>$session, 'year'=>date('Y') );
+   					$pref_array = array( 'member_id'=>$user->ID , 'trade'=>$role_id, 'session'=>$session, 'year'=>date('Y') );
    					// see if a record exists for this year, member, trade and session 
    					$sql = $wpdb->prepare("Select id from {$table_preferences} where member_id = %d  AND trade=%d AND session=%d  AND year=%d ", 
-   						$user->id, $role_id, $session, date('Y') );   	
+   						$user->ID, $role_id, $session, date('Y') );   	
    					$record_id = $wpdb->get_var($sql);    					
    					if(is_null($record_id)){ // record does not exist create new
    						$wpdb->insert($table_preferences, array_merge($pref_array , $selected));
@@ -111,12 +111,11 @@
 		}
 		global $wpdb;
 		$user = wp_get_current_user();
-		$user_meta = get_userdata( $user->id );
+		$user_meta = get_userdata( $user->ID );
 		$display_name = $user_meta->first_name .' '.  $user_meta->last_name;
 		$user_roles=$user_meta->roles; 		
 		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
 		
-//  $enabled_sessions= array( '1', '1', '0');
 		$label_text = array('1st', '2nd', '3ed');
 		$table_calendar =  $wpdb->prefix . 'cloud_base_calendar';
  		$table_field_duty =  $wpdb->prefix . 'cloud_base_field_duty';	
@@ -132,7 +131,7 @@
 		echo (' <div>Profession: ' .$role_name. '</div>');
 		echo (' <div>Select your prefered Duty days:</div><br>');	
 		echo ('<form id="selectdutyday"  name="selectdutyday" method="post" >');
-		echo ('<input type="hidden" id="member_id" name="member_id" value="'. $user->id . '"</input> ');
+		echo ('<input type="hidden" id="member_id" name="member_id" value="'. $user->ID . '"</input> ');
 		echo ('<input type="hidden" id="member_role" name="member_role" value="'. $role_name . '"</input> ');
 		echo('<table>');
 
