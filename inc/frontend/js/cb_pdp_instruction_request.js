@@ -97,7 +97,7 @@
 					},
 				eventTextColor: 'black',
 				events:{
-				  	url: '/wordpress/wp-json/cloud_base/v1/instruction',
+					url: passed_vars.restURL + 'cloud_base/v1/instruction',
 				  	method: 'GET',				
 // 				  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
 				},

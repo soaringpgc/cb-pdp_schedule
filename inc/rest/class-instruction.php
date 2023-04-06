@@ -115,8 +115,8 @@ class Instruction extends \Cloud_Base_Rest {
 //  create new instruction request 
 	public function pdp_post_instruction ( \WP_REST_Request $request) {
 		$max_per_hour = 3; // this needs to be a configuration changeable value. 
-		$hours_per_day = 3; // this needs to be a configuration changeable value. 
-		$first_instruction = 8;
+		$hours_per_day = 4; // this needs to be a configuration changeable value. 
+		$first_instruction = 9;
 		$lesson_length = 1; 
 		$inst = null;
 		$cfig2 = null;
@@ -228,7 +228,7 @@ class Instruction extends \Cloud_Base_Rest {
 			$msg .= 'Member weight: ' . $member_weight .  "<br>\n"; 
 			$sql = ('Select request_type FROM ' . $table_type . ' WHERE id=' . $inst_type);
 			$msg .= 'Instruction type: ' . $wpdb->get_var($sql) .  "<br>\n"; 
-			$msg .= 'Email:  <a href="mailto:' . $user_meta->user_email .  ">". $user_meta->user_email  ."</a><br>\n"; 
+			$msg .= 'Email:  <a href="mailto:' . $user_meta->user_email .  '">'. $user_meta->user_email  .'</a><br>\n'; 
 		 	
 			$headers = "MIME-Version: 1.0" . "\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";

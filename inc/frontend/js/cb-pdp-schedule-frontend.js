@@ -101,9 +101,12 @@
                	     $.ajax({
                	         url: passed_vars.restURL + "cloud_base/v1/field_duty?fc=1&start="+ start + "&end=" + end,
                	         type: 'GET',
-               	         cache: "no-store", 
+               	         cache: false, 
                	         headers: {
-               	             'X-WP-NONCE':passed_vars.nonce
+               	             'X-WP-NONCE':passed_vars.nonce,
+               	             'Cache-Control': 'no-cache, no-store, must-revalidate', 
+     						 'Pragma': 'no-cache', 
+     						 'Expires': '0'
                	         }, success: function (response) {
                	              successCallback(response);
                	         }
@@ -118,6 +121,9 @@
 // 					},
 	    // If an event is click on decide what to do. 
 				eventClick: function(info) {
+					if(current_user_role === null){
+						return;
+					}
 					var assigned_member = info.event.title.split(': ')[1] ;				  
 					info.jsEvent.preventDefault(); 
 					hideassignpopup( );	
