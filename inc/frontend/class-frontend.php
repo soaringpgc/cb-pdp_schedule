@@ -229,7 +229,6 @@ class Frontend {
 		if(!is_user_logged_in()){
  			return;
 		}
-
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar', 'jqueryui'), $this->version, true  );	
 			$current_user = wp_get_current_user();
@@ -246,7 +245,7 @@ class Frontend {
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
      			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
-				'current_user_caps' => $this->user_cb_capability($current_user)
+				'current_user_caps' => $current_user->allcaps
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'  );
 		ob_start();	    	
@@ -340,7 +339,7 @@ class Frontend {
 	 	}
      }
      public function user_cb_capability($user){
-     	// requires user object      		
+     	// requires user object      	     		
    		$current_cap =array();
 			foreach ($user->allcaps as $k=>$v ){
 				if (strpos($k, "cb_" ) !== false) {

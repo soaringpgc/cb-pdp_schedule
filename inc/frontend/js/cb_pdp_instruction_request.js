@@ -37,12 +37,12 @@
 		 var enabled_sessions = passed_vars.enabled_sessions;
 		 var trade_authority = passed_vars.trade_authority;
 		 var current_user_role_name =  passed_vars.current_user_role_name;
-		 var current_user_can =  passed_vars.user_can;
+		 var current_user_can =  passed_vars.current_user_caps;
 		 var saturday = nextDay(6);
 		 var sunday = nextDay(0);
 		 var record_id ='';
 
-  		 if(current_user_role == 'cfi_g' ){
+ 		if(current_user_can['cfi_g'] ){
   			var header = {
   				left: 'cb_prev',
   				center: 'title',
@@ -107,8 +107,9 @@
  				 }, 
  				 slotMinTime: "08:00:00",
  				 slotMaxTime: "12:00:00",		
+//  I'm sure the following logic could be cleaned up and streamlined. that will have to wait
+//  for version two, for now it is work.  				  				 
 				 eventClick: function(info) {
-//  			console.log(info.event.id);
 					var instructiondate= moment(info.event.start).format('YYYY-MM-DD'); 
 					// member wishes to cancel 
 					if( current_user_id ==  info.event.extendedProps.member_id){
@@ -135,7 +136,7 @@
     							}								
  							});	 	
   	 		  			} 						
- 				} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2) ){										
+ 				} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2) || current_user_id ==  info.event.extendedProps.cfiga){										
 					if( current_user_id ==  info.event.extendedProps.cfiga){
 						// Instructor wishes to cancel
 					 	if(confirm("Do you wish to cancel instructionon? on " + instructiondate + "? " )) {								
@@ -157,7 +158,7 @@
 								},
 								error: function(xhr){
         							calendar.refetchEvents();
-        							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
+//         							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
     							}								
  							});	 	
   	 		  			} 						
@@ -201,7 +202,41 @@
 //  				alert("Hi schedule assistant");
  					$("#assigned_instructor").show(); 
 // 					$("#assigned_instructor").removeClass('popup-content'); 	
-				}	
+				}	else if (current_user_can['cfi_g']  ) {	
+ 					// Instructor accetps. 				
+ 					$('#cfig_accept').dialog({									
+ 					    autoOpen: true,
+ 					    buttons: {
+ 					        Cancel: function() {
+ 					            $(this).dialog("close");
+ 					        },
+ 					        Accept: function() {
+ 								$.ajax({
+ 									type: "PUT",
+ 									url: passed_vars.restURL + 'cloud_base/v1/instruction',
+ 									async: true,
+ 								   cache: false,
+ 								   timeout: 30000,
+ 									beforeSend: function (xhr){
+ 										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+ 									},
+ 									data:{
+ 										id: info.event.id,
+ 										cfig : current_user_id
+ 									},
+ 									success : function (response){
+ 										calendar.refetchEvents();
+  										hideinstructionrequest();				
+ 									},
+ 									error: function(xhr){
+         								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
+     								}									
+  								});	 
+ 					            $(this).dialog("close");	
+   	 		  				}												
+ 					    },
+ 					    width: "400px"});							    
+					  }  									
 			  }
 		  });
 		  calendar.render();    		  
@@ -259,7 +294,7 @@
 							calendar.refetchEvents();		
 						},
 						error : function(response){
-						console.log(response);
+// 						console.log(response);
 // 							alert(response);
 							hideassigninstuctor( );		
 							calendar.refetchEvents();

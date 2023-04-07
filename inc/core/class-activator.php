@@ -160,6 +160,6 @@ function set_default_cb_schedule_configuration(){
 		$cb_fm_weekly = array( '1', '0', '0', '0', '0', '0', '1' );
 		$cb_weekly = array( $cb_tp_weekly, $cb_ins_weekly, $cb_fm_weekly );
 		update_option('cloudbase_tp_weekly', $cb_weekly, false );		
-		update_option('cloudbase_enabled_sessions', array('0','0','0') );								    
+// 		update_option('cloudbase_enabled_sessions', array('0','0','0') );								    
 	}	
 }

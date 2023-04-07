@@ -21,7 +21,7 @@ function instruction_Request_submit(){
 		$requestType = $_SERVER['REQUEST_METHOD'];
 		if($requestType == 'GET'){
 			return;
-		} 	
+		} 			
  		global $wpdb; 
 // 		$table_instruction =  $wpdb->prefix . 'cloud_base_instruction';		
  		$table_type =  $wpdb->prefix . 'cloud_base_instruction_type';		
@@ -29,9 +29,10 @@ function instruction_Request_submit(){
   		$user = get_user_by('ID', $_POST['member_id'] );
  		$user_meta = get_userdata($_POST['member_id']  );
  		$request_date = $_POST['request_date'] ;	
- 		$istr_type = $_POST['inst_type'] ;	
+ 		isset($request['inst_type']) ? $inst_type = $request['inst_type'] : $inst_type = 1 ;
+ 		$inst_type = $_POST['inst_type'] ;	
 		$query_params = array( 'member_id'=> $user->ID, 'enter_date'=> date('Y-m-d'),
-			'request_date'=> $request_date, 'inst_type'=> $istr_type);
+			'request_date'=> $request_date, 'inst_type'=> $inst_type);
 		$display_name = $user->first_name .' '.  $user->last_name;
 		if(isset($_POST['cfig1']) && (trim($_POST['cfig1'])!="") && ($_POST['cfig1'] > 0 )){
 			   $cfig1 = get_user_by('ID', $_POST['cfig1'] );
@@ -57,12 +58,10 @@ function instruction_Request_submit(){
 		isset($_POST['comment']) ? $comment = $_POST['comment'] : $comment = "" ;
 		$query_params = array_merge($query_params, array('comment'=> $comment));
  		$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/instruction' ) ;  
-
-		$rest_request->set_query_params($query_params );
-		   		  		
+		$rest_request->set_query_params($query_params );		   		  		
     	$rest_response = rest_do_request( $rest_request);     
    		
-   		$sql = 'SELECT request_type FROM '. $table_type .' WHERE id=' . $istr_type ;
+   		$sql = 'SELECT request_type FROM '. $table_type .' WHERE id=' . $inst_type ;
    		$inst_text = $wpdb->get_var($sql);
    		   		 		
    		$msg = 'Member: ' . $display_name . ', is requesting instruction on ' . substr($request_date, 0,10) . "<br>\n";  

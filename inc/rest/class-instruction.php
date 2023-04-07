@@ -65,7 +65,7 @@ class Instruction extends \Cloud_Base_Rest {
 		if(isset($request['start']) && isset($request['end'])){			
   			$sql = $wpdb->prepare("SELECT *, i.id as id FROM {$table_instruction} i INNER JOIN {$table_type} t ON t.id=i.inst_type WHERE i.request_date BETWEEN %s AND %s", $request['start'], $request['end'] );	 
 			$items = $wpdb->get_results($sql);
-			
+				
 			foreach($items as $value){ 
 				$start = new \DateTime($value->request_date);
 				
@@ -116,8 +116,8 @@ class Instruction extends \Cloud_Base_Rest {
 	public function pdp_post_instruction ( \WP_REST_Request $request) {
 		$max_per_hour = 3; // this needs to be a configuration changeable value. 
 		$hours_per_day = 4; // this needs to be a configuration changeable value. 
-		$first_instruction = 9;
-		$lesson_length = 1; 
+		$first_instruction = 9; // this needs to be a configuration changeable value. 
+		$lesson_length = 1; // this needs to be a configuration changeable value. 
 		$inst = null;
 		$cfig2 = null;
 				
