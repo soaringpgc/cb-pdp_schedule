@@ -255,7 +255,7 @@ class Instruction extends \Cloud_Base_Rest {
 			$display_name = $user_meta->first_name .' '.  $user_meta->last_name;				
 			$request_date = new \DateTime($record->request_date);
 			$cfig = get_user_by('ID', $record->assigned_cfig_id);
-			$cfig_meta = get_userdata( $member->ID );
+			$cfig_meta = get_userdata( $cfig->ID );
 			$display_cfig = $cfig_meta->first_name .' '.  $cfig_meta->last_name;				
 
 			$to = $cfig->user_email . ', ' .  $member->user_email  ; 		

@@ -107,6 +107,7 @@ class Frontend {
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
         wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	    
+       	wp_register_script( 'fcadaptive', 'https://cdn.jsdelivr.net/npm/@fullcalendar/adaptive@6.1.5/index.global.min.js'); 	
  	    
 //  	    wp_register_script( 'calendar_daygrid',' https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js');
  	    
@@ -158,7 +159,7 @@ class Frontend {
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 			$enabled = get_option('cloudbase_enabled_sessions', false );
-
+			$current_user = wp_get_current_user();
     		$dateToBePassed = array(
     		    'ajax_url' =>  admin_url('admin-ajax.php'),
     			'restURL' => esc_url_raw( rest_url() ),
@@ -171,6 +172,7 @@ class Frontend {
      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
      			'user_can' => $this->user_can(),
+     			'current_user_caps' => $current_user->allcaps, // these two need to be cleand up later. 
      			'hide_days' => $hide_days
     			);   	
     		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'

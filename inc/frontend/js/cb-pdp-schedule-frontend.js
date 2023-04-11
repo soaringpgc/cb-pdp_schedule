@@ -48,14 +48,15 @@
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
+        		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
 // set up calendar
-        		headerToolbar: {
-//        	  		plugins: [ dayGrid, timeGrid ],
- 					left: 'prev, timeGridWeek',
- 					center: 'title',
- 					right: 'dayGridMonth, next',
- 						ignoreTimezone: false
- 					},
+        			headerToolbar: {
+//        	  			plugins: [ dayGrid, timeGrid ],
+ 						left: 'prev, timeGridWeek',
+ 						center: 'title',
+ 						right: 'dayGridMonth, next',
+ 							ignoreTimezone: false
+ 						},
   					hiddenDays: hidded_days,
  					selectable: true,
  					select: this.select, 
@@ -104,9 +105,9 @@
                	         cache: false, 
                	         headers: {
                	             'X-WP-NONCE':passed_vars.nonce,
-               	             'Cache-Control': 'no-cache, no-store, must-revalidate', 
-     						 'Pragma': 'no-cache', 
-     						 'Expires': '0'
+//                	             'Cache-Control': 'no-cache, no-store, must-revalidate', 
+//      						 'Pragma': 'no-cache', 
+//      						 'Expires': '0'
                	         }, success: function (response) {
                	              successCallback(response);
                	         }

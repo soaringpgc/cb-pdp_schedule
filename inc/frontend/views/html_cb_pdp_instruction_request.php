@@ -68,7 +68,7 @@ function instruction_Request_submit(){
    		$msg .=  'In the area of: ' . $inst_text  ."<br>\n";
    		$msg .=  'Student Weight is: ' . $member_weight ."<br>\n";
    		if( $cfig1 != null ){
-   			   		$msg .=  'Request Instructor is: ' .  $cfig1->first_name .' '. $cfig1->last_name ."<br>\n";
+   			   	$msg .=  'Request Instructor is: ' .  $cfig1->first_name .' '. $cfig1->last_name ."<br>\n";
    		}
    		if( $cfig2 != null ){
    			$msg .=  'Alternate Instructor is: ' . $cfig2->first_name .' '. $cfig2->last_name  ."<br>\n";	
@@ -107,7 +107,7 @@ function instruction_Request_submit(){
 // var_dump($subject, $msg, $to )	;
 // die();	
 		
-//   		mail($to,$subject,$msg,$headers);
+   		mail($to,$subject,$msg,$headers);
 		echo('<p> Your Instruction Request has been entered.</p> ');
 
 
@@ -180,10 +180,9 @@ function display_instruction_Request(){
  			<div class="table-col" ><textarea id="comment" name="comment" rows="2", cols="55"></textarea></div></div>');
 
       		echo ('<div id="inst_type"  class="table-row"> <label for="inst_type" style=color:black class="table-col">Instruction Type: </label>
-     	 		<div class="table-col" ><select class="event_cal_form" name="inst_type" id="inst_type" form="instruction_request">
-     	 		<option value=NULL>Select</option>');       
+     	 		<div class="table-col" ><select class="event_cal_form" name="inst_type" id="inst_type" form="instruction_request">');       
      			  foreach($instruction_types as $key){ 	
-     			  	echo '<option value=' . $key->id . '>'. $key->request_type . '</option>';
+     			  		echo '<option value=' . $key->id . '>'. $key->request_type . '</option>';
      	 		 };             
      	 		echo ( '</select></div> </div>');
      	 		echo('<div class="table-row"><label for="member_weight" style=color:black class="table-col">Member Weight: </label>

@@ -172,6 +172,7 @@ class Calendar extends \Cloud_Base_Rest {
   			 	   		$id = $wpdb->insert_id;  // get the id of the record just inserted. 
   			 	   		$c++;
   			 	   	};	
+// this is a problem if the trads are not sequencial !! need to revist this!
    			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
    			 		$max_t = $wpdb->get_var($sql);  
 					if( $sessions[$j] === '0'){

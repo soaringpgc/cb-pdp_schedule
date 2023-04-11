@@ -59,6 +59,7 @@
         $(document).ready (function() {
 	      	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
+        		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
         		customButtons :{
         			cb_next :{ 
         				text: 'Next',
