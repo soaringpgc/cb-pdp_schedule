@@ -114,10 +114,18 @@ class Instruction extends \Cloud_Base_Rest {
 	}
 //  create new instruction request 
 	public function pdp_post_instruction ( \WP_REST_Request $request) {
-		$max_per_hour = 3; // this needs to be a configuration changeable value. 
-		$hours_per_day = 4; // this needs to be a configuration changeable value. 
-		$first_instruction = 9; // this needs to be a configuration changeable value. 
-		$lesson_length = 1; // this needs to be a configuration changeable value. 
+// 		$max_per_hour = 3; // this needs to be a configuration changeable value. 
+// 		$hours_per_day = 4; // this needs to be a configuration changeable value. 
+// 		$first_instruction = 9; // this needs to be a configuration changeable value. 
+// 		$lesson_length = 1; // this needs to be a configuration changeable value. 
+
+
+		$lessions = get_option('cloudbase_leason_slots', array('start'=>9, 'slots'=>3, 'length'=>1, 'count'=>3));	
+		$first_instruction = $lessions['start'];
+		$max_per_hour = $lessions['slots'];
+		$lesson_length = $lessions['length'];
+		$hours_per_day = $lessions['count'];
+
 		$inst = null;
 		$cfig2 = null;
 				

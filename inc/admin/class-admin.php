@@ -152,7 +152,10 @@ class Admin {
            
             $page_tabs_enhanced[] = array( "tab"=>"html_instruction_setup" , "title"=> "Instruction Setup", "page"=>"cloud_base",
            "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
-           
+
+            $page_tabs_enhanced[] = array( "tab"=>"html_instruction" , "title"=> "Instruction Hours", "page"=>"cloud_base",
+           "plug_path"=>plugin_dir_path(__FILE__).'views/' );   
+
            return  $page_tabs_enhanced;
     }
 
@@ -221,5 +224,24 @@ class Admin {
 		}
 		wp_redirect('options-general.php?page=cloud_base&tab=html_seasion_setup');	
     	exit();    		
-    }  
+    } 
+    public function cb_schedule_instruction_setup(){
+		$lessions = get_option('cloudbase_leason_slots', array('start'=>"9:00", 'slots'=>3, 'length'=>"1:00", 'count'=>3));		
+		if( isset($_POST['start'])){
+			$lessions['start'] = $_POST['start'];
+		}
+		if( isset($_POST['slots'])){
+			$lessions['slots'] = $_POST['slots'];
+		}
+		if( isset($_POST['length'])){
+			$lessions['length'] = $_POST['length'];
+		}
+		if( isset($_POST['count'])){
+			$lessions['count'] = $_POST['count'];
+		}	
+//      	check_admin_referer('schedule_page');		
+		update_option('cloudbase_leason_slots',$lessions , false )	;
+		wp_redirect('options-general.php?page=cloud_base&tab=html_instruction');	
+    	exit();    		
+    }   
 }

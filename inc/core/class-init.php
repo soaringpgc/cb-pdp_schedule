@@ -148,7 +148,7 @@ class Init {
 		 */
 		 $this->loader->add_filter( 'cb_admin_add_config', $plugin_admin, 'add_admin_tab_calendar' );
 		 $this->loader->add_action( 'admin_post_schedule_setup', $plugin_admin, 'cb_schedule_setup_response');
-
+		 $this->loader->add_action( 'admin_post_instruction_setup', $plugin_admin, 'cb_schedule_instruction_setup');
 	}
 
 	/**
