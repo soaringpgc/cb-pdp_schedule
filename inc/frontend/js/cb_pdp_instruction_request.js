@@ -136,36 +136,36 @@
         							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
     							}								
  							});	 	
-  	 		  			} 						
- 				} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2) || current_user_id ==  info.event.extendedProps.cfiga){										
-					if( current_user_id ==  info.event.extendedProps.cfiga){
-						// Instructor wishes to cancel
-					 	if(confirm("Do you wish to cancel instructionon? on " + instructiondate + "? " )) {								
-							$.ajax({
-								type: "DELETE",
-								url: passed_vars.restURL + 'cloud_base/v1/instruction',
-								async: true,
-							   cache: false,
-							   timeout: 30000,
-								beforeSend: function (xhr){
-									xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-								},
-								data:{
-									id: info.event.id,
-								},
-								success : function (response){
-									calendar.refetchEvents();
- 									hideinstructionrequest();				
-								},
-								error: function(xhr){
-        							calendar.refetchEvents();
-//         							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
-    							}								
- 							});	 	
-  	 		  			} 						
- 				} else {	
- 					// Instructor accetps. 				
- 					$('#cfig_accept').dialog({									
+  	 		  				} 						
+ 					} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2) || current_user_id ==  info.event.extendedProps.cfiga){										
+						if( current_user_id ==  info.event.extendedProps.cfiga){
+							// Instructor wishes to cancel
+						 	if(confirm("Do you wish to cancel instructionon? on " + instructiondate + "? " )) {								
+								$.ajax({
+									type: "DELETE",
+									url: passed_vars.restURL + 'cloud_base/v1/instruction',
+									async: true,
+								   cache: false,
+								   timeout: 30000,
+									beforeSend: function (xhr){
+										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+									},
+									data:{
+										id: info.event.id,
+									},
+									success : function (response){
+										calendar.refetchEvents();
+ 										hideinstructionrequest();				
+									},
+									error: function(xhr){
+        								calendar.refetchEvents();
+//         								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
+    								}								
+ 								});	 	
+  	 		  				} 						
+ 					} else if ( (current_user_can['cfi_g'])&& (info.event.extendedProps.cfiga == null)  ){	
+  					// Instructor accepts. 					
+ 					$('#cfig_accept').dialog({	 												
  					    autoOpen: true,
  					    buttons: {
  					        Cancel: function() {
@@ -203,9 +203,9 @@
 //  				alert("Hi schedule assistant");
  					$("#assigned_instructor").show(); 
 // 					$("#assigned_instructor").removeClass('popup-content'); 	
-				}	else if (current_user_can['cfi_g']  ) {	
+				}	else if ( (current_user_can['cfi_g'])&& (info.event.extendedProps.cfiga == null)  ){	
  					// Instructor accetps. 				
- 					$('#cfig_accept').dialog({									
+ 					$('#cfig_accept').dialog({								
  					    autoOpen: true,
  					    buttons: {
  					        Cancel: function() {
@@ -236,8 +236,8 @@
  					            $(this).dialog("close");	
    	 		  				}												
  					    },
- 					    width: "400px"});							    
-					  }  									
+  					    width: "400px"});							    
+ 					  }  									
 			  }
 		  });
 		  calendar.render();    		  
@@ -270,8 +270,7 @@
   	 		   }     		   	
      		}); 
      		
-     		$('.instructor_select').change(function() {
-		 		
+     		$('.instructor_select').change(function() {		 		
 				var member_id =   $("#assigned_cfig").val();
 				var member_name = $("#assigned_cfig").find('option:selected').text();			
 		 	 				
@@ -296,7 +295,6 @@
 						},
 						error : function(response){
 // 						console.log(response);
-// 							alert(response);
 							hideassigninstuctor( );		
 							calendar.refetchEvents();
 						}
@@ -324,18 +322,38 @@
 })( jQuery );
 
 function hideinstructionrequest( ) {
-	jQuery('#editinstruction').addClass('popup-content'); 	
-// 	jQuery('#calendar').removeClass('popup-content');
-	
+	jQuery('#editinstruction').addClass('popup-content'); 		
 }
 function hideassigninstuctor( ) {
-// 	var trade_authority = passed_vars.trade_authority;
-// 		for(let i=0; i < trade_authority.length; ++i){
-			jQuery("#assigned_instructor").hide(); 
-//  			jQuery("#assigned_instructor").addClass('popup-content'); 
-// 		}				
-//  	jQuery("#popup-content").hide();  	
+		jQuery("#assigned_instructor").hide();  	
 }
+function dumpweekendschedule(){
+
+	var saturday = nextDay(6);
+	var sunday = nextDay(1);
+	
+	jQuery.ajax({
+        url: passed_vars.restURL + "cloud_base/v1/instruction?&start="+ saturday.toISOString().substr(0,10) + "&end=" + sunday.toISOString().substr(0,10),
+        type: 'GET',
+        cache: false, 
+        success: function (response) {
+        console.log(response);
+    		var str = '<div class="table-container">';
+          		response.forEach((item) => {
+          			str += '<div class="table-row"><div class="table-col">' + item.start + '</div><div class="table-col"> '  + item.title +'</div></div>' ;	  
+          		});
+          		str += '</div>'
+          		jQuery("#dumpschedule").html(str );	  
+        }
+    });		
+}
+function nextDay(x){
+	var now = new Date();    
+	now.setDate(now.getDate() + (x+(7-now.getDay())) % 7);
+	return now;
+}
+
+
 
 
 	

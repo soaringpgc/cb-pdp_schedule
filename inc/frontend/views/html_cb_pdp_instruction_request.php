@@ -225,6 +225,8 @@ function display_instruction_Request(){
 		for the days flying. </div>');
 
 	echo ('<div id="calendar" "></div>');
+	echo('<input type="button" value="Dump schedule"  onclick="dumpweekendschedule()" >'); //
+	echo('<div id="dumpschedule"></div>');
  }	
 	
 ?> 
