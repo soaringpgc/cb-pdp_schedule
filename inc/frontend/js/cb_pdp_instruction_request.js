@@ -217,22 +217,13 @@ function dumpweekendschedule(){
         type: 'GET',
         cache: false, 
         success: function (response) {
-        	response.sort(function(a,b){ return new Date(a.start) - new Date(b.start)});
+        	response.sort(function(a,b){ return new Date(a.start) - new Date(b.start)});  // sort by date time 
         	var str = '<table width="60%"  border="1"><tr><th width="20%x">Date/Time</th><th width="30%x">Student/Instructor</th><th width="25%">Instruction type</th><th width="25%">Comment</th><tr>';
            		response.forEach((item) => {
           			str += '<tr><td>' + item.start + '</td><td>' + item.title + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
           		});
        str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        
-         console.log(response);
-//     		var str = '<div class="table-container"><div class="table-row"><div class="table-col">' + 'Time' + '</div><div class="table-col"> '  + 'Student' +
-//           			'</div><div class="table-col"> '  + 'instruction type' +'</div><div class="table-col"> '  + 'member weight' +'</div> <div class="table-col"> '  + 
-//           			'comment'+'</div><div class="table-col"> '  +  'Instructor' +'</div></div>';
-//           		response.forEach((item) => {
-//           			str += '<div class="table-row"><div class="table-col">' + item.start + '</div><div class="table-col"> '  + item.title +
-//           			'</div><div class="table-col"> '  + item.request_type +'</div><div class="table-col"> '  + item.member_weight +'</div> <div class="table-col"> '  + 
-//           			item.comment +'</div><div class="table-col"> '  + item.member_weight +'</div></div>' ;	  
-//           		});
-//           		str += '</div>'
+//          console.log(response);
           		print_schedule(str);
 //           		jQuery("#dumpschedule").html(str );	  
         }
@@ -242,9 +233,7 @@ function getNextDayOfWeek(date, dayOfWeek) {
     // Code to check that date and dayOfWeek are valid left as an exercise ;)
 
     var resultDate = new Date(date.getTime());
-
     resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
-
     return resultDate;
 }
 
