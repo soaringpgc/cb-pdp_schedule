@@ -30,6 +30,7 @@
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
 	 $(function(){
+	 
 		 var current_user_id = passed_vars.current_user_id;
 // 		 var current_user_caps = passed_vars.current_user_caps;
 // 		 console.log(current_user_caps);
@@ -41,8 +42,9 @@
 		 var saturday = nextDay(6);
 		 var sunday = nextDay(0);
 		 var record_id ='';
-
+		 
  		if(current_user_can['cfi_g'] ){
+// Allow CFIs to move to other weekends to schedule students. 
   			var header = {
   				left: 'cb_prev',
   				center: 'title',
@@ -55,11 +57,11 @@
   				right: '',
   					}; 
 		  }
-
+// 
         $(document).ready (function() {
-	      	var calendarEl = document.getElementById('calendar');
-        	var calendar = new FullCalendar.Calendar(calendarEl, {
-        		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
+	      	var calendarEl = document.getElementById('calendar'); 
+        	var calendar = new FullCalendar.Calendar(calendarEl, { // set up calendar
+//         		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
         		customButtons :{
         			cb_next :{ 
         				text: 'Next',
@@ -89,7 +91,18 @@
  				headerToolbar: header, 
  				selectable: true,
  				select: this.select, 
-         	  	initialView: 'timeGrid',	// agendaDay
+  				initialView: 'timeGrid',
+//          	  	initialView: 'dayGridWeekend',	// agendaDay
+//          	  	views:{
+//          	  		dayGridWeekend:{
+//          	  			type: 'timeGrid',
+//          	  			allDaySlot: false,
+//          	  			slotEventOverlap: false,
+// //          	  			duration: { days: 2 },
+//  				 		eventShortHeight: "30",
+//  				 		eventMaxStack: "1",	
+//          	  			}
+//          	  		},
 				dateClick: function(info){
 					$('#editinstruction').removeClass('popup-content');
 // 					$('#calendar').addClass('popup-content');
@@ -103,177 +116,52 @@
 // 				  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
 				},
 				visibleRange: {
- 				   start: saturday,
+ 				   start:  saturday,
  				   end: sunday
- 				 }, 
- 				 slotMinTime: "08:00:00",
- 				 slotMaxTime: "12:00:00",		
-//  I'm sure the following logic could be cleaned up and streamlined. that will have to wait
-//  for version two, for now it is work.  				  				 
+ 				 },
+ 	   			 slotMinTime: "08:00:00",
+				 slotMaxTime: "14:00:00",	
 				 eventClick: function(info) {
 					var instructiondate= moment(info.event.start).format('YYYY-MM-DD'); 
 					// member wishes to cancel 
-					if( current_user_id ==  info.event.extendedProps.member_id){
-					 	if(confirm("Do you wish to cancel instructionon? on " + instructiondate + "? " )) {								
-							$.ajax({
-								type: "DELETE",
-								url: passed_vars.restURL + 'cloud_base/v1/instruction',
-								async: true,
-							   cache: false,
-							   timeout: 30000,
-								beforeSend: function (xhr){
-									xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-								},
-								data:{
-									id: info.event.id,
-								},
-								success : function (response){
-									calendar.refetchEvents();
- 									hideinstructionrequest();				
-								},
-								error: function(xhr){
-									calendar.refetchEvents();
-        							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-    							}								
- 							});	 	
-  	 		  				} 						
- 					} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2) || current_user_id ==  info.event.extendedProps.cfiga){										
-						if( current_user_id ==  info.event.extendedProps.cfiga){
-							// Instructor wishes to cancel
-						 	if(confirm("Do you wish to cancel instructionon? on " + instructiondate + "? " )) {								
-								$.ajax({
-									type: "DELETE",
-									url: passed_vars.restURL + 'cloud_base/v1/instruction',
-									async: true,
-								   cache: false,
-								   timeout: 30000,
-									beforeSend: function (xhr){
-										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-									},
-									data:{
-										id: info.event.id,
-									},
-									success : function (response){
-										calendar.refetchEvents();
- 										hideinstructionrequest();				
-									},
-									error: function(xhr){
-        								calendar.refetchEvents();
-//         								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
-    								}								
- 								});	 	
-  	 		  				} 						
- 					} else if ( (current_user_can['cfi_g'])&& (info.event.extendedProps.cfiga == null)  ){	
-  					// Instructor accepts. 					
- 					$('#cfig_accept').dialog({	 												
- 					    autoOpen: true,
- 					    buttons: {
- 					        Cancel: function() {
- 					            $(this).dialog("close");
- 					        },
- 					        Accept: function() {
- 								$.ajax({
- 									type: "PUT",
- 									url: passed_vars.restURL + 'cloud_base/v1/instruction',
- 									async: true,
- 								   cache: false,
- 								   timeout: 30000,
- 									beforeSend: function (xhr){
- 										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
- 									},
- 									data:{
- 										id: info.event.id,
- 										cfig : current_user_id
- 									},
- 									success : function (response){
- 										calendar.refetchEvents();
-  										hideinstructionrequest();				
- 									},
- 									error: function(xhr){
-         								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-     								}									
-  								});	 
- 					            $(this).dialog("close");	
-   	 		  				}												
- 					    },
- 					    width: "400px"});							    
-					  }  		
- 				} else if( current_user_role == 'schedule_assist' ){
- 					record_id = info.event.id;
-//  				alert("Hi schedule assistant");
- 					$("#assigned_instructor").show(); 
-// 					$("#assigned_instructor").removeClass('popup-content'); 	
-				}	else if ( (current_user_can['cfi_g'])&& (info.event.extendedProps.cfiga == null)  ){	
- 					// Instructor accetps. 				
- 					$('#cfig_accept').dialog({								
- 					    autoOpen: true,
- 					    buttons: {
- 					        Cancel: function() {
- 					            $(this).dialog("close");
- 					        },
- 					        Accept: function() {
- 								$.ajax({
- 									type: "PUT",
- 									url: passed_vars.restURL + 'cloud_base/v1/instruction',
- 									async: true,
- 								   cache: false,
- 								   timeout: 30000,
- 									beforeSend: function (xhr){
- 										xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
- 									},
- 									data:{
- 										id: info.event.id,
- 										cfig : current_user_id
- 									},
- 									success : function (response){
- 										calendar.refetchEvents();
-  										hideinstructionrequest();				
- 									},
- 									error: function(xhr){
-         								alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);
-     								}									
-  								});	 
- 					            $(this).dialog("close");	
-   	 		  				}												
- 					    },
-  					    width: "400px"});							    
- 					  }  									
+					if( current_user_id ==  info.event.extendedProps.member_id){  // Student clicks on event., possible to cancel. 
+// 					  	jQuery("#pop_up_dialog").html('Do you wish to cancel instructionon on ' + instructiondate + '"? ' );	
+// 						$('#pop_up_dialog').removeClass('popup-content');	
+  	 		  			jQuery("#cfig_accept").html('Date: ' + instructiondate + '<br>Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' + 
+  	 		  			    info.event.extendedProps.member_weight + '<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  
+  	 		  			    info.event.extendedProps.alt_ins );	
+						 pop_up_dialog(info.event.id, calendar, 'Do you wish to cancel instructionon?', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);				 	
+  	 		  		} else if( current_user_id ==  info.event.extendedProps.cfiga){	  // assigned CFI clicks, possible cancel 
+   	 		  		console.log( info.event.extendedProps);
+  	 		  			jQuery("#cfig_accept").html( info.event.title + '<br>Date: ' + instructiondate +'<br>Instruction: ' + 
+  	 		  				info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
+  						 	'<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
+//   	 		  			jQuery("#pop_up_dialog").html('Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
+//   					 '<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
+
+   					    pop_up_dialog( info.event.id, calendar, 'Instructor Cancel', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);													  	 		  									
+ 					} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2)){										
+  						// Instructor accepts. 					
+ 	 		  			 jQuery("#cfig_accept").html('Date: ' + instructiondate + '<br>Instruction: ' + info.event.extendedProps.request_type + 
+ 	 		  					'<br>Member weight: ' +  info.event.extendedProps.member_weight + '<br>Comment: ' +  info.event.extendedProps.comment + 
+ 	 		  					'<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
+// 								$('#cfig_accept').removeClass('popup-content');	
+
+						 pop_up_dialog( info.event.id, calendar, 'Instructor Accept', "Return", "Yes, schedule", "PUT", current_user_id);				     		
+ 					} else if( current_user_role == 'schedule_assist' ){
+ 						console.log( info.event.extendedProps);
+ 				 		jQuery("#assigned_instructor").prepend('<div id="event_info">Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
+  					 			'<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.cfig2 +'</div>');	
+//  					alert('schedule assist');
+ 						record_id = info.event.id;
+  						$("#assigned_instructor").show(); 	
+					}	 									
 			  }
 		  });
 		  calendar.render();    		  
-		    $('.assigned_instructor').change(function() {
-				var cfig_id =   $("#assigned_cfig").val();
-				var cfig_name = $("#assigned_cfig").find('option:selected').text();		
-  				if(confirm("Are you sure you want to assign " + member_name + " as " + instructor + " on " + startdate + "? " )) {					
-					$.ajax({
-						type: "PUT",
-						url: passed_vars.restURL + 'cloud_base/v1/instruction',
-						async: true,
-					     cache: false,
-					     timeout: 30000,
-						beforeSend: function (xhr){ 
-							xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
-						},
-						data:{
-							id: info.event.id,
-							cfig : cfig_id							
-						},
-						success : function (response){
-							calendar.refetchEvents();
-							hideassigninstuctor( );				
-						},
-						error : function(response){
-							alert(response);
-							hideassigninstuctor( );		
-						}
-					});	 		 
-  	 		   }     		   	
-     		}); 
-     		
-     		$('.instructor_select').change(function() {		 		
-				var member_id =   $("#assigned_cfig").val();
-				var member_name = $("#assigned_cfig").find('option:selected').text();			
-		 	 				
+     	  $('.instructor_select').change(function() {		 		
+			var member_id =   $("#assigned_cfig").val();
+			var member_name = $("#assigned_cfig").find('option:selected').text();		 				
   				if(confirm("Are you sure you want to assign " + member_name + "? " )) {					
 					$.ajax({
 						type: "PUT",
@@ -289,7 +177,6 @@
 							cfig: member_id
 						},
 						success : function (response){
-							calendar.refetchEvents();
 							hideassigninstuctor( );		
 							calendar.refetchEvents();		
 						},
@@ -299,25 +186,18 @@
 							calendar.refetchEvents();
 						}
 					});	 		 
-  	 		   }     		   	
-     		});   
-		  
- 		});
+  	 			} 
+     		});     
+ 		  });
 		 		
-  	$('#cancel').on('click', function(){ 
-     alert("button is clicked");
-    restore_page_settings();
-    });
- 
+  	      $('#cancel').on('click', function(){ 
+//     	restore_page_settings();
+    	     jQuery("#assigned_instructor").empty();   
+          }); 
 	 }) // $(function) close	 
-	 $( window ).load(function() {
-
-	 });
-	 function nextDay(x){
-    	var now = new Date();    
-    	now.setDate(now.getDate() + (x+(7-now.getDay())) % 7);
-    	return now;
-		}
+// 	 $( window ).load(function() {
+// 
+// 	 });
 	 	 
 })( jQuery );
 
@@ -325,33 +205,117 @@ function hideinstructionrequest( ) {
 	jQuery('#editinstruction').addClass('popup-content'); 		
 }
 function hideassigninstuctor( ) {
-		jQuery("#assigned_instructor").hide();  	
+		jQuery("#assigned_instructor").hide();  
+		jQuery("#event_info").remove();   	
 }
 function dumpweekendschedule(){
-
-	var saturday = nextDay(6);
-	var sunday = nextDay(1);
-	
+	var now = new Date();   
+	var saturday = getNextDayOfWeek(now, 5);
+	var sunday = getNextDayOfWeek(now, 6);
 	jQuery.ajax({
         url: passed_vars.restURL + "cloud_base/v1/instruction?&start="+ saturday.toISOString().substr(0,10) + "&end=" + sunday.toISOString().substr(0,10),
         type: 'GET',
         cache: false, 
         success: function (response) {
-        console.log(response);
-    		var str = '<div class="table-container">';
-          		response.forEach((item) => {
-          			str += '<div class="table-row"><div class="table-col">' + item.start + '</div><div class="table-col"> '  + item.title +'</div></div>' ;	  
+        	response.sort(function(a,b){ return new Date(a.start) - new Date(b.start)});
+        	var str = '<table width="60%"  border="1"><tr><th width="20%x">Date/Time</th><th width="30%x">Student/Instructor</th><th width="25%">Instruction type</th><th width="25%">Comment</th><tr>';
+           		response.forEach((item) => {
+          			str += '<tr><td>' + item.start + '</td><td>' + item.title + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
           		});
-          		str += '</div>'
-          		jQuery("#dumpschedule").html(str );	  
+       str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        
+         console.log(response);
+//     		var str = '<div class="table-container"><div class="table-row"><div class="table-col">' + 'Time' + '</div><div class="table-col"> '  + 'Student' +
+//           			'</div><div class="table-col"> '  + 'instruction type' +'</div><div class="table-col"> '  + 'member weight' +'</div> <div class="table-col"> '  + 
+//           			'comment'+'</div><div class="table-col"> '  +  'Instructor' +'</div></div>';
+//           		response.forEach((item) => {
+//           			str += '<div class="table-row"><div class="table-col">' + item.start + '</div><div class="table-col"> '  + item.title +
+//           			'</div><div class="table-col"> '  + item.request_type +'</div><div class="table-col"> '  + item.member_weight +'</div> <div class="table-col"> '  + 
+//           			item.comment +'</div><div class="table-col"> '  + item.member_weight +'</div></div>' ;	  
+//           		});
+//           		str += '</div>'
+          		print_schedule(str);
+//           		jQuery("#dumpschedule").html(str );	  
         }
     });		
 }
+function getNextDayOfWeek(date, dayOfWeek) {
+    // Code to check that date and dayOfWeek are valid left as an exercise ;)
+
+    var resultDate = new Date(date.getTime());
+
+    resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
+
+    return resultDate;
+}
+
 function nextDay(x){
 	var now = new Date();    
 	now.setDate(now.getDate() + (x+(7-now.getDay())) % 7);
 	return now;
 }
+
+function print_schedule(str){
+	var w = window.open();
+// 	var headers = jQuery("#headers").html();
+// 	var field1 = jQuery("#field1").html();
+// 	var field2 = jQuery("#field2").html();
+	
+	var html = "<!DOCTYP HTM>";
+	html += '<html lang="en-us">';
+	html += '<head><style>Student Schedule</style>';
+	html += "<body>";
+	html += str;
+	html += "</body>";
+	w.document.write(html);
+//  	w.window.print();
+// 	w.document.close(); 
+}
+
+function pop_up_dialog(event_id, calendar, title, return_text, cancel_text, ajax_type, cfig_id){
+	 jQuery('#cfig_accept').removeClass('popup-content');	
+	 jQuery('#cfig_accept').dialog({	 
+	   	 autoOpen: true,
+	   	 title: title,
+	     buttons: [
+	     	{
+	     		text : return_text,
+	     		click:  function() {
+	         			jQuery(this).dialog("close");
+	      		}	
+	      	},
+	      	{
+	     		text : cancel_text,
+	     		click:  function() {
+	     			jQuery.ajax({
+						type: ajax_type,
+						url: passed_vars.restURL + 'cloud_base/v1/instruction',
+						async: true,
+					   cache: false,
+					   timeout: 30000,
+						beforeSend: function (xhr){
+							xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
+						},
+						data:{
+							id: event_id,
+							cfig : cfig_id
+						},
+						dataType: 'text json',
+						success : function (response){
+ 							calendar.refetchEvents();		
+						},
+						error: function(xhr){
+  							calendar.refetchEvents();
+// 							alert('Request Status: ' + xhr.status + ' Status Text: ' + xhr.statusText + ' ' + xhr.responseText);    							
+						}								
+					});	
+	         		jQuery(this).dialog("close");
+	      		}	
+	      	},
+	    ],
+	    width: "400px"});	
+	    jQuery('#cfig_accept').addClass('popup-content');				
+}									
+
 
 
 

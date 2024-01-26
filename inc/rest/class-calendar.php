@@ -154,7 +154,7 @@ class Calendar extends \Cloud_Base_Rest {
 	  		$session_dates = array(  $jan_this_year, $s1, $s2, $s3, $e3, $jan_next_year);
 	  		$sessions = array('0', '1', '2', '3', '0');
   
-	  	    for ( $j = 0; $j < 5; $j++) {	
+	  	    for ( $j = 0; $j < sizeof($sessions); $j++) {	// 
  	  	    	 $s_count++;	
 	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {	
 	  	    	 	  	    	 						 
@@ -176,7 +176,7 @@ class Calendar extends \Cloud_Base_Rest {
    			 		$sql = $wpdb->prepare("SELECT MAX(id)FROM {$trade_name}");	
    			 		$max_t = $wpdb->get_var($sql);  
 					if( $sessions[$j] === '0'){
-						$max_t = 1;						
+						$max_t = 2;		// in off seasion only schedule tow pilot and instructors again dependent on sequence of trades in database!				
 					}	
 			 	 	for ($t = 1 ; $t <= $max_t; $t++ )	{	
 			 	 		if($schedule_days[$t-1][$i->format('w')] == 1 ){ // if the weekday has a schedule flag for this trade create an entry in the field duty table. 

@@ -197,7 +197,9 @@ function display_instruction_Request(){
 	echo('<div><input type="submit" value="Submit" >'); //
 	echo('<input type="button" value="Cancel"  onclick="hideinstructionrequest()" >'); //
 	echo('</div></form> </div></div>');
-	echo('<div id="cfig_accept" title="Instructor Acceptance" class="instructor_hidden">Click Accept to accept Instruction Request.</div>');
+	echo('<div id="cfig_accept" title="Instructor Acceptance" <div id="dialogText" class="popup-content"></div></div>');
+	
+// 	echo('<div id="pop_up_dialog" title="dialog" <div id="dialogText" class="popup-content"></div></div>');
 
 	if(current_user_can('schedule_assist')){ 
 // 		echo('<div id=editdate>  </div>');
@@ -225,8 +227,8 @@ function display_instruction_Request(){
 		for the days flying. </div>');
 
 	echo ('<div id="calendar" "></div>');
-	echo('<input type="button" value="Dump schedule"  onclick="dumpweekendschedule()" >'); //
-	echo('<div id="dumpschedule"></div>');
+	echo('<div style="width: 160px; margin: 0 auto; background: #000; color: #fff;"><input style="text-align: center;" type="button" value="Display Weekend schedule"  onclick="dumpweekendschedule()" ></div>'); //
+// 	echo('<div id="dumpschedule"></div>');
  }	
 	
 ?> 

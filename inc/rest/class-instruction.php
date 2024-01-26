@@ -59,18 +59,23 @@ class Instruction extends \Cloud_Base_Rest {
 	public function pdp_get_instruction ( \WP_REST_Request $request) {
 		global $wpdb;
  		$table_instruction =  $wpdb->prefix . 'cloud_base_instruction';
- 		$table_type =  $wpdb->prefix . 'cloud_base_instruction_type';	
+ 		$table_type =  $wpdb->prefix . 'cloud_base_instruction_type';	 		
  		$results_array = array();
 
-		if(isset($request['start']) && isset($request['end'])){			
-  			$sql = $wpdb->prepare("SELECT *, i.id as id FROM {$table_instruction} i INNER JOIN {$table_type} t ON t.id=i.inst_type WHERE i.request_date BETWEEN %s AND %s", $request['start'], $request['end'] );	 
+		if(isset($request['start']) && isset($request['end'])){		
+			$startdate = new \DateTime($request['start']);			
+			$enddate = new \DateTime($request['end']);				
+  			$enddate->add(new \DateInterval("P1D"));
+  			$sql = $wpdb->prepare("SELECT *, i.id as id FROM {$table_instruction} i INNER JOIN {$table_type} t ON t.id=i.inst_type WHERE i.request_date BETWEEN %s AND %s", $startdate->format('Y-m-d'), $enddate->format('Y-m-d'));	 
 			$items = $wpdb->get_results($sql);
 				
 			foreach($items as $value){ 
 				$start = new \DateTime($value->request_date);
 				
 				$end = new \DateTime($value->request_date);
-				$end->add(new \DateInterval("PT1H"));
+ 				$end->add(new \DateInterval("PT1H"));
+//  				$end->add(new \DateInterval("PT20M"));
+
 						
 				if($value->scheduling_assistance == 1  ){				
 					$c = 'orange';
@@ -100,12 +105,21 @@ class Instruction extends \Cloud_Base_Rest {
 						$title .=  '/' . $i_name;
 					}					
 				}
+				if($value->cfig2_id != 0) {
+					$f = get_user_meta($value->cfig2_id, 'first_name', true  );
+  					$l = get_user_meta($value->cfig2_id, 'last_name', true  );  	
+					$i2_name = 	 $l. ', ' .$f ;				
+				} else {
+					$i2_name ="";
+				}				
+				$user_meta = get_userdata( $value->member_id);
+					
  			$r = array ( 'id'=> $value->id, 'title'=>$title, 'color'=>$c, 'textColor'=>$tc, 
  				'start'=> $start->format('Y-m-d H:i:s'), 'end'=> $end->format('Y-m-d G:i:s'), 
- 				'cfig1'=>$value->cfig1_id, 'cfig2'=>$value->cfig2_id , 'member_id'=>$value->member_id, 'cfiga'=>$value->assigned_cfig_id );				
-
+ 				'cfig1'=>$value->cfig1_id, 'cfig2'=>$value->cfig2_id , 'member_id'=>$value->member_id, 'cfiga'=>$value->assigned_cfig_id,
+ 				'request_type'=>$value->request_type, 'member_weight'=> $user_meta->weight, 'comment'=>$value->request_notes, 'alt_ins'=> $i2_name );				
 				array_push($results_array, $r );	
-			}	 				
+			}	 					
 			return new \WP_REST_Response ($results_array);	
 		
 		} else {
@@ -283,8 +297,9 @@ class Instruction extends \Cloud_Base_Rest {
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
 			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
 
-   		mail($to, $subject, $msg, $headers);
-		   	return new \WP_REST_Response ( $result); 	 	
+   			mail($to, $subject, $msg, $headers);
+   			wp_send_json_success( $data = $resutl, $status_code = 200, $options = 0 );
+// 		   	return new \WP_REST_Response ( $result); 	 	
 	     } else {	     
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
  	     }
