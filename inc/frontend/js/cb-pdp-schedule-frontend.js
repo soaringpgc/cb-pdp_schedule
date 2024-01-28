@@ -36,7 +36,8 @@
 	 var current_user_role_name =  passed_vars.current_user_role_name;
 	 var current_user_can =  passed_vars.user_can;
 	 var overide = [];
-	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
+// 	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
+	 var hidded_days = passed_vars_days.hide_days; 
 	 
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
@@ -48,7 +49,7 @@
        $(document).ready (function() {
         	var calendarEl = document.getElementById('calendar');
         	var calendar = new FullCalendar.Calendar(calendarEl, {
-        		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
+//         		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
 // set up calendar
         			headerToolbar: {
 //        	  			plugins: [ dayGrid, timeGrid ],
