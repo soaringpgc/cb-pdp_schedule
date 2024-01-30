@@ -98,14 +98,14 @@ class Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */  
-	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
-	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
+// 	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
+// 	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
         wp_register_script( 'cb_pdp_schedule_admin_templates',  plugins_url('/cb-pdp_schedule/inc/admin/js/templates.js'));
 	    	    
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp_schedule-admin.js', 
-		array( 'jquery', 'javascripts', 'CalendarPopup', 'zxml', 'underscore', 'backbone', 'workingjs', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
+		array( 'jquery', 'javascripts', 'CalendarPopup', 'underscore', 'backbone', 'cb_pdp_schedule_admin_templates'  ), $this->version, false );
 
      		$dateToBePassed = array(
  					'root' => esc_url_raw( rest_url() ),

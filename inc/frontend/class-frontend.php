@@ -101,8 +101,8 @@ class Frontend {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
-	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
+// 	    wp_register_script( 'workingjs',  plugins_url('/cb-pdp_schedule/assets/js/workingjs.js'));
+// 	    wp_register_script( 'zxml',  plugins_url('/cb-pdp_schedule/assets/js/zxml.js'));
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
@@ -126,27 +126,7 @@ class Frontend {
 //      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
 //    		)	
 //    	);	
-
-			$enabled = get_option('cloudbase_enabled_sessions', false );
-			$current_user = wp_get_current_user();
-
-
-    	$dateToBePassed = array(
-    	    'ajax_url' =>  admin_url('admin-ajax.php'),
-    		'restURL' => esc_url_raw( rest_url() ),
-     		'nonce' => wp_create_nonce( 'wp_rest' ),
-     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
-     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
-    		'current_user_id' => get_current_user_id(),
-     		'current_user_role' => $this->user_roles(),
-			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
-     		'enabled_sessions' => $enabled,
-     		'trade_authority' => $this->trade_authority(),
-      		'user_can' => $this->user_can(),
-     		'current_user_caps' => $current_user->allcaps, // these two need to be cleand up later. 
-    		);   	
-    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
-    	);    	
+	
 	}
 
 	public function cb_pdp_calendar( $atts = array() ) {
@@ -168,12 +148,29 @@ class Frontend {
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
 			$enabled = get_option('cloudbase_enabled_sessions', false );
 			$current_user = wp_get_current_user();
-			
+	
     		$dateToBePassed = array(
-     			'hide_days' => $hide_days
+//     		    'ajax_url' =>  admin_url('admin-ajax.php'),
+    			'restURL' => esc_url_raw( rest_url() ),
+     			'nonce' => wp_create_nonce( 'wp_rest' ),
+     			'success' => __( 'REcord has been updated!', 'your-text-domain' ),
+     			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    			'current_user_id' => get_current_user_id(),
+     			'current_user_role' => $this->user_roles(),
+				'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+//      			'enabled_sessions' => $enabled,
+     			'trade_authority' => $this->trade_authority(),
+     			'hide_days' => $hide_days,
+      			'user_can' => $this->user_can(),
+//      			'current_user_caps' => $current_user->allcaps, // these two need to be cleand up later. 
     			);   	
-    		wp_add_inline_script( $this->plugin_name, 'const passed_vars_days = ' . json_encode ( $dateToBePassed  ), 'before'
-    		); 
+    		wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    		);    				
+//     		$dateToBePassed = array(
+//      			'hide_days' => $hide_days
+//     			);   	
+//     		wp_add_inline_script( $this->plugin_name, 'const passed_vars_days = ' . json_encode ( $dateToBePassed  ), 'before'
+//     		); 
 		ob_start();
 	    	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
@@ -197,11 +194,27 @@ class Frontend {
 	} //cb_pdp_select_fd
 	public function cb_pdp_vac_view( $atts = array() ) {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
-
+// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-vacation_view.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar'), $this->version, true  );	
+
+    	$dateToBePassed = array(
+    	    'ajax_url' =>  admin_url('admin-ajax.php'),
+    		'restURL' => esc_url_raw( rest_url() ),
+     		'nonce' => wp_create_nonce( 'wp_rest' ),
+     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    		'current_user_id' => get_current_user_id(),
+     		'current_user_role' => $this->user_roles(),
+			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+     		'trade_authority' => $this->trade_authority(),
+      		'user_can' => $this->user_can(),
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	);    	
+
 		ob_start();	    	
-// 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+
 			include ('views/html_cb_vac_view.php' );
 // 			field_duty_submit_request();
 // 			display_fd_choices();
@@ -217,6 +230,29 @@ class Frontend {
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar', 'jqueryui'), $this->version, true  );	
 			$current_user = wp_get_current_user();
+
+// 			$enabled = get_option('cloudbase_enabled_sessions', false );
+			$current_user = wp_get_current_user();
+
+    	$dateToBePassed = array(
+//     	    'ajax_url' =>  admin_url('admin-ajax.php'),
+    		'restURL' => esc_url_raw( rest_url() ),
+     		'nonce' => wp_create_nonce( 'wp_rest' ),
+     		'success' => __( 'Schedule Has been updated!', 'your-text-domain' ),
+     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    		'current_user_id' => get_current_user_id(),
+     		'current_user_role' => $this->user_roles(),
+// 			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+//      		'enabled_sessions' => $enabled,
+     		'trade_authority' => $this->trade_authority(),
+//        		'user_can' => $this->user_can(),
+      		'current_user_caps' => $current_user->allcaps, // these two need to be cleand up later. 
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	);    	
+
+
+
 		ob_start();	    	
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 			include ('views/html_cb_pdp_instruction_request.php' );
@@ -233,14 +269,10 @@ class Frontend {
 	 * @return [type] [description]
 	 */
 	public function register_shortcodes() {
-
-// 		add_shortcode( 'cb_pgc_schedule_request', array( $this, 'schedule_request' ) );
-// 		add_shortcode( 'cb_pgc_instructor_portal', array( $this, 'instructor_portal' ) );
 		add_shortcode( 'cb_pdp_calendar', array( $this, 'cb_pdp_calendar' ) );
 		add_shortcode( 'cb_pdp_select_fd', array( $this, 'cb_pdp_select_fd' ) );
 		add_shortcode( 'cb_pdp_vac_view', array( $this, 'cb_pdp_vac_view' ) );
 		add_shortcode( 'cb_pdp_instruction_request', array( $this, 'cb_pdp_instruction_request' ) );
-
 	} // register_shortcodes()
 	/**
 	 * This function redirects to the longin page if the user is not logged in.

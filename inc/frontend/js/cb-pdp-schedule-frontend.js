@@ -31,13 +31,13 @@
 	 */
 	 $(function(){
 	 var current_user_role = passed_vars.current_user_role;
-	 var enabled_sessions = passed_vars.enabled_sessions;
+// 	 var enabled_sessions = passed_vars.enabled_sessions;
 	 var trade_authority = passed_vars.trade_authority;
 	 var current_user_role_name =  passed_vars.current_user_role_name;
 	 var current_user_can =  passed_vars.user_can;
 	 var overide = [];
-// 	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
-	 var hidded_days = passed_vars_days.hide_days; 
+	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
+// 	 var hidded_days = passed_vars_days.hide_days; 
 	 
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
