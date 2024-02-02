@@ -123,17 +123,12 @@ class Instruction extends \Cloud_Base_Rest {
 			return new \WP_REST_Response ($results_array);	
 		
 		} else {
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
+			return new \WP_Error( ' Failed', esc_html__( 'missing parameter start/end(Y-M-D) dates', 'my-text-domain' ), array( 'status' => 422) );	     
 		}	
 	}
 //  create new instruction request 
 	public function pdp_post_instruction ( \WP_REST_Request $request) {
-// 		$max_per_hour = 3; // this needs to be a configuration changeable value. 
-// 		$hours_per_day = 4; // this needs to be a configuration changeable value. 
-// 		$first_instruction = 9; // this needs to be a configuration changeable value. 
-// 		$lesson_length = 1; // this needs to be a configuration changeable value. 
-
-
+		// get preferences from options 
 		$lessions = get_option('cloudbase_leason_slots', array('start'=>9, 'slots'=>3, 'length'=>1, 'count'=>3));	
 		$first_instruction = $lessions['start'];
 		$max_per_hour = $lessions['slots'];
@@ -152,7 +147,8 @@ class Instruction extends \Cloud_Base_Rest {
 				$user = get_user_by('ID', $request['member_id'] );
 			} else {
 				$user = wp_get_current_user();				
-			} 				
+			} 	
+//  	return new \WP_REST_Response ( $user ); 				
 			$user_meta = get_userdata( $user->ID );
 			$display_name = $user_meta->first_name .' '.  $user_meta->last_name;				
 			
@@ -184,22 +180,22 @@ class Instruction extends \Cloud_Base_Rest {
 			} else {			
 				$member_weight = $user_meta->weight; 
 			}			
- 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE DATE(request_date) = %s", $request_date->format('Y-m-d'));	
+ 		    $sql = $wpdb->prepare("SELECT * FROM {$table_name} WHERE DATE(request_date) = %s", $request_date->format('Y-m-d'));	 
 			$result = $wpdb->get_results($sql);
 			$inst_count = $wpdb->num_rows; 
 
 			foreach( $result as $k){
 				if( $k->member_id == $user->ID ) {
-					return new \WP_Error( 'duplicate', esc_html__( 'instruction requests exists', 'my-text-domain' ), array( 'status' => 409) );
+					return new \WP_Error( 'duplicate', esc_html__( 'Instruction request exists', 'my-text-domain' ), array( 'status' => 409) );
 				}
-			}			
-			
+			}						
 			if ($inst_count > $max_per_hour *$hours_per_day ){
-				return new \WP_Error( 'max limit', esc_html__( 'All instruction slots filled', 'my-text-domain' ), array( 'status' => 409) );
+				return new \WP_Error( 'max limit', esc_html__( 'All instruction slots are filled', 'my-text-domain' ), array( 'status' => 409) );
 			}
+
+
 			$time_slot = floor($inst_count/$max_per_hour) + $first_instruction  ;
 			$assigned_time = $request_date->setTime( $time_slot ,0, 0 ); 
-
 			if($assistance){
 				$record = array( 
 					'member_id'=>  $user->ID, 
@@ -227,39 +223,11 @@ class Instruction extends \Cloud_Base_Rest {
 					'request_notes'=> $comment
 				);	
 			}			 	 				
-  			$result = $wpdb->insert($table_name , $record);							
-  			$msg = 'Member ' . $display_name . ' is requesting instruction on: ' . $request_date->format('Y-m-d') .  "<br>\n";	
-			if ( $assistance ) {
-				$subject = "PGC Instruction Assistance for: " . $display_name ;
-   				$sql = "SELECT wp_users.user_email FROM wp_users INNER JOIN wp_usermeta ON wp_users.ID = wp_usermeta.user_id WHERE wp_usermeta.meta_value like '%tow_scheduler%' "; 
-				$send_emails = $wpdb->get_results($sql);	
-				$to ="";
-				foreach ( $send_emails as $m ){
-					$to .= $m->user_email .', ';
-				};
-				$to .= $user_meta->user_email; 
-							
-			} else {
-				$subject = "PGC Instruction Member: " . $display_name ;
-				$to = $user_meta->user_email  . ', ' . $inst_meta->user_email; 	
-				isset($request['cfig2']) ?  $to .=  ', ' .  $cfig2_meta->user_email : ""; 
-				
-//  				$to .=  ', ' .  $cfig2_meta->user_email; 		
-			}
-			
-			$msg .= 'Member weight: ' . $member_weight .  "<br>\n"; 
-			$sql = ('Select request_type FROM ' . $table_type . ' WHERE id=' . $inst_type);
-			$msg .= 'Instruction type: ' . $wpdb->get_var($sql) .  "<br>\n"; 
-			$msg .= 'Email:  <a href="mailto:' . $user_meta->user_email .  '">'. $user_meta->user_email  .'</a><br>\n'; 
-		 	
-			$headers = "MIME-Version: 1.0" . "\n";
-			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
-			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
-			mail($to, $subject, $msg, $headers);
+  			$result = $wpdb->insert($table_name , $record);			
 			return new \WP_REST_Response ( 'Request entered'); 	
 
 	     } else {	     
-			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
+			return new \WP_Error( ' Failed', esc_html__( 'Date is missing.', 'my-text-domain' ), array( 'status' => 422) );	     
  	     }
 	}	
 //  update instruction request . 	

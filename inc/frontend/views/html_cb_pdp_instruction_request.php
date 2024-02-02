@@ -59,14 +59,19 @@ function instruction_Request_submit(){
 		$query_params = array_merge($query_params, array('comment'=> $comment));
  		$rest_request = new \WP_REST_REQUEST( 'POST', '/cloud_base/v1/instruction' ) ;  
 		$rest_request->set_query_params($query_params );		   		  		
-    	$rest_response = rest_do_request( $rest_request);     
-   		
+    	$rest_response = rest_do_request( $rest_request);    
+    	
+    	if ($rest_response->is_error()) {
+     		$message = $rest_response->as_error()->get_error_messages()[0];
+     		echo "<script>alert('$message');</script>"; 
+    	} else  {  		
    		$sql = 'SELECT request_type FROM '. $table_type .' WHERE id=' . $inst_type ;
    		$inst_text = $wpdb->get_var($sql);
    		   		 		
    		$msg = 'Member: ' . $display_name . ', is requesting instruction on ' . substr($request_date, 0,10) . "<br>\n";  
    		$msg .=  'In the area of: ' . $inst_text  ."<br>\n";
    		$msg .=  'Student Weight is: ' . $member_weight ."<br>\n";
+   		$msg .=  'Comment: ' . $comment ."<br>";
    		if( $cfig1 != null ){
    			   	$msg .=  'Request Instructor is: ' .  $cfig1->first_name .' '. $cfig1->last_name ."<br>\n";
    		}
@@ -110,7 +115,7 @@ function instruction_Request_submit(){
    		mail($to,$subject,$msg,$headers);
 		echo('<p> Your Instruction Request has been entered.</p> ');
 
-
+		}
 }
 function display_instruction_Request(){
 	if(!is_user_logged_in()){

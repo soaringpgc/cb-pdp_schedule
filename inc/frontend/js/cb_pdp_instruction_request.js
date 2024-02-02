@@ -208,8 +208,9 @@ function hideassigninstuctor( ) {
 }
 function dumpweekendschedule(){
 	var now = new Date();   
-	var saturday = getNextDayOfWeek(now, 5);
-	var sunday = getNextDayOfWeek(now, 6);
+	var saturday = getNextDayOfWeek(now, 6);
+	var sunday = getNextDayOfWeek(now, 0);
+
 	jQuery.ajax({
         url: passed_vars.restURL + "cloud_base/v1/instruction?&start="+ saturday.toISOString().substr(0,10) + "&end=" + sunday.toISOString().substr(0,10),
         type: 'GET',
