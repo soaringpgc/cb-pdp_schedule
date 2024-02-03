@@ -112,6 +112,9 @@
 					url: passed_vars.restURL + 'cloud_base/v1/instruction',
 				  	method: 'GET',				
 // 				  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
+					failure: function(){
+						alert('there was an error while fetching events!');
+					}
 				},
 				visibleRange: {
  				   start:  saturday,
@@ -123,12 +126,12 @@
 					var instructiondate= moment(info.event.start).format('YYYY-MM-DD'); 
 					// member wishes to cancel 
 					if( current_user_id ==  info.event.extendedProps.member_id){  // Student clicks on event., possible to cancel. 
-// 					  	jQuery("#pop_up_dialog").html('Do you wish to cancel instructionon on ' + instructiondate + '"? ' );	
+// 					  	jQuery("#pop_up_dialog").html('Do you wish to cancel instruction on ' + instructiondate + '"? ' );	
 // 						$('#pop_up_dialog').removeClass('popup-content');	
   	 		  			jQuery("#cfig_accept").html('Date: ' + instructiondate + '<br>Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' + 
   	 		  			    info.event.extendedProps.member_weight + '<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  
   	 		  			    info.event.extendedProps.alt_ins );	
-						 pop_up_dialog(info.event.id, calendar, 'Do you wish to cancel instructionon?', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);				 	
+						 pop_up_dialog(info.event.id, calendar, 'Do you wish to cancel instruction?', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);				 	
   	 		  		} else if( current_user_id ==  info.event.extendedProps.cfiga){	  // assigned CFI clicks, possible cancel 
    	 		  		console.log( info.event.extendedProps);
   	 		  			jQuery("#cfig_accept").html( info.event.title + '<br>Date: ' + instructiondate +'<br>Instruction: ' + 

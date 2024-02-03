@@ -110,8 +110,12 @@
 //      						 'Pragma': 'no-cache', 
 //      						 'Expires': '0'
                	         }, success: function (response) {
-               	              successCallback(response);
+                	              successCallback(response);
+               	         },
+               	     	 }, error: function (response) {
+               	              failureCallback(response);
                	         }
+
                	     });
                	 },		      		  					  
 // It is absurd that FullCalendar has no way to include headers. 					  
