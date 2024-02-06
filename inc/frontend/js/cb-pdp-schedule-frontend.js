@@ -111,8 +111,7 @@
 //      						 'Expires': '0'
                	         }, success: function (response) {
                 	              successCallback(response);
-               	         },
-               	     	 }, error: function (response) {
+               	         }, error : function (response) {
                	              failureCallback(response);
                	         }
 

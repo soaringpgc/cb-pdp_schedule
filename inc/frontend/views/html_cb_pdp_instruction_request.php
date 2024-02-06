@@ -202,11 +202,12 @@ function display_instruction_Request(){
 	echo('<div><input type="submit" value="Submit" >'); //
 	echo('<input type="button" value="Cancel"  onclick="hideinstructionrequest()" >'); //
 	echo('</div></form> </div></div>');
-	echo('<div id="cfig_accept" title="Instructor Acceptance" <div id="dialogText" class="popup-content"></div></div>');
+// 	echo('<div id="cfig_accept" title="Instructor Acceptance" class="popup-content" <div id="dialogText" >stuff here </div></div>');
+	echo('<div id="cfig_accept" title="Instructor Acceptance">  <div id="dialogText" > </div></div>');
 	
 // 	echo('<div id="pop_up_dialog" title="dialog" <div id="dialogText" class="popup-content"></div></div>');
 
-	if(current_user_can('schedule_assist')){ 
+// 	if(current_user_can('schedule_assist')){ 
 // 		echo('<div id=editdate>  </div>');
 		echo ('<div id="assigned_instructor" >');	 // 
 		echo ('<form id="schedule_assist" action="#" >');
@@ -225,7 +226,7 @@ function display_instruction_Request(){
 	 	echo('<input type="button" value="Cancel"  onclick="hideassigninstuctor()" >'); // 		
 		echo('</form></div> ');
 	 		 	
-	}
+// 	}
 
 	echo('<div>Note: The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager 
 		and instructors will determine flying order. All students are required to be at the field by 8:00 to assist in setting up 

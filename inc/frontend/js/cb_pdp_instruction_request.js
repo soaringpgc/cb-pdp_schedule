@@ -33,8 +33,6 @@
 	 
 		 var current_user_id = passed_vars.current_user_id;
 		 var current_user_role = passed_vars.current_user_role;
-// 		 var enabled_sessions = passed_vars.enabled_sessions;
-// 		 var trade_authority = passed_vars.trade_authority;
 		 var current_user_role_name =  passed_vars.current_user_role_name;
  		 var current_user_can =  passed_vars.current_user_caps;
 		 var saturday = nextDay(6);
@@ -103,18 +101,23 @@
 //          	  		},
 				dateClick: function(info){
 					$('#editinstruction').removeClass('popup-content');
-// 					$('#calendar').addClass('popup-content');
-					$('#request_date').val(info.dateStr);
+					$("html, body").animate({ scrollTop: 20 }, "slow");
+//  					$('#calendar').addClass('popup-content');
+					$('#request_date').val(info.dateStr);  // set the date field 
 					$('#display_date').text(info.dateStr.substring(0,10));
 					},
 				eventTextColor: 'black',
 				events:{
 					url: passed_vars.restURL + 'cloud_base/v1/instruction',
 				  	method: 'GET',				
-// 				  	extraParams:{ fc: '1' }  // tell rest endpoint we want FullCallendar data format. 
-					failure: function(){
+				  	extraParams:  function(){ 
+				  		return {
+					        cachebuster: new Date().valueOf()
+					    };
+				  	 },  
+					 failure: function(){
 						alert('there was an error while fetching events!');
-					}
+					 }
 				},
 				visibleRange: {
  				   start:  saturday,
@@ -123,37 +126,22 @@
  	   			 slotMinTime: "08:00:00",
 				 slotMaxTime: "14:00:00",	
 				 eventClick: function(info) {
-					var instructiondate= moment(info.event.start).format('YYYY-MM-DD'); 
 					// member wishes to cancel 
 					if( current_user_id ==  info.event.extendedProps.member_id){  // Student clicks on event., possible to cancel. 
-// 					  	jQuery("#pop_up_dialog").html('Do you wish to cancel instruction on ' + instructiondate + '"? ' );	
-// 						$('#pop_up_dialog').removeClass('popup-content');	
-  	 		  			jQuery("#cfig_accept").html('Date: ' + instructiondate + '<br>Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' + 
-  	 		  			    info.event.extendedProps.member_weight + '<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  
-  	 		  			    info.event.extendedProps.alt_ins );	
-						 pop_up_dialog(info.event.id, calendar, 'Do you wish to cancel instruction?', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);				 	
+						 pop_up_dialog(info, calendar, 'Do you wish to cancel instruction?', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);				 	
   	 		  		} else if( current_user_id ==  info.event.extendedProps.cfiga){	  // assigned CFI clicks, possible cancel 
-   	 		  		console.log( info.event.extendedProps);
-  	 		  			jQuery("#cfig_accept").html( info.event.title + '<br>Date: ' + instructiondate +'<br>Instruction: ' + 
-  	 		  				info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
-  						 	'<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
-//   	 		  			jQuery("#pop_up_dialog").html('Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
-//   					 '<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
-
-   					    pop_up_dialog( info.event.id, calendar, 'Instructor Cancel', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);													  	 		  									
- 					} else if((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2)){										
-  						// Instructor accepts. 					
- 	 		  			 jQuery("#cfig_accept").html('Date: ' + instructiondate + '<br>Instruction: ' + info.event.extendedProps.request_type + 
- 	 		  					'<br>Member weight: ' +  info.event.extendedProps.member_weight + '<br>Comment: ' +  info.event.extendedProps.comment + 
- 	 		  					'<br>Alt Inst: ' +  info.event.extendedProps.alt_ins );	
-// 								$('#cfig_accept').removeClass('popup-content');	
-
-						 pop_up_dialog( info.event.id, calendar, 'Instructor Accept', "Return", "Yes, schedule", "PUT", current_user_id);				     		
+   					    pop_up_dialog( info, calendar, 'Instructor Cancel', "No, keep appointment", "Yes, cancel Instruction", "DELETE", current_user_id);													  	 		  									
+ 					} else if(((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2)) && (info.event.extendedProps.cfiga === null ) ){										
+  						// cfi1 or cfi2 accepts. 					
+						 pop_up_dialog( info, calendar, 'Instructor Accept', "Return", "Yes, schedule", "PUT", current_user_id);				     		
+ 					} else if(((current_user_id == info.event.extendedProps.cfig2) ||  (current_user_id == info.event.extendedProps.cfig1)) && (info.event.extendedProps.cfiga !== null )){										
+  						// Other instructor takes over from accepted cfi  					
+						 pop_up_dialog( info, calendar, 'Instructor OverRide', "Return", "Yes, OverRide Instructor", "PUT", current_user_id);				     		
  					} else if( current_user_role == 'schedule_assist' ){
+ 						// If the user is schedual assistant administrator. 
  						console.log( info.event.extendedProps);
  				 		jQuery("#assigned_instructor").prepend('<div id="event_info">Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
   					 			'<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.cfig2 +'</div>');	
-//  					alert('schedule assist');
  						record_id = info.event.id;
   						$("#assigned_instructor").show(); 	
 					}	 									
@@ -225,15 +213,12 @@ function dumpweekendschedule(){
           			str += '<tr><td>' + item.start + '</td><td>' + item.title + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
           		});
        str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        
-//          console.log(response);
           		print_schedule(str);
-//           		jQuery("#dumpschedule").html(str );	  
         }
     });		
 }
 function getNextDayOfWeek(date, dayOfWeek) {
     // Code to check that date and dayOfWeek are valid left as an exercise ;)
-
     var resultDate = new Date(date.getTime());
     resultDate.setDate(date.getDate() + (7 + dayOfWeek - date.getDay()) % 7);
     return resultDate;
@@ -262,8 +247,16 @@ function print_schedule(str){
 // 	w.document.close(); 
 }
 
-function pop_up_dialog(event_id, calendar, title, return_text, cancel_text, ajax_type, cfig_id){
-	 jQuery('#cfig_accept').removeClass('popup-content');	
+function pop_up_dialog(info, calendar, title, return_text, cancel_text, ajax_type, cfig_id){
+		//  ntfs: using the cfix(info.event.extendedProps.cfig) id to look up the cfi name from the drop down select menu list(info.event.extendedProps.cfig1 +']').text()). 
+	var inst_string = (info.event.extendedProps.cfiga === null) ?  '<br>Requested CFI-G: ' + jQuery('#cfig1 option[value=' + info.event.extendedProps.cfig1 +']').text() : '<br>Assigned CFI-G: ' + jQuery('#cfig1 option[value=' + info.event.extendedProps.cfiga +']').text();
+
+	 jQuery('#dialogText').html('Date: ' + moment(info.event.start).format('YYYY-MM-DD') + 
+	 	inst_string +	 
+	 	'<br>Instruction: ' + info.event.extendedProps.request_type + 
+	 	'<br>Member weight: ' + info.event.extendedProps.member_weight + 
+	 	'<br>Comment: ' +  info.event.extendedProps.comment + 
+	 	'<br>Alt Inst: ' + jQuery('#cfig1 option[value=' + info.event.extendedProps.cfig2 +']').text() );
 	 jQuery('#cfig_accept').dialog({	 
 	   	 autoOpen: true,
 	   	 title: title,
@@ -287,7 +280,7 @@ function pop_up_dialog(event_id, calendar, title, return_text, cancel_text, ajax
 							xhr.setRequestHeader('X-WP-NONCE',  passed_vars.nonce );
 						},
 						data:{
-							id: event_id,
+							id: info.event.id,
 							cfig : cfig_id
 						},
 						dataType: 'text json',
@@ -304,7 +297,6 @@ function pop_up_dialog(event_id, calendar, title, return_text, cancel_text, ajax
 	      	},
 	    ],
 	    width: "400px"});	
-	    jQuery('#cfig_accept').addClass('popup-content');				
 }									
 
 

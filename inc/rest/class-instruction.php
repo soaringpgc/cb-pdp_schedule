@@ -192,10 +192,13 @@ class Instruction extends \Cloud_Base_Rest {
 			if ($inst_count > $max_per_hour *$hours_per_day ){
 				return new \WP_Error( 'max limit', esc_html__( 'All instruction slots are filled', 'my-text-domain' ), array( 'status' => 409) );
 			}
-
-
+			date_default_timezone_set('America/New_York');
+			$date = date('Y-m-d H:i:s');
 			$time_slot = floor($inst_count/$max_per_hour) + $first_instruction  ;
 			$assigned_time = $request_date->setTime( $time_slot ,0, 0 ); 
+			if ($assigned_time < $date  ){
+				return new \WP_Error( 'max limit', esc_html__( 'That time slot is in the past. ', 'my-text-domain' ), array( 'status' => 409) );
+			}
 			if($assistance){
 				$record = array( 
 					'member_id'=>  $user->ID, 
