@@ -78,7 +78,9 @@ class Frontend {
 		 */                    
 		 
 //  		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css', array( ), $this->version, 'all' );
-        wp_enqueue_style(  'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');                                                                                             
+        wp_enqueue_style(  'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');    
+//         wp_enqueue_style(  'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');                                                                                                                                                                                              
+        wp_enqueue_style(  'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css');   
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/cb-pdp_schedule-frontend.css', array( ), $this->version, 'all' );
 
 	}
@@ -106,7 +108,8 @@ class Frontend {
 	    wp_register_script( 'CalendarPopup',  plugins_url('/cb-pdp_schedule/assets/js/CalendarPopup.js'));
 	    wp_register_script( 'javascripts',  plugins_url('/cb-pdp_schedule/assets/js/javascripts.js'));
  	    wp_register_script( 'calendar', 'https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js');
-        wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	    
+//         wp_register_script( 'jqueryui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'); 	  
+        wp_register_script( 'jqueryui', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js'); 	            
        	wp_register_script( 'fcadaptive', 'https://cdn.jsdelivr.net/npm/@fullcalendar/adaptive@6.1.5/index.global.min.js'); 	
  	    
 //  	    wp_register_script( 'calendar_daygrid',' https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.4/index.global.min.js');
