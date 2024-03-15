@@ -37,7 +37,17 @@
 	 var current_user_can =  passed_vars.user_can;
 	 var overide = [];
 	 var hidded_days = passed_vars.hide_days; //  [ 1, 2, 4, 5 ]; 
-// 	 var hidded_days = passed_vars_days.hide_days; 
+
+	 var header = {	 left: 'prev, timeGridWeek',
+  					center: 'title',
+ 					right: 'dayGridMonth, next',
+ 					ignoreTimezone: false
+ 					};
+	 var m_header = {	 left: 'prev',
+//   					center: 'title',
+ 					right: 'next',
+ 					ignoreTimezone: false
+ 					};	 
 	 
  	 trade_authority.forEach(function(trade){
 	 	overide.push(trade['overrideauthority']);
@@ -51,13 +61,7 @@
         	var calendar = new FullCalendar.Calendar(calendarEl, {
 //         		schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', // demo key
 // set up calendar
-        			headerToolbar: {
-//        	  			plugins: [ dayGrid, timeGrid ],
- 						left: 'prev, timeGridWeek',
- 						center: 'title',
- 						right: 'dayGridMonth, next',
- 							ignoreTimezone: false
- 						},
+        			headerToolbar: window.innerWidth >= 765 ? header : m_header, 
   					hiddenDays: hidded_days,
  					selectable: true,
  					select: this.select, 
