@@ -145,6 +145,7 @@ class Frontend {
 				break;
 				case 'week'   : $hide_days = array(0, 6);
 				break;
+				default	      : $hide_days = array();
 			}
 						
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb-pdp-schedule-frontend.js', array( 'jquery', 

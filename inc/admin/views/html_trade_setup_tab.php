@@ -25,13 +25,10 @@ if( current_user_can( 'manage_options' ) ) {
             name = "trade"/> 
            </div> 
 		<div class="hform">	
-        <label for="role" style=color:black>role: </label>      		
-		<select name ="role" id="role" name="role" >');
-			
-		wp_dropdown_roles( $selected = 'inactive');	
-		
+        <label for="role" style=color:black>Role: </label>      		
+		<select name ="role" id="role" name="role" >
+			<option value="0"> Select Authority </option>');
 		echo ('</select>  </div>
-
         <div class="hform">   
         <label for="authority" style=color:black>Authority: </label>          		
 		<select name ="authority" id="authority" name="authority" >
@@ -81,8 +78,8 @@ if( current_user_can( 'manage_options' ) ) {
     </form></div>');
 }    
 ?>   
-</div>
-<div  class="Table">
+
+<div class="Table">
     <div class="Title">
         <p>Trade Types</p>
     </div>
@@ -110,16 +107,3 @@ if( current_user_can( 'manage_options' ) ) {
         </div>                       
     </div>
 </div>
-</div>
-    
-    <h3>Instructions</h3>
-    <p>Here is where you add trades such as; Tow Pilot, Instructor, Field Manager for 
-    Field Duty.     
-    You can not delete a trade type if it is in use.  
-    To edit an existing item double click anywhere in that line. The data will be copied 
-    to the form at the top of the page and the button will change to "Update" click on
-    Update to save the new values.  All previous assignment to that id will reflect the 
-    change to the type. 
-</p>    
-
- 
