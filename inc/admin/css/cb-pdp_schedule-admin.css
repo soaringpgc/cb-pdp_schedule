@@ -13,21 +13,14 @@ dd label input {
 }
 .hform1 {
 	float:left;
-	margin-right:2px;
+ 
+/* 	margin-right:20px; */
+ */
 	width: 10px;
 }
 .hiding{
 	display: none;
 }
-.Table{
-	  float: left;
+.hform2 label {
+	width 80px;
 }
-
-/* 
-input, label {
-    float:left;
-    margin:5px;
-}
- */
-
-input { display: inline; }
