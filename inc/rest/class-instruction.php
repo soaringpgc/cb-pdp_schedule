@@ -105,19 +105,23 @@ class Instruction extends \Cloud_Base_Rest {
 						$title .=  '/' . $i_name;
 					}					
 				}
-				if($value->cfig2_id != 0) {
-					$f = get_user_meta($value->cfig2_id, 'first_name', true  );
-  					$l = get_user_meta($value->cfig2_id, 'last_name', true  );  	
-					$i2_name = 	 $l. ', ' .$f ;				
-				} else {
-					$i2_name ="";
-				}				
-				$user_meta = get_userdata( $value->member_id);
+// 				if($value->cfig2_id != 0) {
+// 					$f = get_user_meta($value->cfig2_id, 'first_name', true  );
+//   					$l = get_user_meta($value->cfig2_id, 'last_name', true  );  	
+// 					$i2_name = 	 $l. ', ' .$f ;				
+// 				} else {
+// 					$i2_name ="";
+// 				}				
+// 				$user_meta = get_userdata( $value->member_id);
+				$student  = $this->cb_member_info($value->member_id);
+				$i1_name  = $this->cb_member_info($value->cfig1_id);
+ 				$i2_name  = $this->cb_member_info($value->cfig2_id);
 					
  			$r = array ( 'id'=> $value->id, 'title'=>$title, 'color'=>$c, 'textColor'=>$tc, 
  				'start'=> $start->format('Y-m-d H:i:s'), 'end'=> $end->format('Y-m-d G:i:s'), 
  				'cfig1'=>$value->cfig1_id, 'cfig2'=>$value->cfig2_id , 'member_id'=>$value->member_id, 'cfiga'=>$value->assigned_cfig_id,
- 				'request_type'=>$value->request_type, 'member_weight'=> $user_meta->weight, 'comment'=>$value->request_notes, 'alt_ins'=> $i2_name );				
+ 				'request_type'=>$value->request_type, 'member_weight'=> $student->weight, 'comment'=>$value->request_notes, 
+ 				'student'=>$student->name ,'cfi1_name'=>$i1_name->name , 'cfi2_name'=> $i2_name->name );				
 				array_push($results_array, $r );	
 			}	 					
 			return new \WP_REST_Response ($results_array);	
@@ -284,5 +288,17 @@ class Instruction extends \Cloud_Base_Rest {
 		} else {
 			$wpdb->delete($table_name, array( 'id' => $request['id']) );
 		}	
-	}	
+	}
+// 	public function cb_member_info($id){
+// 		if($id != 0 && !is_null($id)){
+// 			$member_data  = get_userdata( $id);
+// 			$oBj = (object)[ "name"=>$member_name =  $member_data->first_name .' '.  $member_data->last_name ,
+// 			       "email"=> $member_data->user_email ];
+// 		} else {
+// 			$oBj = (object)[  "name"=>"none",
+// 			       "email"=> "" ];
+// 		}
+// 		return $oBj;
+// 	
+// 	}	
 }

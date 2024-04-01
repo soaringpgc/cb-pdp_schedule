@@ -38,7 +38,7 @@
 		 var saturday = nextDay(6);
 		 var sunday = nextDay(0);
 		 var record_id ='';
-		 
+// console.log(passed_vars)	;	 
  		if(current_user_can['cfi_g'] ){
 // Allow CFIs to move to other weekends to schedule students. 
   			var header = {
@@ -123,6 +123,7 @@
  				   start:  saturday,
  				   end: sunday
  				 },
+ // I think I should be passin men max from options?? dsj  
  	   			 slotMinTime: "08:00:00",
 				 slotMaxTime: "14:00:00",	
 				 eventClick: function(info) {
@@ -134,12 +135,14 @@
  					} else if(((current_user_id == info.event.extendedProps.cfig1) ||(current_user_id == info.event.extendedProps.cfig2)) && (info.event.extendedProps.cfiga === null ) ){										
   						// cfi1 or cfi2 accepts. 					
 						 pop_up_dialog( info, calendar, 'Instructor Accept', "Return", "Yes, schedule", "PUT", current_user_id);				     		
- 					} else if(((current_user_id == info.event.extendedProps.cfig2) ||  (current_user_id == info.event.extendedProps.cfig1)) && (info.event.extendedProps.cfiga !== null )){										
-  						// Other instructor takes over from accepted cfi  					
+//  					} else if(((current_user_id == info.event.extendedProps.cfig2) ||  (current_user_id == info.event.extendedProps.cfig1)) && (info.event.extendedProps.cfiga !== null )){										
+//						// Other instructor takes over from accepted cfi  			
+ 					} else if(current_user_role == 'cfi_g'){										
+  						// allow any instructor to take over appointment. 				
 						 pop_up_dialog( info, calendar, 'Instructor OverRide', "Return", "Yes, OverRide Instructor", "PUT", current_user_id);				     		
  					} else if( current_user_role == 'schedule_assist' ){
  						// If the user is schedual assistant administrator. 
- 						console.log( info.event.extendedProps);
+//  						console.log( info.event.extendedProps);
  				 		jQuery("#assigned_instructor").prepend('<div id="event_info">Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
   					 			'<br>Comment: ' +  info.event.extendedProps.comment + '<br>Alt Inst: ' +  info.event.extendedProps.cfig2 +'</div>');	
  						record_id = info.event.id;
@@ -208,15 +211,24 @@ function dumpweekendschedule(){
         cache: false, 
         success: function (response) {
         	response.sort(function(a,b){ return new Date(a.start) - new Date(b.start)});  // sort by date time 
-        	var str = '<table width="60%"  border="1"><tr><th width="20%x">Date/Time</th><th width="30%x">Student/Instructor</th><th width="25%">Instruction type</th><th width="25%">Comment</th><tr>';
+        	var str = '<table width="60%"  border="1"><tr><th width="20%x">Date/Time</th><th width="30%x">Student</th><th width="30%x">Instructor</th><th width="30%x">Alt Instructor</th><th width="25%">Instruction type</th><th width="25%">Comment</th><tr>';
            		response.forEach((item) => {
-          			str += '<tr><td>' + item.start + '</td><td>' + item.title + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
+          			str += '<tr><td>' + item.start + '</td><td>' + item.student + '</td><td>' + item.cfi1_name + '</td><td>' + item.cfi2_name + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
           		});
        str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        
-          		print_schedule(str);
+	
+		var html = "<!DOCTYP HTM>";
+		html += '<html lang="en-us">';
+		html += '<head><style>Student Schedule</style>';
+		html += "<body>";
+		html += str;
+		html += "</body>";
+		var w =window.open('about:blank' );
+		w.document.write(html);
         }
     });		
 }
+
 function getNextDayOfWeek(date, dayOfWeek) {
     // Code to check that date and dayOfWeek are valid left as an exercise ;)
     var resultDate = new Date(date.getTime());
@@ -230,22 +242,22 @@ function nextDay(x){
 	return now;
 }
 
-function print_schedule(str){
-	var w = window.open();
-// 	var headers = jQuery("#headers").html();
-// 	var field1 = jQuery("#field1").html();
-// 	var field2 = jQuery("#field2").html();
-	
-	var html = "<!DOCTYP HTM>";
-	html += '<html lang="en-us">';
-	html += '<head><style>Student Schedule</style>';
-	html += "<body>";
-	html += str;
-	html += "</body>";
-	w.document.write(html);
-//  	w.window.print();
-// 	w.document.close(); 
-}
+// function print_schedule(str){
+// 	var w = window.open();
+// // 	var headers = jQuery("#headers").html();
+// // 	var field1 = jQuery("#field1").html();
+// // 	var field2 = jQuery("#field2").html();
+// 	
+// 	var html = "<!DOCTYP HTM>";
+// 	html += '<html lang="en-us">';
+// 	html += '<head><style>Student Schedule</style>';
+// 	html += "<body>";
+// 	html += str;
+// 	html += "</body>";
+// 	w.document.write(html);
+// //  	w.window.print();
+// // 	w.document.close(); 
+// }
 
 function pop_up_dialog(info, calendar, title, return_text, cancel_text, ajax_type, cfig_id){
 		//  ntfs: using the cfix(info.event.extendedProps.cfig) id to look up the cfi name from the drop down select menu list(info.event.extendedProps.cfig1 +']').text()). 

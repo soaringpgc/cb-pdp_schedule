@@ -234,6 +234,7 @@ class Frontend {
  			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_pdp_instruction_request.js', array( 'jquery', 
  				'underscore',  'moment', 'calendar', 'jqueryui'), $this->version, true  );	
 			$current_user = wp_get_current_user();
+			$lessions  = get_option('cloudbase_leason_slots', false );	
 
 // 			$enabled = get_option('cloudbase_enabled_sessions', false );
 			$current_user = wp_get_current_user();
@@ -246,17 +247,16 @@ class Frontend {
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     		'current_user_id' => get_current_user_id(),
      		'current_user_role' => $this->user_roles(),
+     		'options' => $lessions,
 // 			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
 //      		'enabled_sessions' => $enabled,
      		'trade_authority' => $this->trade_authority(),
 //        		'user_can' => $this->user_can(),
       		'current_user_caps' => $current_user->allcaps, // these two need to be cleand up later. 
+      		
     		);   	
     	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
     	);    	
-
-
-
 		ob_start();	    	
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
 			include ('views/html_cb_pdp_instruction_request.php' );

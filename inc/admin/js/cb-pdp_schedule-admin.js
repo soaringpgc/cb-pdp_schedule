@@ -178,7 +178,7 @@
       	'click #update' : 'updateItem'
       },
       addItem: function(e){
-       console.log($(this.localDivTag));
+//        console.log($(this.localDivTag));
       	e.preventDefault();
       	var formData ={};
       	// grab all of the input fields
@@ -202,7 +202,6 @@
       			formData[el.id] = $(el).val();
       		}
       	});
-    console.log(formData);
       	this.collection.create( formData, {wait: true, error: function(model, response, error){
       				var mresult= JSON.parse(response.responseText);     	
       				alert(mresult["message"]) 
@@ -303,7 +302,7 @@
    			break;
    		}
    	} else {
-   	console.log("not defined");}
+//    	console.log("not defined");}
    });	
    	    
   }) // $(function) close

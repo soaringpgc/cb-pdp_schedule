@@ -33,7 +33,7 @@ Setup the start time, lessions/hour, number of hours of instruction and length o
 				echo ('<input type="number" value=' .$lessions['slots'] .' id="slots" name="slots"/>');   
      			echo ('	Slots/Hour </label> </dd>');		
            		echo ('<hr><dd id="rr-element" class="hform"><label for="length">');
-       			echo ('<input type="number" value=' .$lessions['length'].' id="length" name="length"/>');
+       			echo ('<input type="number" value=' .$lessions['length'].' id="length" name="length" step="0.1"/>');
      			echo ('	Length of Lession </label></dd>');
            		echo ('<dd id="rr-element" class="hform"><label for="count">');
   				echo ('<input type="number" value=' .$lessions['count'] .' id="count" name="count"/>');  
