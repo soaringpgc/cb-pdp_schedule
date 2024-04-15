@@ -302,7 +302,7 @@
    			break;
    		}
    	} else {
-//    	console.log("not defined");}
+    	console.log("not defined");}
    });	
    	    
   }) // $(function) close

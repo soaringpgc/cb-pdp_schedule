@@ -35,8 +35,9 @@
 		 var current_user_role = passed_vars.current_user_role;
 		 var current_user_role_name =  passed_vars.current_user_role_name;
  		 var current_user_can =  passed_vars.current_user_caps;
-		 var saturday = nextDay(6);
+ 		 var saturday =new Date(); 
 		 var sunday = nextDay(0);
+  		 saturday = new Date(saturday.setDate(sunday.getDate() -1));
 		 var record_id ='';
 // console.log(passed_vars)	;	 
  		if(current_user_can['cfi_g'] ){
@@ -53,7 +54,6 @@
   				right: '',
   					}; 
 		  }
-// 
         $(document).ready (function() {
 	      	var calendarEl = document.getElementById('calendar'); 
         	var calendar = new FullCalendar.Calendar(calendarEl, { // set up calendar
@@ -61,8 +61,9 @@
         		customButtons :{
         			cb_next :{ 
         				text: 'Next',
-        				click: function(){       					
-        					calendar.changeView('timeGrid', {
+        				click: function(){     
+        				console.log(saturday, sunday);
+						calendar.changeView('timeGrid', {
 						      start: saturday.setDate(saturday.getDate() + 7 ),
 						      end: sunday.setDate(sunday.getDate() + 7 )
 						    }) ;
