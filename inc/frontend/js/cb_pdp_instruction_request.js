@@ -33,7 +33,8 @@
 	 
 		 var current_user_id = passed_vars.current_user_id;
 		 var current_user_role = passed_vars.current_user_role;
-		 var current_user_role_name =  passed_vars.current_user_role_name;
+		 var current_user_roles = passed_vars.current_user_role_array;
+ 		 var result = current_user_roles.findIndex(ele => ele === "subscriber");
  		 var current_user_can =  passed_vars.current_user_caps;
  		 var saturday =new Date(); 
 		 var sunday = nextDay(0);
@@ -62,7 +63,6 @@
         			cb_next :{ 
         				text: 'Next',
         				click: function(){     
-        				console.log(saturday, sunday);
 						calendar.changeView('timeGrid', {
 						      start: saturday.setDate(saturday.getDate() + 7 ),
 						      end: sunday.setDate(sunday.getDate() + 7 )
@@ -138,10 +138,12 @@
 						 pop_up_dialog( info, calendar, 'Instructor Accept', "Return", "Yes, schedule", "PUT", current_user_id);				     		
 //  					} else if(((current_user_id == info.event.extendedProps.cfig2) ||  (current_user_id == info.event.extendedProps.cfig1)) && (info.event.extendedProps.cfiga !== null )){										
 //						// Other instructor takes over from accepted cfi  			
- 					} else if(current_user_role == 'cfi_g'){										
+//  					} else if(current_user_role == 'cfi_g'){	
+ 					} else if( current_user_roles.findIndex(ele => ele === "cfi_g") >= 0){	 														
   						// allow any instructor to take over appointment. 				
 						 pop_up_dialog( info, calendar, 'Instructor OverRide', "Return", "Yes, OverRide Instructor", "PUT", current_user_id);				     		
- 					} else if( current_user_role == 'schedule_assist' ){
+ 					} else if( current_user_roles.findIndex(ele => ele === "schedule_assist") >= 0){	 	
+//  					} else if( current_user_role == 'schedule_assist' ){
  						// If the user is schedual assistant administrator. 
 //  						console.log( info.event.extendedProps);
  				 		jQuery("#assigned_instructor").prepend('<div id="event_info">Instruction: ' + info.event.extendedProps.request_type + '<br>Member weight: ' +  info.event.extendedProps.member_weight + 
@@ -214,10 +216,10 @@ function dumpweekendschedule(){
         	response.sort(function(a,b){ return new Date(a.start) - new Date(b.start)});  // sort by date time 
         	var str = '<table width="60%"  border="1"><tr><th width="20%x">Date/Time</th><th width="30%x">Student</th><th width="30%x">Instructor</th><th width="30%x">Alt Instructor</th><th width="25%">Instruction type</th><th width="25%">Comment</th><tr>';
            		response.forEach((item) => {
-          			str += '<tr><td>' + item.start + '</td><td>' + item.student + '</td><td>' + item.cfi1_name + '</td><td>' + item.cfi2_name + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
+          			str += '<tr><td>' + item.start + '</td><td>' + item.student + '</td><td>' + (item.cfia_name != "none" ?  item.cfia_name : item.cfi1_name   ) + '</td><td>' + 
+          			item.cfi2_name + '</td><td> ' + item.request_type +'</td><td> ' + item.comment + '</td></tr>' ;	  
           		});
-       str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        
-	
+       str += '</table><br><p>The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager and instructors will determine flying order.</p>';        	
 		var html = "<!DOCTYP HTM>";
 		html += '<html lang="en-us">';
 		html += '<head><style>Student Schedule</style>';
@@ -310,7 +312,15 @@ function pop_up_dialog(info, calendar, title, return_text, cancel_text, ajax_typ
 	      	},
 	    ],
 	    width: "400px"});	
-}									
+}	
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}								
 
 
 

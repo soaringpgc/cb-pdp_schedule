@@ -116,12 +116,13 @@ class Instruction extends \Cloud_Base_Rest {
 				$student  = $this->cb_member_info($value->member_id);
 				$i1_name  = $this->cb_member_info($value->cfig1_id);
  				$i2_name  = $this->cb_member_info($value->cfig2_id);
+ 				$ia_name  = $this->cb_member_info($value->assigned_cfig_id);
 					
  			$r = array ( 'id'=> $value->id, 'title'=>$title, 'color'=>$c, 'textColor'=>$tc, 
  				'start'=> $start->format('Y-m-d H:i:s'), 'end'=> $end->format('Y-m-d G:i:s'), 
  				'cfig1'=>$value->cfig1_id, 'cfig2'=>$value->cfig2_id , 'member_id'=>$value->member_id, 'cfiga'=>$value->assigned_cfig_id,
  				'request_type'=>$value->request_type, 'member_weight'=> $student->weight, 'comment'=>$value->request_notes, 
- 				'student'=>$student->name ,'cfi1_name'=>$i1_name->name , 'cfi2_name'=> $i2_name->name );				
+ 				'student'=>$student->name ,'cfi1_name'=>$i1_name->name , 'cfi2_name'=> $i2_name->name, 'cfia_name'=> $ia_name->name  );				
 				array_push($results_array, $r );	
 			}	 					
 			return new \WP_REST_Response ($results_array);	
