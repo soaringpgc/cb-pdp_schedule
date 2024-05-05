@@ -234,10 +234,10 @@ function display_instruction_Request(){
 	 		 	
 	}
 
-	echo('<button type="button" id="showInstruction">Instructions </button><div id="instructions" class="popup-content"><p>Students: Click in the DAY you wish to schedule instruction. In the pop up form select your instructor, Alternate instructor if desired, 
+	echo('<button type="button" id="showInstruction">Instructions: </button><div id="instructions" class="popup-content"><p><u>Students</u>: Click in the DAY you wish to schedule instruction. In the pop up form select your instructor, Alternate instructor if desired, 
 			type of instruction, weight and any comment for the instructor. If you have pre- confermed with your primary instructor check the pre-confirmed box. If you 
 		need help selecting an instructor select "Scheduling Assistance" as the primary instructor and we will attempt to match you up with an available instructor. </p>
-		<p>Instructors: You will receive an email when a student selects you as a primary or alternate instructor. Click on the colored bar with the students name to accept or 
+		<p><u>Instructors</u>: You will receive an email when a student selects you as a primary or alternate instructor. Click on the colored bar with the students name to accept or 
 		cancel the instruction. Instructors can pre-schedule students for future  weeks by selecting the arrows at the top and selecting the student name. Note: any instructor
 		can over ride or steal another instructors student. This is so if a CFI-G is unavailable they can ask another CFIG to take over. Please use this with care. 	
 	</p> </div>');

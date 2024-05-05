@@ -16,10 +16,8 @@ p:first-line {
 }
  */
 
-p{	
+p,u{	
 	text-align: left;
-	text-indent:-85px;
-	
 }
 #assign_trade_popup {
   display:none;
