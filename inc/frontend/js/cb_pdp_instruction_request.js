@@ -29,16 +29,15 @@
          * 
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
-	 $(function(){
-	 
+	 $(function(){	 
 		 var current_user_id = passed_vars.current_user_id;
 		 var current_user_role = passed_vars.current_user_role;
 		 var current_user_roles = passed_vars.current_user_role_array;
- 		 var result = current_user_roles.findIndex(ele => ele === "subscriber");
+//  		 var result = current_user_roles.findIndex(ele => ele === "subscriber");
  		 var current_user_can =  passed_vars.current_user_caps;
- 		 var saturday =new Date(); 
+ 		 var saturday =nextDay(6);
 		 var sunday = nextDay(0);
-  		 saturday = new Date(saturday.setDate(sunday.getDate() -1));
+  		 saturday = saturday.setDate(sunday.getDate() -1);
 		 var record_id ='';
 // console.log(passed_vars)	;	 
  		if(current_user_can['cfi_g'] ){
@@ -184,16 +183,20 @@
   	 			} 
      		});     
  		  });
-		 		
+  	      $('#showInstruction').on('click', function(){ 
+    	     jQuery('#instructions').removeClass('popup-content');
+          }); 		 		
   	      $('#cancel').on('click', function(){ 
 //     	restore_page_settings();
     	     jQuery("#assigned_instructor").empty();   
           }); 
 	 }) // $(function) close	 
-// 	 $( window ).load(function() {
-// 
-// 	 });
-	 	 
+	 $(".confirmed_check").click( function(){
+	 	if( $('#cfig1').val() == -1){			
+	 		alert(" You must select an instructor first. ");
+	 		$('#confirmed').prop("checked", false);
+	 		}
+	 }); 
 })( jQuery );
 
 function hideinstructionrequest( ) {

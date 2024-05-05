@@ -165,7 +165,8 @@ function display_instruction_Request(){
 
      echo ('<div id="prim_instructor" class="table-row"  > <label for="cfig1" style=color:black class="table-col">Instructor: </label>
     		<div class="table-col" > <select class="event_cal_form" name="cfig1" id="cfig1" form="instruction_request">
-    		<option value=NULL>Instructor</option>');       
+    		<option value=-1>Instructor</option> 
+    		<option value=-1>Scheduling Assistance</option>');        
     	foreach($instructors as $key){ 	
  		  if( $key->ID == $user->ID ){
     	   		echo '<option selected value=' . $key->ID . '>'. $key->first_name . ' '. $key->last_name . '</option>';
@@ -173,31 +174,36 @@ function display_instruction_Request(){
     	  		echo '<option value=' . $key->ID . '>'. $key->first_name . ' '. $key->last_name . '</option>';
     	  }  
      	 };             
-     echo ( '</select></div></div> ');
-     echo ('<div id="cfig2ructor" class="table-row" > <label for="cfig2" style=color:black class="table-col">Alt Inst: </label>
+     echo ( '</select><div class="caption">Select Scheduling Assistance to for assistance in finding an instructor. </div></div></div> ');
+
+      echo('<div class="table-row"><label for="array_mergeirmed" style=color:black class="table-col">Confirmed: </label>
+  	 	<div class="table-col" > <input class="confirmed_check" type="checkbox" id="confirmed" name="confirmed" >
+  	 	</input><div class="caption">If you have pre-arranged with Instcrutor click here. </div></div></div>');
+
+      echo ('<div id="cfig2ructor" class="table-row" > <label for="cfig2" style=color:black class="table-col">Alt Inst: </label>
      	 		<div class="table-col" ><select class="event_cal_form" name="cfig2" id="cfig2" form="instruction_request">
      	 		<option value=NULL>Alt Instructor</option>');       
      			  foreach($instructors as $key){ 	
      			  	echo '<option value=' . $key->ID . '>'. $key->first_name . ' '. $key->last_name . '</option>';
      	 		 };             
      	 		echo ( '</select></div></div> ');
- 			echo('<div class="table-row"><label for="comment" class="table-col">Comment</label>				
- 			<div class="table-col" ><textarea id="comment" name="comment" rows="2", cols="55"></textarea></div></div>');
-
+ 
       		echo ('<div id="inst_type"  class="table-row"> <label for="inst_type" style=color:black class="table-col">Instruction Type: </label>
      	 		<div class="table-col" ><select class="event_cal_form" name="inst_type" id="inst_type" form="instruction_request">');       
      			  foreach($instruction_types as $key){ 	
      			  		echo '<option value=' . $key->id . '>'. $key->request_type . '</option>';
      	 		 };             
      	 		echo ( '</select></div> </div>');
+     	 		   	 		
+ 			echo('<div class="table-row"><label for="comment" class="table-col">Comment</label>				
+ 			<div class="table-col" ><textarea id="comment" name="comment" rows="2", cols="55"></textarea></div></div>');
+
+
      	 		echo('<div class="table-row"><label for="member_weight" style=color:black class="table-col">Member Weight: </label>
      	 		 <div class="table-col" > <input type="number" id="member_weight" name="member_weight" value='.$user_weight .' ></input></div></div>');
  
-     	 		echo('<div class="table-row"><label for="array_mergeirmed" style=color:black class="table-col">Confirmed with CFIG?: </label>
-     	 		 <div class="table-col" > <input type="checkbox" id="confirmed" name="confirmed" ></input></div></div>');
-
-     	 		echo('<div class="table-row"><label for="scheduling_assistance" style=color:black class="table-col">Scheduling Assistance Requested? </label>
-     	 		 <div class="table-col" > <input type="checkbox" id="scheduling_assistance" name="scheduling_assistance" ></input></div></div>');
+//      	 		echo('<div class="table-row"><label for="scheduling_assistance" style=color:black class="table-col">Scheduling Assistance Requested? </label>
+//      	 		 <div class="table-col" > <input  class="confirmed_check" type="checkbox" id="scheduling_assistance" name="scheduling_assistance" ></input></div></div>');
 	echo(' <input type="hidden" id="request_date" name="request_date" ></input>');
 	echo('<div><input type="submit" value="Submit" >'); //
 	echo('<input type="button" value="Cancel"  onclick="hideinstructionrequest()" >'); //
@@ -228,13 +234,22 @@ function display_instruction_Request(){
 	 		 	
 	}
 
-	echo('<div>Note: The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager 
-		and instructors will determine flying order. All students are required to be at the field by 8:00 to assist in setting up 
-		for the days flying. </div>');
+	echo('<button type="button" id="showInstruction">Instructions </button><div id="instructions" class="popup-content"><p>Students: Click in the DAY you wish to schedule instruction. In the pop up form select your instructor, Alternate instructor if desired, 
+			type of instruction, weight and any comment for the instructor. If you have pre- confermed with your primary instructor check the pre-confirmed box. If you 
+		need help selecting an instructor select "Scheduling Assistance" as the primary instructor and we will attempt to match you up with an available instructor. </p>
+		<p>Instructors: You will receive an email when a student selects you as a primary or alternate instructor. Click on the colored bar with the students name to accept or 
+		cancel the instruction. Instructors can pre-schedule students for future  weeks by selecting the arrows at the top and selecting the student name. Note: any instructor
+		can over ride or steal another instructors student. This is so if a CFI-G is unavailable they can ask another CFIG to take over. Please use this with care. 	
+	</p> </div>');
 
 	echo ('<div id="calendar" "></div>');
 	echo('<div style="width: 160px; margin: 0 auto; background: #000; color: #fff;"><input style="text-align: center;" type="button" value="Display Weekend schedule"  onclick="dumpweekendschedule()" ></div>'); //
 // 	echo('<div id="dumpschedule"></div>');
+	echo('<div>Note: The time slot shown for your instruction is not necessarly the time of your lesson. The Field Manager 
+		and instructors will determine flying order. All students are required to be at the field by 8:00 to assist in setting up 
+		for the days flying. </div>');
+
+
  }	
 	
 ?> 

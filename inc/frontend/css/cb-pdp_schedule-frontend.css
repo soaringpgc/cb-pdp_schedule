@@ -8,7 +8,19 @@
 tr{
  white-space: nowrap
 }
+/* 
+p:first-line {
+    color:red;
+    text-indent:0;
+    text-align: left;
+}
+ */
 
+p{	
+	text-align: left;
+	text-indent:-85px;
+	
+}
 #assign_trade_popup {
   display:none;
   position: fixed; 
@@ -124,7 +136,10 @@ position: fixed;
 z-index: 99999;
 
 }
-
+.caption{
+    font-weight: bold;
+    font-size: 12px;
+}
 /* 
 body .fc { 
    font-size: 1.0em;  <--- change here for general 

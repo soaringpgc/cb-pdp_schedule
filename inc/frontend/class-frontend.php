@@ -161,6 +161,7 @@ class Frontend {
      			'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     			'current_user_id' => get_current_user_id(),
      			'current_user_role' => $this->user_roles(),
+     			'current_user_role_array' =>  ( array ) $current_user->roles, // obtaining the role 	 
 				'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
 //      			'enabled_sessions' => $enabled,
      			'trade_authority' => $this->trade_authority(),
@@ -210,6 +211,7 @@ class Frontend {
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     		'current_user_id' => get_current_user_id(),
      		'current_user_role' => $this->user_roles(),
+     		'current_user_role_array' =>  ( array ) $current_user->roles, // obtaining the role 	 
 			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
      		'trade_authority' => $this->trade_authority(),
       		'user_can' => $this->user_can(),
@@ -238,7 +240,7 @@ class Frontend {
 
 // 			$enabled = get_option('cloudbase_enabled_sessions', false );
 			$current_user = wp_get_current_user();
-	 		$roles = ( array ) $current_user->roles; // obtaining the role 	 	 		
+// 	 		$roles = ( array ) $current_user->roles; // obtaining the role 	 	 		
 
     	$dateToBePassed = array(
 //     	    'ajax_url' =>  admin_url('admin-ajax.php'),
@@ -248,7 +250,8 @@ class Frontend {
      		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
     		'current_user_id' => get_current_user_id(),
      		'current_user_role' => $this->user_roles(),
-     		'current_user_role_array' =>  $roles,
+     		'current_user_role_array' =>  ( array ) $current_user->roles, // obtaining the role 	 
+//      		'current_user_role_array' =>  $roles,
      		'options' => $lessions,
 // 			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
 //      		'enabled_sessions' => $enabled,

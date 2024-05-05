@@ -30,13 +30,13 @@
          * The file is enqueued from inc/admin/class-admin.php.
 	 */
 	 $(function(){
-	 var current_user_role = passed_vars.current_user_role;
-	 var enabled_sessions = passed_vars.enabled_sessions;
-	 var trade_authority = passed_vars.trade_authority;
-	 var current_user_role_name =  passed_vars.current_user_role_name;
-	 var current_user_can =  passed_vars.user_can;
+// 	 var current_user_role = passed_vars.current_user_role;
+	 var // enabled_sessions = passed_vars.enabled_sessions;
+// 	 var trade_authority = passed_vars.trade_authority;
+// 	 var current_user_role_name =  passed_vars.current_user_role_name;
+// 	 var current_user_can =  passed_vars.user_can;
+	 var current_user_roles = passed_vars.current_user_role_array;
 	 
- 
 	 var startdate ='';
   	 var localdata ="";
         $(document).ready (function() {

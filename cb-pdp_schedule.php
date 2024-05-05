@@ -15,7 +15,7 @@
  * Plugin Name:       Cloud Base -PGC PDP Instruction Scheduling. 
  * Plugin URI:        http://pgcsoaring.com/pdp_instruction_schedule-uri/
  * Description:       The is an extension to plugin Cloud Base. This adds the PDP calendar duty managment and instructing scheduling. If CloudBase is deactivate, this plugin will auto deactivate. 
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Philadelphia Glider Council -- Dave Johnson
  * Author URI:        http://pgcsoaring.com/
  * License:           GPL-2.0+
@@ -49,7 +49,7 @@ define( __NAMESPACE__ . '\NS', __NAMESPACE__ . '\\' );
 
 define( NS . 'PLUGIN_NAME', 'cb-pdp_schedule' );
 
-define( NS . 'PLUGIN_VERSION', '1.1.2' );
+define( NS . 'PLUGIN_VERSION', '1.1.3' );
 
 define( NS . 'PLUGIN_NAME_DIR', plugin_dir_path( __FILE__ ) );
 

@@ -156,9 +156,13 @@ class Instruction extends \Cloud_Base_Rest {
 //  	return new \WP_REST_Response ( $user ); 				
 			$user_meta = get_userdata( $user->ID );
 			$display_name = $user_meta->first_name .' '.  $user_meta->last_name;				
+
+			if((isset($request['cfig1']) && $request['cfig1'] == -1 ) || $request['cfig1'] == null ){
+				$assistance = true ;	
+
 			
-			if(isset($request['scheduling_assistance'] ) && ($request['scheduling_assistance']!= 0 )){
-				$assistance = true ;			
+// 			if(isset($request['scheduling_assistance'] ) && ($request['scheduling_assistance']!= 0 )){
+// 				$assistance = true ;			
 			} else {
 				$assistance = false ;
 				if(isset($request['cfig1']) ){
