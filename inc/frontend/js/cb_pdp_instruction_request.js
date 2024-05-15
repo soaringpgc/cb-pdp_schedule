@@ -35,12 +35,17 @@
 		 var current_user_roles = passed_vars.current_user_role_array;
 //  		 var result = current_user_roles.findIndex(ele => ele === "subscriber");
  		 var current_user_can =  passed_vars.current_user_caps;
- 		 var saturday =nextDay(6);
-		 var sunday = nextDay(0);
-  		 saturday = saturday.setDate(sunday.getDate() -1);
+	 	 var saturday =nextDay(6, new Date()); 
+	 	 var sunday = nextDay(0, new Date());
+
+ 		 if (sessionStorage['workingDate']){
+ 		 	var sunday = new Date(sessionStorage.getItem('workingDate'));
+ 		 }    		 
+    	saturday = subtractDays(sunday, 1)	 
+//      sessionStorage.clear(); 	 	 		 
 		 var record_id ='';
 // console.log(passed_vars)	;	 
- 		if(current_user_can['cfi_g'] ){
+ 		if(current_user_can['cfi_g'] || current_user_can['schedule_assist']){
 // Allow CFIs to move to other weekends to schedule students. 
   			var header = {
   				left: 'cb_prev',
@@ -61,20 +66,27 @@
         		customButtons :{
         			cb_next :{ 
         				text: 'Next',
-        				click: function(){     
-						calendar.changeView('timeGrid', {
-						      start: saturday.setDate(saturday.getDate() + 7 ),
-						      end: sunday.setDate(sunday.getDate() + 7 )
+        				click: function(){          
+        			 		sunday = getNextDayOfWeek(new Date( sunday.setDate(sunday.getDate()+1)), 0 );
+        			 		saturday.setDate(saturday.getDate()+7); 
+        					sessionStorage.setItem('workingDate', sunday);        			            				
+							calendar.changeView('timeGrid', {
+						      start: saturday,
+						      end: sunday
 						    }) ;
 						    calendar.refetchEvents();              				
         				}
         			},
 					cb_prev :{ 
         				text: 'Prev',
-        				click: function(){       					
+        				click: function(){  
+        			 		sunday = getNextDayOfWeek(new Date( sunday.setDate(sunday.getDate()-7)), 0 );
+        			 		saturday.setDate(saturday.getDate()-7); 
+        					sessionStorage.setItem('workingDate', sunday);
+        					saturday = new Date(saturday.setDate(sunday.getDate() -1));     					
         					calendar.changeView('timeGrid', {
-						      start: saturday.setDate(saturday.getDate() - 7 ),
-						      end: sunday.setDate(sunday.getDate() - 7 )
+						      start: saturday,
+						      end: sunday
 						    });
 						    calendar.refetchEvents();       				
         				}
@@ -242,28 +254,15 @@ function getNextDayOfWeek(date, dayOfWeek) {
     return resultDate;
 }
 
-function nextDay(x){
-	var now = new Date();    
-	now.setDate(now.getDate() + (x+(7-now.getDay())) % 7);
-	return now;
+function nextDay(x, workingDate){    
+	workingDate.setDate(workingDate.getDate() + (x+(7-workingDate.getDay())) % 7);
+	return workingDate;
 }
-
-// function print_schedule(str){
-// 	var w = window.open();
-// // 	var headers = jQuery("#headers").html();
-// // 	var field1 = jQuery("#field1").html();
-// // 	var field2 = jQuery("#field2").html();
-// 	
-// 	var html = "<!DOCTYP HTM>";
-// 	html += '<html lang="en-us">';
-// 	html += '<head><style>Student Schedule</style>';
-// 	html += "<body>";
-// 	html += str;
-// 	html += "</body>";
-// 	w.document.write(html);
-// //  	w.window.print();
-// // 	w.document.close(); 
-// }
+function subtractDays(date, days) {  
+  const dateCopy = new Date(date);
+  dateCopy.setDate(dateCopy.getDate() - days);
+  return dateCopy;   
+}
 
 function pop_up_dialog(info, calendar, title, return_text, cancel_text, ajax_type, cfig_id){
 		//  ntfs: using the cfix(info.event.extendedProps.cfig) id to look up the cfi name from the drop down select menu list(info.event.extendedProps.cfig1 +']').text()). 

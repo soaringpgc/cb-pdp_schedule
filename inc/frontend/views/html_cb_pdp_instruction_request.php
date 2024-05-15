@@ -145,7 +145,7 @@ function display_instruction_Request(){
 // however if user is CFIG allow to select any member to put on schedule. 	
 
 // 	if(current_user_can('cb_edit_instruction')){ 
-	if(in_array('cfi_g', $roles)){ 
+	if(in_array('cfi_g', $roles) ||  in_array('schedule_assist', $roles)) { 
 //   		echo ('<div >');
 		echo ('<div id="member_id" class="table-row" > <label for="member_id" style=color:black class="table-col">Student: </label>
     		<div class="table-col" > <select class="event_cal_form" name="member_id" id="member_id" form="instruction_request">
@@ -176,9 +176,15 @@ function display_instruction_Request(){
      	 };             
      echo ( '</select><div class="caption">Select Scheduling Assistance to for assistance in finding an instructor. </div></div></div> ');
 
-      echo('<div class="table-row"><label for="array_mergeirmed" style=color:black class="table-col">Confirmed: </label>
-  	 	<div class="table-col" > <input class="confirmed_check" type="checkbox" id="confirmed" name="confirmed" >
-  	 	</input><div class="caption">If you have pre-arranged with Instcrutor click here. </div></div></div>');
+ 		if((in_array('cfi_g', $roles) ||  in_array('schedule_assist', $roles)) ){  // if instructor is scheduling auto pre-confirm 
+		      echo('<div class="table-row"><label for="array_mergeirmed" style=color:black class="table-col">Confirmed: </label>
+		  	 	<div class="table-col" > <input class="confirmed_check" type="checkbox" checked id="confirmed" name="confirmed" >
+		  	 	</input></div></div>');
+		}   else {
+		      echo('<div class="table-row"><label for="array_mergeirmed" style=color:black class="table-col">Confirmed: </label>
+		  	 	<div class="table-col" > <input class="confirmed_check" type="checkbox"  id="confirmed" name="confirmed" >
+		  	 	</input><div class="caption">If you have pre-arranged with an instructor click here. </div></div></div>');
+		}
 
       echo ('<div id="cfig2ructor" class="table-row" > <label for="cfig2" style=color:black class="table-col">Alt Inst: </label>
      	 		<div class="table-col" ><select class="event_cal_form" name="cfig2" id="cfig2" form="instruction_request">
