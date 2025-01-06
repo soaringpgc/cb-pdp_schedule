@@ -61,6 +61,7 @@ class Instruction extends \Cloud_Base_Rest {
  		$table_instruction =  $wpdb->prefix . 'cloud_base_instruction';
  		$table_type =  $wpdb->prefix . 'cloud_base_instruction_type';	 		
  		$results_array = array();
+ 		$i_status = 0; 
 
 		if(isset($request['start']) && isset($request['end'])){		
 			$startdate = new \DateTime($request['start']);			
@@ -80,6 +81,7 @@ class Instruction extends \Cloud_Base_Rest {
 				if($value->scheduling_assistance == 1  ){				
 					$c = 'orange';
 					$tc = 'white';	
+//					$i_status = 0;
 				}
 				$f = get_user_meta($value->member_id, 'first_name', true  );
   				$l = get_user_meta($value->member_id, 'last_name', true  );  
@@ -92,6 +94,7 @@ class Instruction extends \Cloud_Base_Rest {
   					$i_name = $l. ', ' .$f ;	
 					$c = 'green';
 					$tc = 'white';	
+					$i_status = 1;
 					$title .=  '/' . $i_name;
 				} elseif($value->cfig1_id != 0) {
 					$f = get_user_meta($value->cfig1_id, 'first_name', true  );
@@ -99,12 +102,17 @@ class Instruction extends \Cloud_Base_Rest {
 					$i_name = 	 $l. ', ' .$f ;
 					$c ='yellow';
 					$tc = 'black';
+					$i_status = 1;
 					if ($value->cfig_confirmed == 1){
 						$c ='blue';
 						$tc = 'white';
+						$i_status = 2;
 						$title .=  '/' . $i_name;
 					}					
 				}
+				/*
+					i_status  0 = unassigned, 1 = instructor requested, 2 - pre-confirmed, 3 - requested and accepted by instructor. ntfs dsj 01/06/2025
+				*/
 // 				if($value->cfig2_id != 0) {
 // 					$f = get_user_meta($value->cfig2_id, 'first_name', true  );
 //   					$l = get_user_meta($value->cfig2_id, 'last_name', true  );  	
@@ -122,7 +130,7 @@ class Instruction extends \Cloud_Base_Rest {
  				'start'=> $start->format('Y-m-d H:i:s'), 'end'=> $end->format('Y-m-d G:i:s'), 
  				'cfig1'=>$value->cfig1_id, 'cfig2'=>$value->cfig2_id , 'member_id'=>$value->member_id, 'cfiga'=>$value->assigned_cfig_id,
  				'request_type'=>$value->request_type, 'member_weight'=> $student->weight, 'comment'=>$value->request_notes, 
- 				'student'=>$student->name ,'cfi1_name'=>$i1_name->name , 'cfi2_name'=> $i2_name->name, 'cfia_name'=> $ia_name->name  );				
+ 				'student'=>$student->name ,'cfi1_name'=>$i1_name->name , 'cfi2_name'=> $i2_name->name, 'cfia_name'=> $ia_name->name, 'istatus'=> $i_status );				
 				array_push($results_array, $r );	
 			}	 					
 			return new \WP_REST_Response ($results_array);	
