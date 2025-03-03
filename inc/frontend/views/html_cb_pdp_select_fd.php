@@ -37,68 +37,94 @@
    		    echo 'Did not save because your form seemed to be invalid. Sorry';
    		    return;
    		}
-   		$user = get_user_by('ID', $_POST['member_id'] );
- 		$user_meta = get_userdata($_POST['member_id']  );
-		$display_name = $user_meta->first_name .' '.  $user_meta->last_name;
-		$user_roles=$user_meta->roles; 
-		list( $role_id, $role_name) = fd_user_role($user_roles);
-
-   		$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
-//   $enabled_sessions= array( '1', '1', '0'); 	
- 		
-   		foreach( $enabled_sessions as $k=>$v){   			
-   			if($v == '1'){
-   				$session = $k+1;
-   				$selected = array();	
-   				for($i=1; $i<4; $i++){
-   					$choice = 'choice' . $session . '_' . $i ; 
-   					if(isset($_POST[$choice]) && ($_POST[$choice] != "" )){
-   						$sql = $wpdb->prepare("Select calendar_date from {$table_calendar} where id = %d", $_POST[$choice]);   	
-   						$selected['choice_'.$i]= $_POST[$choice] ;			
-   						$choices[$k][$i] = $wpdb->get_var($sql);    		
-   					} else {
-   						$choices[$k][$i] = null;   
-   					}				
-   				}     				  				
-   				if ( !is_null( $choices[$k][1]) ){
-   					$pref_array = array( 'member_id'=>$user->ID , 'trade'=>$role_id, 'session'=>$session, 'year'=>date('Y') );
-   					// see if a record exists for this year, member, trade and session 
-   					$sql = $wpdb->prepare("Select id from {$table_preferences} where member_id = %d  AND trade=%d AND session=%d  AND year=%d ", 
-   						$user->ID, $role_id, $session, date('Y') );   	
-   					$record_id = $wpdb->get_var($sql);    					
-   					if(is_null($record_id)){ // record does not exist create new
-   						$wpdb->insert($table_preferences, array_merge($pref_array , $selected));
-   					} else { // recored exists, update existing. 
-   						$wpdb->update($table_preferences, $selected, array('id'=> $record_id));
+   		$match = $_POST['submit'];	
+   		if( strcmp($match,'Submit Request') == 0 ){
+    		var_dump($_POST['submit']);  $match = $_POST['submit'];	
+//    			die();
+   			$user = get_user_by('ID', $_POST['member_id'] );
+ 			$user_meta = get_userdata($_POST['member_id']  );
+			$display_name = $user_meta->first_name .' '.  $user_meta->last_name;
+			$user_roles=$user_meta->roles; 
+			list( $role_id, $role_name) = fd_user_role($user_roles);
+	
+   			$enabled_sessions = get_option('cloudbase_enabled_sessions'); 
+//   		$enabled_sessions= array( '1', '1', '0'); 	
+	
+   			foreach( $enabled_sessions as $k=>$v){   			
+   				if($v == '1'){
+   					$session = $k+1;
+   					$selected = array();	
+   					for($i=1; $i<4; $i++){
+   						$choice = 'choice' . $session . '_' . $i ; 
+   						if(isset($_POST[$choice]) && ($_POST[$choice] != "" )){
+   							$sql = $wpdb->prepare("Select calendar_date from {$table_calendar} where id = %d", $_POST[$choice]);   	
+   							$selected['choice_'.$i]= $_POST[$choice] ;			
+   							$choices[$k][$i] = $wpdb->get_var($sql);    		
+   						} else {
+   							$choices[$k][$i] = null;   
+   						}				
+   					}     				  				
+   					if ( !is_null( $choices[$k][1]) ){
+   						$pref_array = array( 'member_id'=>$user->ID , 'trade'=>$role_id, 'session'=>$session, 'year'=>date('Y') );
+   						// see if a record exists for this year, member, trade and session 
+   						$sql = $wpdb->prepare("Select id from {$table_preferences} where member_id = %d  AND trade=%d AND session=%d  AND year=%d ", 
+   							$user->ID, $role_id, $session, date('Y') );   	
+   						$record_id = $wpdb->get_var($sql);    					
+   						if(is_null($record_id)){ // record does not exist create new
+   							$wpdb->insert($table_preferences, array_merge($pref_array , $selected));
+   						} else { // recored exists, update existing. 
+   							$wpdb->update($table_preferences, $selected, array('id'=> $record_id));
+   						}
    					}
    				}
-   			}
-   		}   
-   		$msg = 'Member: ' . $display_name . ', ' . $role_name . "<br>\n";  		 		
-//    		$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name .  "\n";
-		if( $enabled_sessions[0] == '1' &&  !is_null( $choices[0][1])){
-   			$msg .=  'Session 1 First: ' . $choices[0][1] . ', Second: ' . $choices[0][2] . ', Third: ' . $choices[0][3] ."<br>\n";
-		}	
-		if( $enabled_sessions[1] == '1'  && !is_null( $choices[1][1]) ){
-   			$msg .=  'Session 2 First: ' . $choices[1][1] . ', Second: ' . $choices[1][2] . ', Third: ' . $choices[1][3] . "<br>\n";
+   			}   
+   			$msg = 'Member: ' . $display_name . ', ' . $role_name . "<br>\n";  		 		
+//    			$msg = 'Member ' . $display_name . ' is requesting the following dates for field duty as ' . $role_name .  "\n";
+			if( $enabled_sessions[0] == '1' &&  !is_null( $choices[0][1])){
+   				$msg .=  'Session 1 First: ' . $choices[0][1] . ', Second: ' . $choices[0][2] . ', Third: ' . $choices[0][3] ."<br>\n";
+			}	
+			if( $enabled_sessions[1] == '1'  && !is_null( $choices[1][1]) ){
+   				$msg .=  'Session 2 First: ' . $choices[1][1] . ', Second: ' . $choices[1][2] . ', Third: ' . $choices[1][3] . "<br>\n";
+			}
+			if( $enabled_sessions[2] == '1'  && !is_null( $choices[2][1]) ){
+   				$msg .=  'Session 3 First: ' . $choices[2][1] . ', Second : ' . $choices[2][2] . ', Third: ' . $choices[2][3] . "<br>\n";
+			}
+			$subject = "Field Duty Selection for: " . $display_name .', ' . $role_name  ;
+	
+			$sql = "SELECT wp_users.user_email FROM wp_users INNER JOIN wp_usermeta ON wp_users.ID = wp_usermeta.user_id WHERE wp_usermeta.meta_value like '%operations%' "; 
+			$ops_emails = $wpdb->get_results($sql);
+			$to = ""; 
+			foreach ( $ops_emails as $m ){
+				$to .= $m->user_email .', ';
+			};
+			$to .= $user_meta->user_email; 
+			$headers = "MIME-Version: 1.0" . "\n";
+			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
+			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
+   			mail($to,$subject,$msg,$headers);
+			echo('<p> Your selections have been accepted</p> ');
+		} elseif( strcmp($match,'Enable Selected') == 0 ){  // process the session enable processes
+			if(current_user_can( 'cb_edit_operations')){
+				$sessions = [];
+				if (isset($_POST ["enablesession"][1])){
+					$sessions[0] = 1;
+				} else {
+					$sessions[0] = 0;
+				}
+				if (isset($_POST ["enablesession"][2])){
+					$sessions[1] = 1;
+				} else {
+					$sessions[1] = 0;
+				}
+				if (isset($_POST ["enablesession"][3])){
+					$sessions[2] = 1;
+				} else {
+					$sessions[2] = 0;
+				}						
+				update_option('cloudbase_enabled_sessions', $sessions , false );	
+				$_POST = array();	  						
+			}
 		}
-		if( $enabled_sessions[2] == '1'  && !is_null( $choices[2][1]) ){
-   			$msg .=  'Session 3 First: ' . $choices[2][1] . ', Second : ' . $choices[2][2] . ', Third: ' . $choices[2][3] . "<br>\n";
-		}
-		$subject = "Field Duty Selection for: " . $display_name .', ' . $role_name  ;
-
-		$sql = "SELECT wp_users.user_email FROM wp_users INNER JOIN wp_usermeta ON wp_users.ID = wp_usermeta.user_id WHERE wp_usermeta.meta_value like '%operations%' "; 
-		$ops_emails = $wpdb->get_results($sql);
-		$to = ""; 
-		foreach ( $ops_emails as $m ){
-			$to .= $m->user_email .', ';
-		};
-		$to .= $user_meta->user_email; 
-		$headers = "MIME-Version: 1.0" . "\n";
-		$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
-		$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
-   		mail($to,$subject,$msg,$headers);
-		echo('<p> Your selections have been accepted</p> ');
 	}
 /*
 *  This function displayes the choices avaliable. The form is submitted back to itself
@@ -122,26 +148,58 @@
 		
 		list( $role_id, $role_name) = fd_user_role($user_roles);
 		$session_dates = array(); 
+		$session_start_dates = array(); 
+		$session_end_dates = array(); 
 		echo('<div style="text-align: center; " id="select_fd_days" > ');
+
+		echo ('<form id="selectdutyday"  name="selectdutyday" method="post" >');
+		if(current_user_can( 'cb_edit_operations')){
+ 			echo('<input type="submit" value="Enable Selected" id="submit" name="submit" >'); 
+ 		}
 		for ($i = 0; $i <3; $i++ )	{	
  			$sql = "SELECT c.id, c.calendar_date FROM {$table_calendar} c INNER JOIN {$table_field_duty} f ON  c.id=f.calendar_id WHERE f.trade = " . $role_id . " AND  f.member_id IS NULL AND c.session =" . ($i+1) . ' AND c.calendar_date >= CURDATE()';
 			$session_dates[$i] = $wpdb->get_results($sql);
+			$sqlmin = "SELECT MIN(calendar_date) FROM {$table_calendar}   WHERE session =" . ($i+1) . ' AND calendar_date >= CURDATE()' ;
+			$sqlmax = "SELECT MAX(calendar_date) FROM {$table_calendar}   WHERE session =" . ($i+1) . ' AND calendar_date >= CURDATE()' ;
+			$session_start_dates[$i] =  $wpdb->get_results($sqlmin);
+ 			$session_end_dates[$i]  =  $wpdb->get_results($sqlmax);
+
+//   			 		echo(get_object_vars($session_start_dates[0][0]) ["MIN(calendar_date)"]); 
+//    			 		echo(get_object_vars($session_end_dates[0][0]) ["MAX(calendar_date)"]); 
 		}
+			
 		echo ('<div class="choices_panel" >  <div>Member: ' .$display_name . '</div>');
 		echo (' <div>Profession: ' .$role_name. '</div>');
 		echo (' <div>Select your prefered Duty days:</div><br>');	
-		echo ('<form id="selectdutyday"  name="selectdutyday" method="post" >');
+//  		echo ('<form id="selectdutyday"  name="selectdutyday" method="post" >');
 		echo ('<input type="hidden" id="member_id" name="member_id" value="'. $user->ID . '"</input> ');
 		echo ('<input type="hidden" id="member_role" name="member_role" value="'. $role_name . '"</input> ');
 		echo('<table>');
 
+		if(current_user_can( 'cb_edit_operations')){
+ 			for($i=0 ; $i<3; $i++){
+ 				$j=$i+1;
+				echo ('<tr><td> Session ' .$j . ' start:</td> <td>' . get_object_vars($session_start_dates[$i][0]) ["MIN(calendar_date)"] . '</td>
+				<td> Session ' .$i+"1". ' end:</td> <td>' . get_object_vars($session_end_dates[$i][0]) ["MAX(calendar_date)"] . '</td> 	
+        	     <td> <label for="enabled1"><input type="checkbox" '.   ($enabled_sessions[$i] ==1 ? "checked" : "")  .'
+        	    id=="enablesession['.$j.']" name="enablesession['.$j.']" />Enabled</label></td></tr>');
+			}
+			
+		} else {	
+ 			for($i=0 ; $i<3; $i++){
+ 				$j=$i+1;
+				echo ('<tr><td> Session ' .$j . ' start:</td> <td>' . get_object_vars($session_start_dates[$i][0]) ["MIN(calendar_date)"] . '</td>
+				<td> Session ' .$i+"1". ' end:</td> <td>' . get_object_vars($session_end_dates[$i][0]) ["MAX(calendar_date)"] . '</td>
+        	    <td>'.   ($enabled_sessions[$i] ==1 ? "Enabled" : "Disabled") .'</td></tr>');
+  			}
+ 		}
    		foreach( $enabled_sessions as $k=>$v){
    			if($v == '1'){
    				$session = $k+1;
    				echo('<tr><td>Session'. $session. ': </td>');   				
    				for($i=1; $i<4; $i++){ 			
    					$choice = 'choice' . $session . '_' . $i ; 	
-       				echo ('<td><div 2 id="assignins"> <label for="' . $session . '" style=color:black>' . $label_text[$i-1] . ' Choice: </label>
+       				echo ('<td><div 2 id="assignins"> <label for="' . $session . '" style=color:black>' . $label_text[$i-1] . ' Choice: </label><br>
           				<select  name="' . $choice . '" id="' . $choice . '" form="selectdutyday">  
           				<option value="" selected>Select</option>');      
      	  			foreach($session_dates[$k] as $key){ 	
@@ -153,9 +211,9 @@
    		}
 		echo('</table></div>');
 		    wp_nonce_field( 'submit_field_duty' ); 
-			if (in_array("field_manager", $user_roles)){
-			
-			}  elseif (in_array("field_manager", $user_roles)){
+			if (in_array("field_manager", $user_roles)){			
+			}  
+			elseif (in_array("field_manager", $user_roles)){
 			
 			} else {
 				$message = "this is for Fild Mananges and Assistant Field Managers."; 

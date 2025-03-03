@@ -176,9 +176,9 @@ enable sign up for duty for each session.
            		echo '<dd id="rr-element" class="hform">
   						<label for="enablesession[1]">';
   						if ( $enabled[1] == '1' )	{
-       							echo '<input type="checkbox" value="1" id="enablesession[0]" name="enablesession[1]" checked/>';
+       							echo '<input type="checkbox" value="1" id="enablesession[1]" name="enablesession[1]" checked/>';
        						} else {
-       							echo '<input type="checkbox" value="1" id="enablesession[0]" name="enablesession[1]"/>';
+       							echo '<input type="checkbox" value="1" id="enablesession[1]" name="enablesession[1]"/>';
       						}   
      						echo '	Session 2
   							 </label>
@@ -187,9 +187,9 @@ enable sign up for duty for each session.
    						<label for="holfm-">
  						<label for="enablesession[2]">';
   						if ( $enabled[2] == '1' )	{
-       							echo '<input type="checkbox" value="1" id="enablesession[0]" name="enablesession[2]" checked/>';
+       							echo '<input type="checkbox" value="1" id="enablesession[2]" name="enablesession[2]" checked/>';
        						} else {
-       							echo '<input type="checkbox" value="1" id="enablesession[0]" name="enablesession[2]"/>';
+       							echo '<input type="checkbox" value="1" id="enablesession[2]" name="enablesession[2]"/>';
       						}   
      						echo '	Session 3
   							 </label>
