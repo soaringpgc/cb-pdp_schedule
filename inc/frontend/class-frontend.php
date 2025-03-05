@@ -197,6 +197,34 @@ class Frontend {
 		ob_end_clean();
 		return $output;
 	} //cb_pdp_select_fd
+	public function cb_pdp_assign_fd( $atts = array() ) {
+		$atts = array_change_key_case( (array) $atts, CASE_LOWER );		
+	 	wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/cb_assign_fd.js', array( 'jquery', 
+ 				'underscore',  'calendar'), $this->version, true  );	
+   			$dateToBePassed = array(
+    	    'ajax_url' =>  admin_url('admin-ajax.php'),
+    		'restURL' => esc_url_raw( rest_url() ),
+     		'nonce' => wp_create_nonce( 'wp_rest' ),
+     		'success' => __( 'Flight Has been updated!', 'your-text-domain' ),
+     		'failure' => __( 'Your submission could not be processed.', 'your-text-domain' ),
+    		'current_user_id' => get_current_user_id(),
+     		'current_user_role' => $this->user_roles(),
+     		'current_user_role_array' =>  ( array ) $current_user->roles, // obtaining the role 	 
+			'current_user_role_name' =>   $this->user_roles() != null ? wp_roles()->get_names()[ $this->user_roles() ] : '' ,
+     		'trade_authority' => $this->trade_authority(),
+      		'user_can' => $this->user_can(),
+    		);   	
+    	wp_add_inline_script( $this->plugin_name, 'const passed_vars = ' . json_encode ( $dateToBePassed  ), 'before'
+    	);    
+ 		 		
+		ob_start();	    	
+	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
+			include ('views/html_cb_pdp_assign_fd.php' );
+			field_duty_assignments();
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output; 
+	} //cb_pdp_assign_fd
 	public function cb_pdp_vac_view( $atts = array() ) {
 		$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 // 	    	$flight_atts = shortcode_atts(array( 'view_only'=>"true"), $atts);
@@ -280,6 +308,7 @@ class Frontend {
 	public function register_shortcodes() {
 		add_shortcode( 'cb_pdp_calendar', array( $this, 'cb_pdp_calendar' ) );
 		add_shortcode( 'cb_pdp_select_fd', array( $this, 'cb_pdp_select_fd' ) );
+		add_shortcode( 'cb_pdp_assign_fd', array( $this, 'cb_pdp_assign_fd' ) );
 		add_shortcode( 'cb_pdp_vac_view', array( $this, 'cb_pdp_vac_view' ) );
 		add_shortcode( 'cb_pdp_instruction_request', array( $this, 'cb_pdp_instruction_request' ) );
 	} // register_shortcodes()
