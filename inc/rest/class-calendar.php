@@ -150,14 +150,11 @@ class Calendar extends \Cloud_Base_Rest {
 		
  			$c = 0; 
 	  		$u = 0;
-	  		$s_count=-1;
 	  		$session_dates = array(  $jan_this_year, $s1, $s2, $s3, $e3, $jan_next_year);
 	  		$sessions = array('0', '1', '2', '3', '0');
   
-	  	    for ( $j = 0; $j < sizeof($sessions); $j++) {	// 
- 	  	    	 $s_count++;	
-	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {	
-	  	    	 	  	    	 						 
+	  	    for ( $j = 0; $j <= sizeof($sessions); $j++) {	// 	
+	  	    	 for($i = $session_dates[$j]; $i <= $session_dates[$j+1] ; $i->modify('+1 day') ) {		  	    	 	  	    	 						 
   			 	  	$record = array( 'calendar_date'=>  $i->format("Y-m-d"), 'session'=> $sessions[$j]);	 			  	  
   			 	   	$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $i->format("Y-m-d"));		  	    	 
 	  	    	 						  			  	 

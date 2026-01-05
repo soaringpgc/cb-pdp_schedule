@@ -94,8 +94,8 @@ enable sign up for duty for each session.
          		echo '<div class="hform"><label for session2Start>Session 3 Start:</label>';
           		echo '<input type="date" id="session3Start" name="session3Start" value="' . $session3Start . '"></div>';                                          
 // Session 3 end date
-         		echo '<div class="hform"><label for session1Start>Session 3 End:</label>';
-          		echo '<input type="date" id="$session3end" name="session3end" value="' . $session3End  . '"></div><br><br>';          		
+         		echo '<div class="hform"><label for session3Start>Session 3 End:</label>';
+          		echo '<input type="date" id="$session3end" name="session3end" value="' . $session3End  . '"></div><br><br>';   
 // days of week for scheduling 
  				submit_button('Update Year', 'primary', 'selection', true);		
  				echo '<hr>';         		 
