@@ -162,6 +162,11 @@ class Admin {
 	public function cb_schedule_setup_response(){
 		$match = $_POST['selection'];	
      	check_admin_referer('schedule_page');
+     	global $wpdb;
+ 		$table_trade =  $wpdb->prefix . 'cloud_base_trades';
+		$sql='SELECT  * FROM ' . $table_trade;
+		$trade_object = $wpdb->get_results($sql); 	
+		$numb_trades = $wpdb->num_rows;
 	
  		if( strcmp($match,'Update Year') == 0 ){
  			// set up the Year
@@ -176,12 +181,7 @@ class Admin {
 		
 		} elseif( strcmp($match, 'Update Daily') == 0 ){
 			// configure the days of the week to schedule	
-			global $wpdb;
- 			$table_trade =  $wpdb->prefix . 'cloud_base_trades';
-			$sql='SELECT  * FROM ' . $table_trade;
-			$trade_object = $wpdb->get_results($sql); 
-			
-			$numb_trades = $wpdb->num_rows;
+
 			for($k1 = 0; $k1 < $numb_trades; $k1++ ){
 				for($k2 = 0; $k2 < 7; $k2++ ){
 					$weekly_options[$k1][$k2] = '0';
@@ -199,12 +199,15 @@ class Admin {
  			if(isset($_POST['holiday'])){
  				$trade = $_POST['holiday'];
  			} else {
-  				$trade = array(0, 0, 0);
+ 				foreach ($trade_object as $trade ){
+					array_push($trade , '0');  
+				}
+ // 				$trade = array(0, 0, 0, 0, 0, 0);
  			};		
    			if (isset($_POST['editdates'] )){ // get id of the date 
   	 	  		$sql = $wpdb->prepare("SELECT id FROM {$table_name} WHERE `calendar_date` = %s" ,  $_POST['editdates']);	
   	 			$id = $wpdb->get_var($sql); 
-  				for ($t = 1 ; $t <= 3; $t++ )	{	// for each trade. 	
+  				for ($t = 1 ; $t <= $numb_trades; $t++ )	{	// for each trade. 	
   					if($trade[$t-1] == "1"){
    						$record = array( 'calendar_id'=>  $id, 'trade'=> $t, 'member_id'=>NULL );		// new record 		 	 	
    	 		 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `calendar_id` = %s AND `trade`=%d",  $id, $t);	// does date and trade exist?

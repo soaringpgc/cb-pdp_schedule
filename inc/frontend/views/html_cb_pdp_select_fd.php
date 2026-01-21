@@ -157,7 +157,7 @@
  			echo('<input type="submit" value="Enable Selected" id="submit" name="submit" >'); 
  		}
 		for ($i = 0; $i <3; $i++ )	{	
- 			$sql = "SELECT c.id, c.calendar_date FROM {$table_calendar} c INNER JOIN {$table_field_duty} f ON  c.id=f.calendar_id WHERE f.trade = " . $role_id . " AND  f.member_id IS NULL AND c.session =" . ($i+1) . ' AND c.calendar_date >= CURDATE()';
+ 			$sql = "SELECT c.id, c.calendar_date FROM {$table_calendar} c INNER JOIN {$table_field_duty} f ON  c.id=f.calendar_id WHERE f.trade = " . $role_id . " AND ( f.member_id IS NULL OR f.member_id = 0 )AND c.session =" . ($i+1) . ' AND c.calendar_date >= CURDATE()';
 			$session_dates[$i] = $wpdb->get_results($sql);
 			$sqlmin = "SELECT MIN(calendar_date) FROM {$table_calendar}   WHERE session =" . ($i+1) . ' AND calendar_date >= CURDATE()' ;
 			$sqlmax = "SELECT MAX(calendar_date) FROM {$table_calendar}   WHERE session =" . ($i+1) . ' AND calendar_date >= CURDATE()' ;

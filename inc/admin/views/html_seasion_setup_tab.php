@@ -113,18 +113,21 @@ enable sign up for duty for each session.
 				}
 				$numb_trades = sizeof( $tradearray);
 // ntfs: this will be a problem if the trade ids are not in sequencial order in the database!
-//  This is something that will need tobe revisited later. 
+//  This is something that will need to be revisited later. 
 // also see in REST/class-field-duty.php (fc=1 option set.)	perhaps easer to insure
 // trade ids are in sequence?!!! 
-//          		$tradearray = array ('Tow Pilots', 'Instructors', 'Field Manager');         		
+     		
 				for($j=0; $j < $numb_trades; $j++ ){  
 					if ( isset($weekly_options[$j])) { 
 				  		$tp_options = $weekly_options[$j]; 
 				  	} else {
-				  		$tp_options = array ('0', '0', '0', '0', '0', '0', '0',);
+				  		foreach ($trade_object as $trade ){
+							array_push($tp_options , '0');  
+						}
+//				  		$tp_options = array ('0', '0', '0', '0', '0', '0', '0',);
 				  	}				  		
            			echo '<br><h4>'. $tradearray[$j].' Schedule: </h4>';         		
- 					for( $i = 0; $i<= 6; $i++ ){
+ 					for( $i = 0; $i<= $numb_trades; $i++ ){
           				echo '<dd id="rr-element" class="hform2">
    							<label for="tpschedule['.$i.']">';
     						if ( $tp_options[$i] == '1' )	{
@@ -139,28 +142,21 @@ enable sign up for duty for each session.
 				submit_button('Update Daily', 'primary', 'selection', true);						  	         		            		         	          		        		
      		}
      		wp_nonce_field('schedule_page');  
+     		$i=-1;
 
          		echo '<hr><label for Individualdatest>Add Holiday:</label>';
           		echo '<input type="date" id="editdates" name="editdates" value="">';
-       		echo '<p>Select the trades to be scheculed for the holiday.';      		    	     		
-           		echo '<dd id="rr-element" class="hform">
-   						<label for="holtp-">
-      						<input type="checkbox" value="1" id="holtp" name="holiday[0]">
-     							Tow Pilot
-  							 </label>
-					  </dd>';
-           		echo '<dd id="rr-element" class="hform">
-   						<label for="holins-">
-      						<input type="checkbox" value="1" id="holins" name="holiday[1]">
-     							Instructor
-  							 </label>
-					  </dd>';
-            	echo '<dd id="rr-element" class="hform">
-   						<label for="holfm-">
-      						<input type="checkbox" value="1" id="holfm" name="holiday[2]">
-     							Field Manager
-  							 </label>
-					  </dd>';  					      		          		
+       			echo '<p>Select the trades to be scheduled for the holiday.';
+       		
+			  		foreach ($trade_object as $trade ){
+				  			$i++;
+				  		
+	           		echo '<dd id="rr-element" class="hform">
+   						<label for=' . $trade->role . '> 
+      						<input type="checkbox" value="1" id=" ' .$trade->role .'" name="holiday['.$i.']">
+    							 ' .$trade->trade .'  </label>  </dd>';	  			  			
+					}      		
+       					      		          		
 				submit_button('Add Holiday', 'primary', 'selection', true);		         		
 				$enabled = get_option('cloudbase_enabled_sessions', false );		
            		echo '<hr><dd id="rr-element" class="hform">
