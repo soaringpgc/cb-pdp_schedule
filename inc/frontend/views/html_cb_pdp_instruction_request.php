@@ -34,13 +34,13 @@ function instruction_Request_submit(){
 		$query_params = array( 'member_id'=> $user->ID, 'enter_date'=> date('Y-m-d'),
 			'request_date'=> $request_date, 'inst_type'=> $inst_type);
 		$display_name = $user->first_name .' '.  $user->last_name;
-		if(isset($_POST['cfig1']) && (trim($_POST['cfig1'])!="") && ($_POST['cfig1'] > 0 )){
+		if( is_numeric($_POST['cfig1']) && ($_POST['cfig1'] > 0 )){
 			   $cfig1 = get_user_by('ID', $_POST['cfig1'] );
 			   $query_params = array_merge($query_params, array('cfig1'=>$cfig1->ID));	 
 		} else {
 			 $cfig1 = null;
 		}
-		if(isset($_POST['cfig2']) && (trim($_POST['cfig2'])!="") && ($_POST['cfig2'] > 0 )){		 
+		if( is_numeric($_POST['cfig2']) && $_POST['cfig2'] > 0 ){ 
 			 $cfig2 = get_user_by('ID', $_POST['cfig2'] );
 			 $query_params = array_merge($query_params, array('cfig2'=> $cfig2->ID));			 
 		} else {
