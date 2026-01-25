@@ -283,9 +283,9 @@ class Instruction extends \Cloud_Base_Rest {
 		 	
 			$headers = "MIME-Version: 1.0" . "\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
-			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
+//			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
 
-   			mail($to, $subject, $msg, $headers);
+   			wp_mail($to, $subject, $msg, $headers);
    			wp_send_json_success( $data = $resutl, $status_code = 200, $options = 0 );
 // 		   	return new \WP_REST_Response ( $result); 	 	
 	     } else {	     

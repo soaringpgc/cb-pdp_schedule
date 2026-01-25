@@ -101,7 +101,7 @@
 			$headers = "MIME-Version: 1.0" . "\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
 			$headers .= 'From: <webmaster@pgcsoaring.com>' . "\n";
-   			mail($to,$subject,$msg,$headers);
+   			wp_mail($to,$subject,$msg,$headers);
 			echo('<p> Your selections have been accepted</p> ');
 		} elseif( strcmp($match,'Enable Selected') == 0 ){  // process the session enable processes
 			if(current_user_can( 'cb_edit_operations')){

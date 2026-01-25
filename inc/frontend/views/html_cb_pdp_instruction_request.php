@@ -112,7 +112,7 @@ function instruction_Request_submit(){
 // var_dump($subject, $msg, $to )	;
 // die();	
 		
-   		mail($to,$subject,$msg,$headers);
+   		wp_mail($to,$subject,$msg,$headers);
 		echo('<p> Your Instruction Request has been entered.</p> ');
 
 		}
