@@ -163,7 +163,7 @@ class Field_Duty extends \Cloud_Base_Rest {
 	  	if (isset($request['member_id']) &&  !($request['member_id'] ==0 )) { // get id of the member leave at null if zero 
 			$member = $request['member_id'] ;
 		}
-		if (isset($request['id'])){
+		if (isset($request['id'])){     // We have the actual field duty id 
 			$sql = $wpdb->prepare("SELECT id FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
  	 		$id = $wpdb->get_var($sql); 
  			if( $id == null ){
@@ -173,10 +173,13 @@ class Field_Duty extends \Cloud_Base_Rest {
  				$result = $wpdb->update($field_name, $record, array('id' => $id ));	// update existing. 
  				$sql = $wpdb->prepare("SELECT * FROM {$field_name} WHERE `id` = %d" ,  $request['id']);	
  	 			$result = $wpdb->get_results($sql); 
+ 	 			$sql2 =  $wpdb->prepare("SELECT calendar_date FROM {$calendar_name} WHERE `id` = %d" ,  $result['calendar_id']);	
+ 	 			$date = $wpdb->get_var($sql2); 
+ 	 			$this->cb_send_fd_email($member, $date );
  				return new \WP_REST_Response ( $result); 	 
  			}
 					
-		} elseif (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date		
+		} elseif (isset($request['date']) && isset($request['trade_id']) ){ // get id of the date	we have the date 	
  	   		$sql = $wpdb->prepare("SELECT id FROM {$calendar_name} WHERE `calendar_date` = %s" ,  $request['date']);	
  	 		$id = $wpdb->get_var($sql); 
  			if( $id == null ){
@@ -197,6 +200,7 @@ class Field_Duty extends \Cloud_Base_Rest {
  					$result = $wpdb->update($field_name, $record, array('id' => $fid ));	// update existing. 
  				}
  			}
+ 			$this->cb_send_fd_email($member,$request['date'] );
 		   	return new \WP_REST_Response ( $result); 	 	
 	     } else {	     
 			return new \WP_Error( ' Failed', esc_html__( 'missing parameter(s)', 'my-text-domain' ), array( 'status' => 422) );	     
@@ -213,4 +217,23 @@ class Field_Duty extends \Cloud_Base_Rest {
 		}	
 		$wpdb->delete($table_name , array('id'=> $request['id']));			
 	}	
+	
+	public function cb_send_fd_email($member, $date  ){
+		global $wpdb;
+ 				
+ 		$subject = "PGC Field Duty assignment "  ;
+		$headers = "MIME-Version: 1.0" . "\n";
+		$headers .= "Content-type:text/html;charset=UTF-8" . "\n";
+ 
+ 	 	$user = get_user_by('ID',  $member  );
+ 		$user_meta = get_userdata( $member);
+ 		$to .= $user_meta->user_email.', '; 
+ 		$display_name = $user->first_name .' '.  $user->last_name;
+ 
+    	$msg = 'Member: ' . $display_name . ', has been scheduled for PGC field duty on ' .  $date . "<br>\n";  
+		$msg .= "Please arive at 8:00 AM to help prepare the field for operation to start at 9:00AM. If you need to change dates you need to find another member to 
+		switch dates. It is not the Field Ops manager's responsibility to find your replacement." ;
+// error_log($msg);			
+		wp_mail($to,$subject,$msg,$headers);		
+	}
 }
